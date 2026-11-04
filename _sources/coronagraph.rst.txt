@@ -46,13 +46,15 @@ The sampling grows with the wavelength: ``samp_sci`` is the sampling at the scie
    :start-after: #%% Coronagraph
    :end-before: #%% Plot
 
-``coro.psf`` returns the image in units of a unit-energy PSF. ``coro.contrast_curve`` normalizes it by the peak of the diffraction PSF without coronagraph, and returns its azimuthal average against the separation in λ/D.
-To normalize by the peak of an off-axis source through the coronagraph instead, use ``coro.raw_contrast`` with the PSD.
+Two normalisations are available:
+
+* ``coro.raw_contrast(psd)`` divides the image by the peak of the AO PSF of an off-axis source at the same separation, through the coronagraph: ``I(x) / (max(PSF_AO) * T_peak(x))``, where ``T_peak`` is the peak throughput. It is not defined close to the axis, where the throughput is too low (NaN). ``coro.raw_contrast_curve(psd)`` gives its azimuthal average against the separation in λ/D.
+* ``coro.normalized_intensities(image)`` divides the image by the peak of the diffraction PSF, without coronagraph: ``I(x) / max(PSF_diffraction)``. Here ``image`` comes from ``coro.psf(psd)``, and ``coro.normalized_intensity_curve(image)`` gives its azimuthal average.
+
+This script uses the raw contrast.
 
 Plot
 ----
-
-``coro.normalized_intensities`` gives the 2D map with the same normalization as the contrast curve.
 
 .. literalinclude:: ../example/coronagraph_simulation.py
    :language: python

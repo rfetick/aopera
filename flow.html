@@ -356,11 +356,11 @@ const D = {
   cor2: { k:'Coronagraph', i:true, h:'Perfect coronagraph',
     p:['It removes from the pupil field its projection on the polynomials of degree &lt; order/2 (Guyon et al. 2006). Order 2 removes the piston only (rejection ∝ separation²), order 4 also removes tip and tilt. The sum over the tilts reduces to a few FFT convolutions, and the coherent part is fully rejected.','Any linear coronagraph can be defined through <code>Coronagraph.propagate</code>: the tilts are propagated exactly for |s| &lt; <code>exact_radius</code> (10 λ/D by default), with a shift-invariant response beyond. Order 0 means no coronagraph and gives back the AO PSF.'],
     eq:'C_s(x) = |F[P](x−s) − Σ_k c_k(s)·F[M_k](x)|²\nI(x)   = Σ_s h_a(s)·C_s(x)',
-    ref:'aopera/coronagraph.py:279 PerfectCoronagraph · 349 image · 91 Coronagraph' },
+    ref:'aopera/coronagraph.py:309 PerfectCoronagraph · 379 image · 91 Coronagraph' },
   cor3: { k:'Coronagraph', i:true, h:'Contrast curve',
-    p:['Two normalisations are available. <code>normalized_intensities</code> divides by the diffraction peak. <code>raw_contrast</code> divides by the peak of an off-axis source at the same position: AO PSF peak × peak throughput.','<code>contrast_curve</code> then gives the azimuthal average, with the separation in λ/D.'],
-    eq:'normalized_intensities: I / max(PSF_diff)\nraw_contrast: I / (max(PSF_AO)·T_peak(x))',
-    ref:'aopera/coronagraph.py:252 · 224 raw_contrast · 258 contrast_curve' },
+    p:['Two normalisations are available. <code>normalized_intensities</code> divides by the peak of the diffraction PSF. <code>raw_contrast</code> divides by the peak of the AO PSF at the same separation, through the coronagraph: AO PSF peak × peak throughput.','<code>normalized_intensity_curve</code> and <code>raw_contrast_curve</code> give their azimuthal averages, with the separation in λ/D.'],
+    eq:'normalized_intensities: I / max(PSF_diff)\nraw_contrast:           I / (max(PSF_AO)·T_peak(x))',
+    ref:'aopera/coronagraph.py:252 normalized_intensities · 224 raw_contrast · 275 normalized_intensity_curve · 290 raw_contrast_curve' },
 };
 
 function dynamic(id) {

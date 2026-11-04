@@ -804,15 +804,13 @@ the normalization of fft2 (without coronagraph, propagate = fft2).</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="aopera.coronagraph.Coronagraph.raw_contrast">
 <span class="sig-name descname"><span class="pre">raw_contrast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">psd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_throughput</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_cpu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.coronagraph.Coronagraph.raw_contrast" title="Link to this definition">¶</a></dt>
-<dd><p>Raw contrast: long-exposure coronagraphic image divided by the peak of the image of an
-off-axis point source at the same position, i.e. by</p>
+<dd><p>Raw contrast: long-exposure coronagraphic image divided by the peak of the AO PSF of an
+off-axis source at the same separation, seen through the coronagraph:</p>
 <blockquote>
-<div><p>(peak of the long-exposure AO PSF without coronagraph) x (peak throughput at x),</p>
+<div><p>raw_contrast(x) = I(x) / (max(PSF_AO) * T_peak(x))</p>
 </div></blockquote>
-<p>both computed from the same residual phase PSD. The peak of the AO PSF is the diffraction
-peak x Strehl (normalization of the E2E / COMPASS curves, which do not include the
-throughput). Close to the axis the throughput goes to 0: the raw contrast is set to NaN
-where the peak throughput is below <cite>min_throughput</cite>.</p>
+<p>with T_peak the peak throughput of the coronagraph (see peak_throughput). Close to the axis
+T_peak goes to 0: the raw contrast is set to NaN where T_peak is below <cite>min_throughput</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -824,7 +822,7 @@ where the peak throughput is below <cite>min_throughput</cite>.</p>
 <dd class="field-even"><p><strong>raw_contrast</strong></p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p>(nx, nx) array (centered). Use contrast_curve(raw_contrast, normalized=True).</p>
+<dd class="field-odd"><p>(nx, nx) array (centered).</p>
 </dd>
 </dl>
 </dd></dl>
@@ -832,26 +830,57 @@ where the peak throughput is below <cite>min_throughput</cite>.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="aopera.coronagraph.Coronagraph.normalized_intensities">
 <span class="sig-name descname"><span class="pre">normalized_intensities</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_cpu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.coronagraph.Coronagraph.normalized_intensities" title="Link to this definition">¶</a></dt>
-<dd><p>Normalize an image by the peak of the non-coronagraphic diffraction PSF.</p>
+<dd><p>Image normalized by the peak of the diffraction PSF, without coronagraph:</p>
+<blockquote>
+<div><p>normalized_intensities(x) = I(x) / max(PSF_diffraction)</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>image</strong> (<em>(</em><em>nx</em><em>, </em><em>nx</em><em>) </em><em>array</em><em> (</em><em>centered</em><em>)</em><em>, </em><em>in units</em><em> of </em><em>a unit-energy PSF</em><em> (</em><em>e.g. psf</em><em>(</em><em>psd</em><em>)</em><em>)</em><em>.</em>)</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>normalized_intensities</strong></p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(nx, nx) array (centered).</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="aopera.coronagraph.Coronagraph.contrast_curve">
-<span class="sig-name descname"><span class="pre">contrast_curve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalized</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.coronagraph.Coronagraph.contrast_curve" title="Link to this definition">¶</a></dt>
-<dd><p>Azimuthal average of the contrast.</p>
+<dt class="sig sig-object py" id="aopera.coronagraph.Coronagraph.normalized_intensity_curve">
+<span class="sig-name descname"><span class="pre">normalized_intensity_curve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.coronagraph.Coronagraph.normalized_intensity_curve" title="Link to this definition">¶</a></dt>
+<dd><p>Azimuthal average of normalized_intensities(image).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>image</strong> (<em>(</em><em>nx</em><em>, </em><em>nx</em><em>) </em><em>array</em><em> (</em><em>centered</em><em>)</em><em>, </em><em>in units</em><em> of </em><em>a unit-energy PSF</em><em> (</em><em>e.g. psf</em><em>(</em><em>psd</em><em>)</em><em>)</em><em>.</em>)</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>separation</strong> (<em>1D array [lambda/D]</em>)</p></li>
+<li><p><strong>normalized_intensity</strong> (<em>1D array</em>)</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.coronagraph.Coronagraph.raw_contrast_curve">
+<span class="sig-name descname"><span class="pre">raw_contrast_curve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">psd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_throughput</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.coronagraph.Coronagraph.raw_contrast_curve" title="Link to this definition">¶</a></dt>
+<dd><p>Azimuthal average of raw_contrast(psd). A ring containing a pixel below <cite>min_throughput</cite>
+is set to NaN.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>image</strong> (<em>(</em><em>nx</em><em>, </em><em>nx</em><em>) </em><em>array</em><em> (</em><em>centered</em><em>)</em><em>.</em>)</p></li>
-<li><p><strong>normalized</strong> (<em>bool</em>) – False (default): <cite>image</cite> is in units of a unit-energy PSF (e.g. psf(psd)) and is normalized
-by the peak of the diffraction PSF (see normalized_intensities).
-True: <cite>image</cite> is already a contrast (e.g. raw_contrast(psd)) and is only averaged.</p></li>
+<li><p><strong>psd</strong> (<em>(</em><em>nx</em><em>, </em><em>nx</em><em>) </em><em>array</em><em>, </em><em>phase PSD</em><em> [</em><em>rad² m²</em><em>] </em><em>on the AOPERA grid</em><em> (</em><em>frequency step 1/</em><em>(</em><em>samp*D</em><em>)</em><em>)</em><em>,</em>) – at the wavelength of the image.</p></li>
+<li><p><strong>min_throughput</strong> (<em>float</em><em>, </em><em>minimum peak throughput</em><em> (</em><em>default 1 %</em><em>)</em><em>.</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><ul class="simple">
 <li><p><strong>separation</strong> (<em>1D array [lambda/D]</em>)</p></li>
-<li><p><strong>contrast</strong> (<em>1D array</em>)</p></li>
+<li><p><strong>raw_contrast</strong> (<em>1D array</em>)</p></li>
 </ul>
 </p>
 </dd>
@@ -1291,7 +1320,8 @@ Only valid for two frames delay (1 for WFS integration, 1 for pixel transfer and
 <li><a class="reference internal" href="#aopera.coronagraph.Coronagraph.psf"><code class="docutils literal notranslate"><span class="pre">Coronagraph.psf()</span></code></a></li>
 <li><a class="reference internal" href="#aopera.coronagraph.Coronagraph.raw_contrast"><code class="docutils literal notranslate"><span class="pre">Coronagraph.raw_contrast()</span></code></a></li>
 <li><a class="reference internal" href="#aopera.coronagraph.Coronagraph.normalized_intensities"><code class="docutils literal notranslate"><span class="pre">Coronagraph.normalized_intensities()</span></code></a></li>
-<li><a class="reference internal" href="#aopera.coronagraph.Coronagraph.contrast_curve"><code class="docutils literal notranslate"><span class="pre">Coronagraph.contrast_curve()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.coronagraph.Coronagraph.normalized_intensity_curve"><code class="docutils literal notranslate"><span class="pre">Coronagraph.normalized_intensity_curve()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.coronagraph.Coronagraph.raw_contrast_curve"><code class="docutils literal notranslate"><span class="pre">Coronagraph.raw_contrast_curve()</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#aopera.coronagraph.PerfectCoronagraph"><code class="docutils literal notranslate"><span class="pre">PerfectCoronagraph</span></code></a><ul>

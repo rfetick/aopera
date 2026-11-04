@@ -124,12 +124,11 @@
 <span class="n">samp_sci</span> <span class="o">=</span> <span class="n">samp</span> <span class="o">/</span> <span class="n">wvl_wfs_sci</span>
 <span class="n">psd_total_sci</span> <span class="o">=</span> <span class="n">psd_wvl_scaling</span><span class="p">(</span><span class="n">psd_total</span><span class="p">,</span> <span class="n">wvl_wfs_sci</span><span class="p">)</span>
 <span class="n">coro</span> <span class="o">=</span> <span class="n">PerfectCoronagraph</span><span class="p">(</span><span class="n">tel</span><span class="p">,</span> <span class="n">nx</span><span class="p">,</span> <span class="n">samp_sci</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">CORO_ORDER</span><span class="p">)</span>
-<span class="n">img</span> <span class="o">=</span> <span class="n">coro</span><span class="o">.</span><span class="n">psf</span><span class="p">(</span><span class="n">psd_total_sci</span><span class="p">)</span>
-<span class="n">sep</span><span class="p">,</span> <span class="n">contrast</span> <span class="o">=</span> <span class="n">coro</span><span class="o">.</span><span class="n">contrast_curve</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+<span class="n">contrast_map</span> <span class="o">=</span> <span class="n">coro</span><span class="o">.</span><span class="n">raw_contrast</span><span class="p">(</span><span class="n">psd_total_sci</span><span class="p">)</span>
+<span class="n">sep</span><span class="p">,</span> <span class="n">contrast</span> <span class="o">=</span> <span class="n">coro</span><span class="o">.</span><span class="n">raw_contrast_curve</span><span class="p">(</span><span class="n">psd_total_sci</span><span class="p">)</span>
 
 <span class="c1">#%% Plot</span>
 <span class="n">hfov</span> <span class="o">=</span> <span class="mi">30</span> <span class="c1"># half field of view of the plots [lambda/D]</span>
-<span class="n">contrast_map</span> <span class="o">=</span> <span class="n">coro</span><span class="o">.</span><span class="n">normalized_intensities</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
 <span class="n">ext</span> <span class="o">=</span> <span class="n">nx</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">samp_sci</span><span class="p">)</span>
 <span class="n">norm</span> <span class="o">=</span> <span class="n">LogNorm</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="mf">1e-7</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">)</span>
 
@@ -138,12 +137,12 @@
 
 <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">121</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">contrast_map</span><span class="p">,</span> <span class="n">extent</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="n">ext</span><span class="p">,</span><span class="n">ext</span><span class="p">)</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;lower&#39;</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Contrast&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Raw contrast&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="o">-</span><span class="n">hfov</span><span class="p">,</span> <span class="n">hfov</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="o">-</span><span class="n">hfov</span><span class="p">,</span> <span class="n">hfov</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Position [$\lambda/D$]&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Position [$\lambda/D$]&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Coronagraphic image&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Raw contrast map&#39;</span><span class="p">)</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">122</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">sep</span><span class="p">,</span> <span class="n">contrast</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
@@ -151,8 +150,8 @@
 <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="n">norm</span><span class="o">.</span><span class="n">vmin</span><span class="p">,</span> <span class="n">norm</span><span class="o">.</span><span class="n">vmax</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">which</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Separation [$\lambda/D$]&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Azimuthal average of the contrast&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Contrast curve&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Azimuthal average of the raw contrast&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Raw contrast curve&#39;</span><span class="p">)</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
