@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Coronagraphic image &#8212; AOPERA docs</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=92fd9be5" />
+    <link rel="stylesheet" type="text/css" href="_static/aopera.css?v=ddfc3e89" />
+    <script src="_static/documentation_options.js?v=f5cff4aa"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Example gallery" href="examples/index.html" />
+    <link rel="prev" title="Cascaded AO" href="cascaded.html" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,650&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="_static/topbar.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+  </head><body>
+<header class="topbar">
+  <a class="brand" href="index.html">AOPERA<span class="ver">2.0.1</span></a>
+  <nav aria-label="Main">
+    <a href="tutorial.html" aria-current="true">Tutorials</a>
+    <a href="flow.html">Code flow</a>
+    <a href="examples/index.html">Examples</a>
+    <a href="api.html">API</a>
+    <a href="validation.html">Validation</a>
+  </nav>
+  <form class="search" action="search.html" method="get" role="search">
+    <input type="search" name="q" placeholder="Search the docs" aria-label="Search the docs">
+  </form>
+</header>
+
+<div class="page">
+  <aside class="side-left">
+    <div class="nav-group">Start</div>
+    <a class="nav-item" href="installation.html">Installation</a>
+    <a class="nav-item" href="tutorial.html">Your first simulation</a>
+    <a class="nav-item" href="cascaded.html">Cascaded AO</a>
+    <a class="nav-item on" href="#">Coronagraphic image</a>
+    <div class="nav-group">Understand</div>
+    <a class="nav-item" href="flow.html">Code flow</a>
+    <div class="nav-group">Examples</div>
+    <a class="nav-item" href="examples/index.html">Example gallery</a>
+    <div class="nav-group">Reference</div>
+    <a class="nav-item" href="api.html">Code documentation</a>
+    <a class="nav-item" href="validation.html">Validation</a>
+  </aside>
+  <main class="doc" role="main">
+    <article>
+  <section id="coronagraphic-image">
+<h1>Coronagraphic image<a class="headerlink" href="#coronagraphic-image" title="Link to this heading">¶</a></h1>
+<p>From the residual PSD of a simulation, AOPERA computes the long-exposure image behind a perfect coronagraph, and its contrast curve.
+This tutorial follows <code class="docutils literal notranslate"><span class="pre">example/coronagraph_simulation.py</span></code>, and the code shown here is read from that script.
+You should have done <a class="reference internal" href="tutorial.html"><span class="doc">Tutorial</span></a> first.</p>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">CORO_ORDER</span></code> is the order of the perfect coronagraph: 2 removes the piston from the pupil field, 4 also removes tip and tilt, and so on.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">file_instru</span> <span class="o">=</span> <span class="s1">&#39;saxo.ini&#39;</span>
+<span class="n">CORO_ORDER</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">nx</span> <span class="o">=</span> <span class="mi">512</span>
+<span class="n">samp</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">IGNORE</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;jitter&#39;</span><span class="p">,</span><span class="s1">&#39;ncpa&#39;</span><span class="p">,</span><span class="s1">&#39;chromatic&#39;</span><span class="p">,</span><span class="s1">&#39;refraction&#39;</span><span class="p">]</span>
+<span class="n">CUBE_BINS</span> <span class="o">=</span> <span class="mi">100</span>
+
+</pre></div>
+</div>
+</section>
+<section id="objects-of-the-simulation">
+<h2>Objects of the simulation<a class="headerlink" href="#objects-of-the-simulation" title="Link to this heading">¶</a></h2>
+<p>These are the same objects as in the first tutorial. This script uses a <code class="docutils literal notranslate"><span class="pre">VLTPupil</span></code>, which includes the spiders.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Telescope and atmosphere</span>
+<span class="n">src_sci</span> <span class="o">=</span> <span class="n">SourceScience</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">file_instru</span><span class="p">)</span>
+<span class="n">atm</span> <span class="o">=</span> <span class="n">Atmosphere</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">file_instru</span> <span class="p">)</span>
+
+<span class="c1"># AO parameters</span>
+<span class="n">src_wfs</span> <span class="o">=</span> <span class="n">SourceWFS</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">file_instru</span> <span class="p">)</span>
+<span class="n">src_sci_wfs_2</span> <span class="o">=</span> <span class="n">SourceScience</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">file_instru</span> <span class="p">)</span>
+<span class="n">tel</span> <span class="o">=</span> <span class="n">VLTPupil</span><span class="p">(</span><span class="n">read_config_file</span><span class="p">(</span><span class="n">file_instru</span> <span class="p">,</span> <span class="s1">&#39;pupil&#39;</span><span class="p">),</span> <span class="n">t_spiders</span><span class="o">=</span><span class="mf">0.00625</span><span class="p">,</span> <span class="n">angle_spiders</span><span class="o">=</span><span class="mf">50.5</span><span class="p">)</span>
+<span class="n">rtc</span> <span class="o">=</span> <span class="n">RTC</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">file_instru</span> <span class="p">)</span>
+<span class="n">wfs</span> <span class="o">=</span> <span class="n">SHWFS</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">file_instru</span><span class="p">)</span>
+
+</pre></div>
+</div>
+</section>
+<section id="ao-simulation">
+<h2>AO simulation<a class="headerlink" href="#ao-simulation" title="Link to this heading">¶</a></h2>
+<p>The simulation itself does not change: the coronagraph only uses its output PSD.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">result_first_stage</span> <span class="o">=</span>  <span class="n">simulation</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span> <span class="n">samp</span><span class="p">,</span> <span class="n">tel</span><span class="p">,</span> <span class="n">atm</span><span class="p">,</span> <span class="n">rtc</span><span class="p">,</span> <span class="n">wfs</span><span class="p">,</span> <span class="n">src_sci</span><span class="p">,</span> <span class="n">src_wfs</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="n">IGNORE</span><span class="p">,</span> <span class="n">cube_bins</span><span class="o">=</span><span class="n">CUBE_BINS</span><span class="p">)</span>
+<span class="n">psd</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">param</span> <span class="o">=</span> <span class="n">result_first_stage</span><span class="o">.</span><span class="n">psd</span><span class="p">,</span> <span class="n">result_first_stage</span><span class="o">.</span><span class="n">var</span><span class="p">,</span> <span class="n">result_first_stage</span><span class="o">.</span><span class="n">param</span>
+<span class="n">psd_total</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">psd</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">psd</span><span class="o">.</span><span class="n">keys</span><span class="p">()])</span>
+
+</pre></div>
+</div>
+</section>
+<section id="id1">
+<h2>Coronagraphic image<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
+<p>The output PSD is given at the wavelength of the WFS, so it is first scaled to the science wavelength.
+The sampling grows with the wavelength: <code class="docutils literal notranslate"><span class="pre">samp_sci</span></code> is the sampling at the science wavelength, and the coronagraph must be built with it.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">wvl_wfs_sci</span> <span class="o">=</span> <span class="n">src_wfs</span><span class="o">.</span><span class="n">wvl</span> <span class="o">/</span> <span class="n">src_sci</span><span class="o">.</span><span class="n">wvl</span> 
+<span class="n">samp_sci</span> <span class="o">=</span> <span class="n">samp</span> <span class="o">/</span> <span class="n">wvl_wfs_sci</span>
+<span class="n">psd_total_sci</span> <span class="o">=</span> <span class="n">psd_wvl_scaling</span><span class="p">(</span><span class="n">psd_total</span><span class="p">,</span> <span class="n">wvl_wfs_sci</span><span class="p">)</span>
+<span class="n">coro</span> <span class="o">=</span> <span class="n">PerfectCoronagraph</span><span class="p">(</span><span class="n">tel</span><span class="p">,</span> <span class="n">nx</span><span class="p">,</span> <span class="n">samp_sci</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">CORO_ORDER</span><span class="p">)</span>
+<span class="n">img</span> <span class="o">=</span> <span class="n">coro</span><span class="o">.</span><span class="n">psf</span><span class="p">(</span><span class="n">psd_total_sci</span><span class="p">)</span>
+<span class="n">sep</span><span class="p">,</span> <span class="n">contrast</span> <span class="o">=</span> <span class="n">coro</span><span class="o">.</span><span class="n">contrast_curve</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">coro.psf</span></code> returns the image in units of a unit-energy PSF. <code class="docutils literal notranslate"><span class="pre">coro.contrast_curve</span></code> normalizes it by the peak of the diffraction PSF without coronagraph, and returns its azimuthal average against the separation in λ/D.
+To normalize by the peak of an off-axis source through the coronagraph instead, use <code class="docutils literal notranslate"><span class="pre">coro.raw_contrast</span></code> with the PSD.</p>
+</section>
+<section id="plot">
+<h2>Plot<a class="headerlink" href="#plot" title="Link to this heading">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">coro.normalized_intensities</span></code> gives the 2D map with the same normalization as the contrast curve.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">hfov</span> <span class="o">=</span> <span class="mi">30</span> <span class="c1"># half field of view of the plots [lambda/D]</span>
+<span class="n">contrast_map</span> <span class="o">=</span> <span class="n">coro</span><span class="o">.</span><span class="n">normalized_intensities</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+<span class="n">ext</span> <span class="o">=</span> <span class="n">nx</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">samp_sci</span><span class="p">)</span>
+<span class="n">norm</span> <span class="o">=</span> <span class="n">LogNorm</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="mf">1e-7</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mf">4.2</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">121</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">contrast_map</span><span class="p">,</span> <span class="n">extent</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="n">ext</span><span class="p">,</span><span class="n">ext</span><span class="p">)</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;lower&#39;</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="s1">&#39;Contrast&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="o">-</span><span class="n">hfov</span><span class="p">,</span> <span class="n">hfov</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="o">-</span><span class="n">hfov</span><span class="p">,</span> <span class="n">hfov</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Position [$\lambda/D$]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Position [$\lambda/D$]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Coronagraphic image&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">122</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">sep</span><span class="p">,</span> <span class="n">contrast</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">hfov</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="n">norm</span><span class="o">.</span><span class="n">vmin</span><span class="p">,</span> <span class="n">norm</span><span class="o">.</span><span class="n">vmax</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">which</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Separation [$\lambda/D$]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Azimuthal average of the contrast&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Contrast curve&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="result">
+<h2>Result<a class="headerlink" href="#result" title="Link to this heading">¶</a></h2>
+<p>The dark area is the region corrected by the deformable mirror.</p>
+<div class="figs"><a href="gallery/coronagraph_simulation/fig_1.svg"><img src="gallery/coronagraph_simulation/fig_1.svg" alt="Coronagraphic image in contrast, and azimuthal average of the contrast against the separation"></a></div></section>
+</section>
+
+</article>
+    <nav class="pager" aria-label="Previous and next page"><a class="prev" href="cascaded.html"><small>Previous</small>Cascaded AO</a><a class="next" href="examples/index.html"><small>Next</small>Example gallery</a>
+    </nav>
+  </main>
+  <aside class="side-right">
+    <div class="nav-group">On this page</div>
+    <ul>
+<li><a class="reference internal" href="#">Coronagraphic image</a><ul>
+<li><a class="reference internal" href="#parameters">Parameters</a></li>
+<li><a class="reference internal" href="#objects-of-the-simulation">Objects of the simulation</a></li>
+<li><a class="reference internal" href="#ao-simulation">AO simulation</a></li>
+<li><a class="reference internal" href="#id1">Coronagraphic image</a></li>
+<li><a class="reference internal" href="#plot">Plot</a></li>
+<li><a class="reference internal" href="#result">Result</a></li>
+</ul>
+</li>
+</ul>
+
+  </aside>
+</div>
+
+<footer class="foot">
+  AOPERA 2.0.1 · <a href="https://gitlab.lam.fr/lam-grd-public/aopera">GitLab</a> · <a href="https://pypi.org/project/aopera/">PyPI</a> · <a href="https://gitlab.lam.fr/lam-grd-public/aopera/-/issues">Report an issue</a>
+</footer>
+
+  </body>
+</html>

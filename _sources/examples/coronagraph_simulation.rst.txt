@@ -1,0 +1,102 @@
+Coronagraphic image
+===================
+
+Coronagraphic image and contrast curve from the AO residual PSD.
+
+Script: ``example/coronagraph_simulation.py``
+
+Result
+------
+
+.. raw:: html
+
+   <div class="figs"><a href="../gallery/coronagraph_simulation/fig_1.svg"><img src="../gallery/coronagraph_simulation/fig_1.svg" alt="Figure 1 of coronagraph_simulation.py" loading="lazy"></a></div>
+
+Code
+----
+
+.. literalinclude:: ../../example/coronagraph_simulation.py
+   :language: python
+
+.. raw:: html
+
+   <details><summary>Console output</summary>
+
+.. code:: text
+
+   ═════════════════════════
+         SourceScience
+   —————————————————————————
+   wvl    : 1043 nm
+   zenith : 0 deg
+   —————————————————————————
+
+   ═════════════════════════
+           SourceWFS
+   —————————————————————————
+   wvl       : 690 nm
+   flux      : 1.1e+07 ph/m²/s
+   separation: 0.000 arcsec
+   size      : 0.00 arcsec
+   —————————————————————————
+
+   ═════════════════════════
+          Atmosphere
+   —————————————————————————
+   seeing    : 0.40 arcsec
+   nb layer  : 35
+   altitude  : 4.4 km
+   wind speed: 8.9 m/s
+   —————————————————————————
+
+   ═════════════════════════
+           VLTPupil
+   —————————————————————————
+   diameter   : 8.0 m
+   occultation: 14 %
+   nb act     : 41
+   mode ratio : 0.62
+   ncpa       : 0 nm
+   jitter     : (0, 0) mas RMS
+   spiders    : 5.0 cm at 50.5 deg
+   —————————————————————————
+
+   ═════════════════════════
+              RTC
+   —————————————————————————
+   freq  : 1380 Hz
+   delay : 0.8 ms
+   ki    : 0.15
+   —————————————————————————
+
+   ═════════════════════════
+             SHWFS
+   —————————————————————————
+   throughput: 100 %
+   lenslet   : 40 
+   ron       : 0.1 e-
+   EMCCD     : False
+   sampling  : 2.0
+   npix CoG  : 36
+   filter    : 1.25 λ/d
+   —————————————————————————
+
+
+   Spatiotemporal ✓   Noise ✓   Spatial-aliasing ✓
+   [OG iter. 1/1]   OG = 1.00   WFE =  47 nm
+
+   ══════════════════════════════════════════════════
+                WAVEFRONT ERROR [nm RMS]
+   —————————————————▾———————▾———————▾———————▾———————▾
+      fitting   37  |■■■■■■■■■■■■■■■■■■             |
+     temporal   29  |■■■■■■■■■■■                    |
+     aliasing    7  |■                              |
+       photon    6  |                               |
+          ron    1  |                               |
+   —————————————————▴———————▴———————▴———————▴———————▴
+        total   48
+   ══════════════════════════════════════════════════
+
+.. raw:: html
+
+   </details>

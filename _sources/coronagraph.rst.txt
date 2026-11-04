@@ -1,0 +1,68 @@
+Coronagraphic image
+===================
+
+From the residual PSD of a simulation, AOPERA computes the long-exposure image behind a perfect coronagraph, and its contrast curve.
+This tutorial follows ``example/coronagraph_simulation.py``, and the code shown here is read from that script.
+You should have done :doc:`tutorial` first.
+
+Parameters
+----------
+
+``CORO_ORDER`` is the order of the perfect coronagraph: 2 removes the piston from the pupil field, 4 also removes tip and tilt, and so on.
+
+.. literalinclude:: ../example/coronagraph_simulation.py
+   :language: python
+   :start-after: #%% PARAMETERS
+   :end-before: #%% READ CONFIG FILE
+
+Objects of the simulation
+-------------------------
+
+These are the same objects as in the first tutorial. This script uses a ``VLTPupil``, which includes the spiders.
+
+.. literalinclude:: ../example/coronagraph_simulation.py
+   :language: python
+   :start-after: #%% READ CONFIG FILE
+   :end-before: print(src_sci)
+
+AO simulation
+-------------
+
+The simulation itself does not change: the coronagraph only uses its output PSD.
+
+.. literalinclude:: ../example/coronagraph_simulation.py
+   :language: python
+   :start-after: #%% AO first stage
+   :end-before: #%% Coronagraph
+
+Coronagraphic image
+-------------------
+
+The output PSD is given at the wavelength of the WFS, so it is first scaled to the science wavelength.
+The sampling grows with the wavelength: ``samp_sci`` is the sampling at the science wavelength, and the coronagraph must be built with it.
+
+.. literalinclude:: ../example/coronagraph_simulation.py
+   :language: python
+   :start-after: #%% Coronagraph
+   :end-before: #%% Plot
+
+``coro.psf`` returns the image in units of a unit-energy PSF. ``coro.contrast_curve`` normalizes it by the peak of the diffraction PSF without coronagraph, and returns its azimuthal average against the separation in λ/D.
+To normalize by the peak of an off-axis source through the coronagraph instead, use ``coro.raw_contrast`` with the PSD.
+
+Plot
+----
+
+``coro.normalized_intensities`` gives the 2D map with the same normalization as the contrast curve.
+
+.. literalinclude:: ../example/coronagraph_simulation.py
+   :language: python
+   :start-after: #%% Plot
+
+Result
+------
+
+The dark area is the region corrected by the deformable mirror.
+
+.. raw:: html
+
+   <div class="figs"><a href="gallery/coronagraph_simulation/fig_1.svg"><img src="gallery/coronagraph_simulation/fig_1.svg" alt="Coronagraphic image in contrast, and azimuthal average of the contrast against the separation"></a></div>

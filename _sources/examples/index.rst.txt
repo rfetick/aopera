@@ -11,6 +11,7 @@ Full AO simulations
    <div class="gallery">
    <a class="card" href="AO_simulation.html"><div class="thumb"><img src="../gallery/AO_simulation/fig_1.svg" alt="First figure of AO_simulation.py" loading="lazy"></div><div class="ctext"><b>Single-stage AO</b><span>The complete run behind the tutorial: error budget, PSD, PSF and Strehl ratio.</span></div></a>
    <a class="card" href="AO_cascaded_simulation.html"><div class="thumb"><img src="../gallery/AO_cascaded_simulation/fig_1.svg" alt="First figure of AO_cascaded_simulation.py" loading="lazy"></div><div class="ctext"><b>Cascaded AO</b><span>A first-stage result fed into a second AO stage, down to the science PSF.</span></div></a>
+   <a class="card" href="coronagraph_simulation.html"><div class="thumb"><img src="../gallery/coronagraph_simulation/fig_1.svg" alt="First figure of coronagraph_simulation.py" loading="lazy"></div><div class="ctext"><b>Coronagraphic image</b><span>Coronagraphic image and contrast curve from the AO residual PSD.</span></div></a>
    <a class="card" href="harmoni-scao.html"><div class="thumb"><em>Did not run in the test build</em></div><div class="ctext"><b>ELT/HARMONI-SCAO</b><span>Phase PSD and PSF for an ELT instrument.</span></div></a>
    <a class="card" href="modulation_abacus.html"><div class="thumb"><img src="../gallery/modulation_abacus/fig_1.svg" alt="First figure of modulation_abacus.py" loading="lazy"></div><div class="ctext"><b>Modulation abacus</b><span>Strehl ratio and optical gain against the guide star magnitude, for several pyramid modulations.</span></div></a>
    </div>
@@ -55,6 +56,7 @@ Turbulence and short exposures
 
    AO_simulation
    AO_cascaded_simulation
+   coronagraph_simulation
    harmoni-scao
    modulation_abacus
    pwfs_vs_shwfs_noise

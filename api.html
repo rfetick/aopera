@@ -42,6 +42,7 @@
     <a class="nav-item" href="installation.html">Installation</a>
     <a class="nav-item" href="tutorial.html">Your first simulation</a>
     <a class="nav-item" href="cascaded.html">Cascaded AO</a>
+    <a class="nav-item" href="coronagraph.html">Coronagraphic image</a>
     <div class="nav-group">Understand</div>
     <a class="nav-item" href="flow.html">Code flow</a>
     <div class="nav-group">Examples</div>
@@ -734,6 +735,188 @@ value on the circle of radius <cite>radius</cite> (slope-sensor regime of the mo
 </dd></dl>
 
 </section>
+<section id="coronagraph">
+<h2>Coronagraph<a class="headerlink" href="#coronagraph" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="aopera.coronagraph.Coronagraph">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aopera.coronagraph.</span></span><span class="sig-name descname"><span class="pre">Coronagraph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exact_radius</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">16</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.coronagraph.Coronagraph" title="Link to this definition">¶</a></dt>
+<dd><p>Long-exposure image through any linear coronagraph on the PSF grid of AOPERA.</p>
+<p>A coronagraph is defined by <cite>propagate(field)</cite>: pupil field (nx, nx) or (batch, nx, nx), with the
+pupil sampled as tel.pupil(nx, samp) -&gt; field on the detector, unshifted FFT index space, with
+the normalization of fft2 (without coronagraph, propagate = fft2).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tel</strong> (<a class="reference internal" href="#aopera.otfpsf.Pupil" title="aopera.otfpsf.Pupil"><em>Pupil</em></a>)</p></li>
+<li><p><strong>nx</strong> (<em>int</em><em>, </em><em>size</em><em> of </em><em>the arrays</em><em> (</em><em>same as the PSD / PSF</em><em>)</em><em>.</em>)</p></li>
+<li><p><strong>samp</strong> (<em>float</em><em>, </em><em>sampling</em><em> of </em><em>the PSF</em><em> (</em><em>pixels per lambda/D</em><em>)</em><em>, </em><em>same as the PSD.</em>)</p></li>
+<li><p><strong>exact_radius</strong> (<em>float</em><em> [</em><em>lambda/D</em><em>]</em><em>, </em><em>the coronagraphic images</em><em> of </em><em>the sources closer to the axis are</em>) – computed exactly (one propagation per pixel); beyond, shift-invariant response.</p></li>
+<li><p><strong>batch</strong> (<em>int</em><em>, </em><em>number</em><em> of </em><em>tilted plane waves propagated together.</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.coronagraph.Coronagraph.image">
+<span class="sig-name descname"><span class="pre">image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">weights</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_cpu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.coronagraph.Coronagraph.image" title="Link to this definition">¶</a></dt>
+<dd><p>Coronagraphic image of an incoherent distribution of point sources (generic hybrid method).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>weights</strong> (<em>(</em><em>nx</em><em>, </em><em>nx</em><em>) </em><em>array</em><em> (</em><em>centered</em><em>)</em><em>, </em><em>flux</em><em> of </em><em>the source at each pixel</em><em> of </em><em>the PSF grid.</em>)</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>image</strong></p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(nx, nx) array (centered), in units of a unit-energy PSF.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.coronagraph.Coronagraph.throughput">
+<span class="sig-name descname"><span class="pre">throughput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">return_cpu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.coronagraph.Coronagraph.throughput" title="Link to this definition">¶</a></dt>
+<dd><p>Fraction of the energy of an off-axis point source transmitted (centered map).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.coronagraph.Coronagraph.peak_throughput">
+<span class="sig-name descname"><span class="pre">peak_throughput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">return_cpu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.coronagraph.Coronagraph.peak_throughput" title="Link to this definition">¶</a></dt>
+<dd><p>Peak of the image of an off-axis point source with / without coronagraph (centered map).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.coronagraph.Coronagraph.psf">
+<span class="sig-name descname"><span class="pre">psf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">psd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_cpu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.coronagraph.Coronagraph.psf" title="Link to this definition">¶</a></dt>
+<dd><p>Long-exposure coronagraphic image for a residual phase PSD.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>psd</strong> (<em>(</em><em>nx</em><em>, </em><em>nx</em><em>) </em><em>array</em><em>, </em><em>phase PSD</em><em> [</em><em>rad² m²</em><em>] </em><em>on the AOPERA grid</em><em> (</em><em>frequency step 1/</em><em>(</em><em>samp*D</em><em>)</em><em>)</em><em>,</em>) – at the wavelength of the image.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>image</strong> – tel.psf_ao(psd, samp). Divide by max(tel.psf_diffraction(nx, samp)) to get a contrast.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(nx, nx) array, in units of a unit-energy PSF. Without coronagraph, this is exactly</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.coronagraph.Coronagraph.raw_contrast">
+<span class="sig-name descname"><span class="pre">raw_contrast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">psd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_throughput</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_cpu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.coronagraph.Coronagraph.raw_contrast" title="Link to this definition">¶</a></dt>
+<dd><p>Raw contrast: long-exposure coronagraphic image divided by the peak of the image of an
+off-axis point source at the same position, i.e. by</p>
+<blockquote>
+<div><p>(peak of the long-exposure AO PSF without coronagraph) x (peak throughput at x),</p>
+</div></blockquote>
+<p>both computed from the same residual phase PSD. The peak of the AO PSF is the diffraction
+peak x Strehl (normalization of the E2E / COMPASS curves, which do not include the
+throughput). Close to the axis the throughput goes to 0: the raw contrast is set to NaN
+where the peak throughput is below <cite>min_throughput</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>psd</strong> (<em>(</em><em>nx</em><em>, </em><em>nx</em><em>) </em><em>array</em><em>, </em><em>phase PSD</em><em> [</em><em>rad² m²</em><em>] </em><em>on the AOPERA grid</em><em> (</em><em>frequency step 1/</em><em>(</em><em>samp*D</em><em>)</em><em>)</em><em>,</em>) – at the wavelength of the image.</p></li>
+<li><p><strong>min_throughput</strong> (<em>float</em><em>, </em><em>minimum peak throughput</em><em> (</em><em>default 1 %</em><em>)</em><em>.</em>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>raw_contrast</strong></p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(nx, nx) array (centered). Use contrast_curve(raw_contrast, normalized=True).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.coronagraph.Coronagraph.normalized_intensities">
+<span class="sig-name descname"><span class="pre">normalized_intensities</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_cpu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.coronagraph.Coronagraph.normalized_intensities" title="Link to this definition">¶</a></dt>
+<dd><p>Normalize an image by the peak of the non-coronagraphic diffraction PSF.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.coronagraph.Coronagraph.contrast_curve">
+<span class="sig-name descname"><span class="pre">contrast_curve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalized</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.coronagraph.Coronagraph.contrast_curve" title="Link to this definition">¶</a></dt>
+<dd><p>Azimuthal average of the contrast.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>image</strong> (<em>(</em><em>nx</em><em>, </em><em>nx</em><em>) </em><em>array</em><em> (</em><em>centered</em><em>)</em><em>.</em>)</p></li>
+<li><p><strong>normalized</strong> (<em>bool</em>) – False (default): <cite>image</cite> is in units of a unit-energy PSF (e.g. psf(psd)) and is normalized
+by the peak of the diffraction PSF (see normalized_intensities).
+True: <cite>image</cite> is already a contrast (e.g. raw_contrast(psd)) and is only averaged.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>separation</strong> (<em>1D array [lambda/D]</em>)</p></li>
+<li><p><strong>contrast</strong> (<em>1D array</em>)</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="aopera.coronagraph.PerfectCoronagraph">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aopera.coronagraph.</span></span><span class="sig-name descname"><span class="pre">PerfectCoronagraph</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.coronagraph.PerfectCoronagraph" title="Link to this definition">¶</a></dt>
+<dd><p>Perfect coronagraph of order <cite>order</cite> on the PSF grid of AOPERA (fast exact method for image,
+throughput and peak_throughput; propagate is also defined, e.g. for checks of the generic method).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tel</strong> (<a class="reference internal" href="#aopera.otfpsf.Pupil" title="aopera.otfpsf.Pupil"><em>Pupil</em></a>) – The AOPERA pupil.</p></li>
+<li><p><strong>nx</strong> (<em>int</em>) – Size of the arrays (same as the PSD / PSF).</p></li>
+<li><p><strong>samp</strong> (<em>float</em>) – Sampling of the PSF (pixels per lambda/D), same as the PSD.</p></li>
+<li><p><strong>order</strong> (<em>int</em><em> (</em><em>even</em><em>)</em>) – Order of the coronagraph (see module documentation). Default 2 = piston removal.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.coronagraph.PerfectCoronagraph.propagate">
+<span class="sig-name descname"><span class="pre">propagate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">field</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.coronagraph.PerfectCoronagraph.propagate" title="Link to this definition">¶</a></dt>
+<dd><p>Field on the detector: projection of the pupil field on the modes removed, then FFT.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.coronagraph.PerfectCoronagraph.throughput">
+<span class="sig-name descname"><span class="pre">throughput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">return_cpu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.coronagraph.PerfectCoronagraph.throughput" title="Link to this definition">¶</a></dt>
+<dd><p>Fraction of the energy of an off-axis point source transmitted by the coronagraph,
+as a function of the source position (centered map on the PSF grid).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.coronagraph.PerfectCoronagraph.peak_throughput">
+<span class="sig-name descname"><span class="pre">peak_throughput</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">return_cpu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.coronagraph.PerfectCoronagraph.peak_throughput" title="Link to this definition">¶</a></dt>
+<dd><p>Off-axis throughput of the coronagraph for the peak: ratio between the peak of the image of
+an off-axis point source with and without coronagraph, as a function of the source position
+(centered map on the PSF grid). The field of the source s at its own position x = s is
+F[P](0) - sum_k conj(F[M_k P](s)) F[M_k](s).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.coronagraph.PerfectCoronagraph.image">
+<span class="sig-name descname"><span class="pre">image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">weights</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_cpu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.coronagraph.PerfectCoronagraph.image" title="Link to this definition">¶</a></dt>
+<dd><p>Coronagraphic image of an incoherent distribution of point sources.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>weights</strong> (<em>(</em><em>nx</em><em>, </em><em>nx</em><em>) </em><em>array</em><em> (</em><em>centered</em><em>)</em><em>, </em><em>flux</em><em> of </em><em>the source at each pixel</em><em> of </em><em>the PSF grid.</em>)</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>image</strong> – (a single source of weight 1 without coronagraph gives tel.psf_diffraction).</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(nx, nx) array (centered), in units of a unit-energy PSF</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
 <section id="photometric-tools">
 <h2>Photometric tools<a class="headerlink" href="#photometric-tools" title="Link to this heading">¶</a></h2>
 <dl class="py function">
@@ -1098,6 +1281,26 @@ Only valid for two frames delay (1 for WFS integration, 1 for pixel transfer and
 <li><a class="reference internal" href="#aopera.ffwfs.ffwfs_transfer_function"><code class="docutils literal notranslate"><span class="pre">ffwfs_transfer_function()</span></code></a></li>
 <li><a class="reference internal" href="#aopera.ffwfs.ffwfs_sensitivity"><code class="docutils literal notranslate"><span class="pre">ffwfs_sensitivity()</span></code></a></li>
 <li><a class="reference internal" href="#aopera.ffwfs.sensitivity_ramp"><code class="docutils literal notranslate"><span class="pre">sensitivity_ramp()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#coronagraph">Coronagraph</a><ul>
+<li><a class="reference internal" href="#aopera.coronagraph.Coronagraph"><code class="docutils literal notranslate"><span class="pre">Coronagraph</span></code></a><ul>
+<li><a class="reference internal" href="#aopera.coronagraph.Coronagraph.image"><code class="docutils literal notranslate"><span class="pre">Coronagraph.image()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.coronagraph.Coronagraph.throughput"><code class="docutils literal notranslate"><span class="pre">Coronagraph.throughput()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.coronagraph.Coronagraph.peak_throughput"><code class="docutils literal notranslate"><span class="pre">Coronagraph.peak_throughput()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.coronagraph.Coronagraph.psf"><code class="docutils literal notranslate"><span class="pre">Coronagraph.psf()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.coronagraph.Coronagraph.raw_contrast"><code class="docutils literal notranslate"><span class="pre">Coronagraph.raw_contrast()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.coronagraph.Coronagraph.normalized_intensities"><code class="docutils literal notranslate"><span class="pre">Coronagraph.normalized_intensities()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.coronagraph.Coronagraph.contrast_curve"><code class="docutils literal notranslate"><span class="pre">Coronagraph.contrast_curve()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#aopera.coronagraph.PerfectCoronagraph"><code class="docutils literal notranslate"><span class="pre">PerfectCoronagraph</span></code></a><ul>
+<li><a class="reference internal" href="#aopera.coronagraph.PerfectCoronagraph.propagate"><code class="docutils literal notranslate"><span class="pre">PerfectCoronagraph.propagate()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.coronagraph.PerfectCoronagraph.throughput"><code class="docutils literal notranslate"><span class="pre">PerfectCoronagraph.throughput()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.coronagraph.PerfectCoronagraph.peak_throughput"><code class="docutils literal notranslate"><span class="pre">PerfectCoronagraph.peak_throughput()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.coronagraph.PerfectCoronagraph.image"><code class="docutils literal notranslate"><span class="pre">PerfectCoronagraph.image()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li><a class="reference internal" href="#photometric-tools">Photometric tools</a><ul>

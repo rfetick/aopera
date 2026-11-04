@@ -171,4 +171,4 @@ The figures below come from running ``example/AO_simulation.py``, the full code 
 
    <div class="figs"><a href="gallery/AO_simulation/fig_1.svg"><img src="gallery/AO_simulation/fig_1.svg" alt="Phase PSD per error term and cumulated OPD"></a><a href="gallery/AO_simulation/fig_2.svg"><img src="gallery/AO_simulation/fig_2.svg" alt="Diffraction and AO PSF at the WFS and science wavelengths"></a></div>
 
-Next: chain two AO stages in :doc:`cascaded`, read the :raw-html:`<a href="flow.html">code flow</a>` to see what ``simulation`` does, or browse the :doc:`examples/index`.
+Next: chain two AO stages in :doc:`cascaded`, compute a coronagraphic image in :doc:`coronagraph`, read the :raw-html:`<a href="flow.html">code flow</a>` to see what ``simulation`` does, or browse the :doc:`examples/index`.

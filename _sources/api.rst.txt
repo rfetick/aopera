@@ -59,6 +59,15 @@ FF-WFS
 .. autofunction:: aopera.ffwfs.sensitivity_ramp
    
    
+Coronagraph
+-----------
+
+.. autoclass:: aopera.coronagraph.Coronagraph
+   :members:
+
+.. autoclass:: aopera.coronagraph.PerfectCoronagraph
+   :members:
+
 Photometric tools
 -----------------
 

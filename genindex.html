@@ -38,6 +38,7 @@
     <a class="nav-item" href="installation.html">Installation</a>
     <a class="nav-item" href="tutorial.html">Your first simulation</a>
     <a class="nav-item" href="cascaded.html">Cascaded AO</a>
+    <a class="nav-item" href="coronagraph.html">Coronagraphic image</a>
     <div class="nav-group">Understand</div>
     <a class="nav-item" href="flow.html">Code flow</a>
     <div class="nav-group">Examples</div>
@@ -126,6 +127,10 @@
 </li>
       <li><a href="api.html#aopera.turbulence.Atmosphere.coherence_time">coherence_time() (aopera.turbulence.Atmosphere method)</a>
 </li>
+      <li><a href="api.html#aopera.coronagraph.Coronagraph.contrast_curve">contrast_curve() (aopera.coronagraph.Coronagraph method)</a>
+</li>
+      <li><a href="api.html#aopera.coronagraph.Coronagraph">Coronagraph (class in aopera.coronagraph)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -194,12 +199,18 @@
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api.html#aopera.photometry.SourceWFS.image">image() (aopera.photometry.SourceWFS method)</a>
+      <li><a href="api.html#aopera.coronagraph.Coronagraph.image">image() (aopera.coronagraph.Coronagraph method)</a>
+
+      <ul>
+        <li><a href="api.html#aopera.coronagraph.PerfectCoronagraph.image">(aopera.coronagraph.PerfectCoronagraph method)</a>
 </li>
-      <li><a href="api.html#aopera.ffwfs.FFWFS.impulse_response">impulse_response() (aopera.ffwfs.FFWFS method)</a>
+        <li><a href="api.html#aopera.photometry.SourceWFS.image">(aopera.photometry.SourceWFS method)</a>
 </li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#aopera.ffwfs.FFWFS.impulse_response">impulse_response() (aopera.ffwfs.FFWFS method)</a>
+</li>
       <li><a href="api.html#aopera.photometry.SourceWFS.is_extended">is_extended (aopera.photometry.SourceWFS property)</a>
 </li>
       <li><a href="api.html#aopera.turbulence.Atmosphere.isoplanetic_angle">isoplanetic_angle() (aopera.turbulence.Atmosphere method)</a>
@@ -240,14 +251,16 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#aopera.control.RTC.nb_frame_delay">nb_frame_delay (aopera.control.RTC property)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#aopera.control.RTC.noise_transfer">noise_transfer() (aopera.control.RTC method)</a>
 
       <ul>
         <li><a href="api.html#aopera.control.noise_transfer">(in module aopera.control)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#aopera.coronagraph.Coronagraph.normalized_intensities">normalized_intensities() (aopera.coronagraph.Coronagraph method)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -288,6 +301,14 @@
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#aopera.coronagraph.Coronagraph.peak_throughput">peak_throughput() (aopera.coronagraph.Coronagraph method)</a>
+
+      <ul>
+        <li><a href="api.html#aopera.coronagraph.PerfectCoronagraph.peak_throughput">(aopera.coronagraph.PerfectCoronagraph method)</a>
+</li>
+      </ul></li>
+      <li><a href="api.html#aopera.coronagraph.PerfectCoronagraph">PerfectCoronagraph (class in aopera.coronagraph)</a>
+</li>
       <li><a href="api.html#aopera.turbulence.Atmosphere.phase_psd">phase_psd() (aopera.turbulence.Atmosphere method)</a>
 </li>
       <li><a href="api.html#aopera.photometry.Band.photon2mag">photon2mag() (aopera.photometry.Band method)</a>
@@ -298,10 +319,14 @@
 </li>
       <li><a href="api.html#aopera.utils.polar_radius">polar_radius() (in module aopera.utils)</a>
 </li>
-      <li><a href="api.html#aopera.simulation.SimulationResult.psd_total">psd_total (aopera.simulation.SimulationResult property)</a>
+      <li><a href="api.html#aopera.coronagraph.PerfectCoronagraph.propagate">propagate() (aopera.coronagraph.PerfectCoronagraph method)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#aopera.simulation.SimulationResult.psd_total">psd_total (aopera.simulation.SimulationResult property)</a>
+</li>
+      <li><a href="api.html#aopera.coronagraph.Coronagraph.psf">psf() (aopera.coronagraph.Coronagraph method)</a>
+</li>
       <li><a href="api.html#aopera.otfpsf.Pupil.psf_ao">psf_ao() (aopera.otfpsf.Pupil method)</a>
 
       <ul>
@@ -332,6 +357,8 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#aopera.coronagraph.Coronagraph.raw_contrast">raw_contrast() (aopera.coronagraph.Coronagraph method)</a>
+</li>
       <li><a href="api.html#aopera.utils.rfftconvolve">rfftconvolve() (in module aopera.utils)</a>
 </li>
       <li><a href="api.html#aopera.control.RTC">RTC (class in aopera.control)</a>
@@ -383,6 +410,14 @@
 
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api.html#aopera.coronagraph.Coronagraph.throughput">throughput() (aopera.coronagraph.Coronagraph method)</a>
+
+      <ul>
+        <li><a href="api.html#aopera.coronagraph.PerfectCoronagraph.throughput">(aopera.coronagraph.PerfectCoronagraph method)</a>
+</li>
+      </ul></li>
+  </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api.html#aopera.ffwfs.FFWFS.transfer_function">transfer_function() (aopera.ffwfs.FFWFS method)</a>
 </li>
