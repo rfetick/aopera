@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Code documentation &#8212; AOPERA docs</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=92fd9be5" />
+    <link rel="stylesheet" type="text/css" href="_static/aopera.css?v=ddfc3e89" />
+    <script src="_static/documentation_options.js?v=f5cff4aa"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Code validation" href="validation.html" />
+    <link rel="prev" title="Short exposures without AO" href="examples/short_exposure_atmo.html" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,650&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="_static/topbar.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+  </head><body>
+<header class="topbar">
+  <a class="brand" href="index.html">AOPERA<span class="ver">2.0.1</span></a>
+  <nav aria-label="Main">
+    <a href="tutorial.html">Tutorials</a>
+    <a href="flow.html">Code flow</a>
+    <a href="examples/index.html">Examples</a>
+    <a href="#" aria-current="true">API</a>
+    <a href="validation.html">Validation</a>
+  </nav>
+  <form class="search" action="search.html" method="get" role="search">
+    <input type="search" name="q" placeholder="Search the docs" aria-label="Search the docs">
+  </form>
+</header>
+
+<div class="page">
+  <aside class="side-left">
+    <div class="nav-group">Start</div>
+    <a class="nav-item" href="installation.html">Installation</a>
+    <a class="nav-item" href="tutorial.html">Your first simulation</a>
+    <a class="nav-item" href="cascaded.html">Cascaded AO</a>
+    <div class="nav-group">Understand</div>
+    <a class="nav-item" href="flow.html">Code flow</a>
+    <div class="nav-group">Examples</div>
+    <a class="nav-item" href="examples/index.html">Example gallery</a>
+    <div class="nav-group">Reference</div>
+    <a class="nav-item on" href="#">Code documentation</a>
+    <a class="nav-item" href="validation.html">Validation</a>
+  </aside>
+  <main class="doc" role="main">
+    <article>
+  <section id="code-documentation">
+<h1>Code documentation<a class="headerlink" href="#code-documentation" title="Link to this heading">¶</a></h1>
+<section id="simulation">
+<h2>Simulation<a class="headerlink" href="#simulation" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="aopera.simulation.simulation">
+<span class="sig-prename descclassname"><span class="pre">aopera.simulation.</span></span><span class="sig-name descname"><span class="pre">simulation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nu_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">split_fit_temp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nb_iter_og</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_cpu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_cubes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cube_bins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.simulation.simulation" title="Link to this definition">¶</a></dt>
+<dd><p>Run a full AO simulation from a given set of objects representing the AO system and the turbulence.
+This might be the main function of AOPERA.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nx</strong> (<em>int</em>) – Number of pixels for output arrays.</p></li>
+<li><p><strong>samp</strong> (<em>float</em>) – Sampling of the PSF at the WFS wavelength.</p></li>
+<li><p><strong>*args</strong> – Must include a Pupil, Atmosphere, WFS, RTC, SourceWFS, SourceScience.</p></li>
+<li><p><strong>nu_max</strong> (<em>float</em><em>, </em><em>default=None</em>) – Maximal temporal frequency.</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em><em>, </em><em>default=False</em>) – Activate verbose mode.</p></li>
+<li><p><strong>split_fit_temp</strong> (<em>bool</em><em>, </em><em>default=False</em>) – Split fitting and temporal error for the returned PSD dictionary.</p></li>
+<li><p><strong>nb_iter_og</strong> (<em>int</em><em>, </em><em>default=None</em>) – Number of iterations for OG computation.</p></li>
+<li><p><strong>return_cpu</strong> (<em>bool</em><em>, </em><em>default=True</em>) – Return result as CPU or GPU arrays.</p></li>
+<li><p><strong>ignore</strong> (<em>list</em><em>, </em><em>default=</em><em>[</em><em>]</em>) – List of error terms to ignore.</p></li>
+<li><p><strong>keep_cubes</strong> (<em>bool</em><em>, </em><em>default=True</em>) – Keep the spatiotemporal and aliasing PSD cubes (psd_cube and frequency_cube) in the result.
+They are needed to feed another AO stage, but can be huge (memory grows with the number of
+layers). Set to False for the last stage: the PSD is then accumulated without storing the cubes.</p></li>
+<li><p><strong>cube_bins</strong> (<em>int</em><em>, </em><em>default=None</em>) – If set, the spatiotemporal and aliasing PSD cubes are gathered in <cite>cube_bins</cite> temporal
+frequency bins (log-spaced), instead of one entry per layer and per aliased frequency.
+The PSD of each bin is exact, its frequency is the PSD-weighted mean frequency.
+For an input result (second stage), all the input cubes are also gathered in <cite>cube_bins</cite> bins.
+This bounds the memory whatever the number of layers, at the cost of a small approximation
+on the temporal filtering of the next stage. Typical value: 100 to 200.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>result</strong> – Container of the results</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#aopera.simulation.SimulationResult" title="aopera.simulation.SimulationResult">SimulationResult</a></p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#aopera.simulation.SimulationResult" title="aopera.simulation.SimulationResult"><code class="xref py py-obj docutils literal notranslate"><span class="pre">aopera.simulation.SimulationResult</span></code></a></p>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="aopera.simulation.SimulationResult">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aopera.simulation.</span></span><span class="sig-name descname"><span class="pre">SimulationResult</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wfs_wvl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tel</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.simulation.SimulationResult" title="Link to this definition">¶</a></dt>
+<dd><p>Store AOPERA simulation results.
+You may access any attributes, among them <cite>psd</cite>, <cite>psd_cube</cite>, <cite>var</cite>.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="aopera.simulation.SimulationResult.psd_total">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">psd_total</span></span><a class="headerlink" href="#aopera.simulation.SimulationResult.psd_total" title="Link to this definition">¶</a></dt>
+<dd><p>Get the sum of all PSD terms.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.simulation.SimulationResult.otf_diffraction">
+<span class="sig-name descname"><span class="pre">otf_diffraction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wvl</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.simulation.SimulationResult.otf_diffraction" title="Link to this definition">¶</a></dt>
+<dd><p>Get the diffraction OTF.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.simulation.SimulationResult.psf_diffraction">
+<span class="sig-name descname"><span class="pre">psf_diffraction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wvl</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.simulation.SimulationResult.psf_diffraction" title="Link to this definition">¶</a></dt>
+<dd><p>Get the diffraction PSF.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.simulation.SimulationResult.otf_ao">
+<span class="sig-name descname"><span class="pre">otf_ao</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wvl</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.simulation.SimulationResult.otf_ao" title="Link to this definition">¶</a></dt>
+<dd><p>Get the AO OTF.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.simulation.SimulationResult.psf_ao">
+<span class="sig-name descname"><span class="pre">psf_ao</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wvl</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.simulation.SimulationResult.psf_ao" title="Link to this definition">¶</a></dt>
+<dd><p>Get the AO PSF.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.simulation.SimulationResult.strehl">
+<span class="sig-name descname"><span class="pre">strehl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wvl</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.simulation.SimulationResult.strehl" title="Link to this definition">¶</a></dt>
+<dd><p>Get the Strehl ratio.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="main-ao-classes">
+<h2>Main AO classes<a class="headerlink" href="#main-ao-classes" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="aopera.turbulence.Atmosphere">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aopera.turbulence.</span></span><span class="sig-name descname"><span class="pre">Atmosphere</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.turbulence.Atmosphere" title="Link to this definition">¶</a></dt>
+<dd><p>Representation of a turbulent atmosphere.
+So far, it can only compute parameters for a source located at infinity.
+The Atmosphere is initialised with a dictionary of parameters.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><code class="xref py py-obj docutils literal notranslate"><span class="pre">aopera.readconfig.INFO_ATMO_CN2DH</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">aopera.readconfig.INFO_ATMO_SEEING</span></code></p>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.turbulence.Atmosphere.from_file">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">category</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'atmosphere'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.turbulence.Atmosphere.from_file" title="Link to this definition">¶</a></dt>
+<dd><p>Load an Atmosphere from a file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.turbulence.Atmosphere.from_file_tiptop">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_file_tiptop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.turbulence.Atmosphere.from_file_tiptop" title="Link to this definition">¶</a></dt>
+<dd><p>Load an Atmosphere from a Tiptop file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.turbulence.Atmosphere.from_oopao">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_oopao</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">atm</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.turbulence.Atmosphere.from_oopao" title="Link to this definition">¶</a></dt>
+<dd><p>Create a AOPERA Atmosphere from a OOPAO Atmosphere.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="aopera.turbulence.Atmosphere.cn2dh">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">cn2dh</span></span><a class="headerlink" href="#aopera.turbulence.Atmosphere.cn2dh" title="Link to this definition">¶</a></dt>
+<dd><p>Get the Cn2dh profile.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="aopera.turbulence.Atmosphere.equivalent_altitude">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">equivalent_altitude</span></span><a class="headerlink" href="#aopera.turbulence.Atmosphere.equivalent_altitude" title="Link to this definition">¶</a></dt>
+<dd><p>Compute equivalent altitude [m].</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="aopera.turbulence.Atmosphere.equivalent_wind_speed">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">equivalent_wind_speed</span></span><a class="headerlink" href="#aopera.turbulence.Atmosphere.equivalent_wind_speed" title="Link to this definition">¶</a></dt>
+<dd><p>Compute equivalent windspeed [m/s].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.turbulence.Atmosphere.squeeze_layers">
+<span class="sig-name descname"><span class="pre">squeeze_layers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nb_alt</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.turbulence.Atmosphere.squeeze_layers" title="Link to this definition">¶</a></dt>
+<dd><p>Squeeze layers in order to make faster computations.
+The total Cn2 is conserved, but the isoplanetic angle might be altered.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.turbulence.Atmosphere.r0">
+<span class="sig-name descname"><span class="pre">r0</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wvl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zenith</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.turbulence.Atmosphere.r0" title="Link to this definition">¶</a></dt>
+<dd><p>Get the Fried parameter [m].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.turbulence.Atmosphere.coherence_time">
+<span class="sig-name descname"><span class="pre">coherence_time</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.turbulence.Atmosphere.coherence_time" title="Link to this definition">¶</a></dt>
+<dd><p>Get the coherence time [s].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.turbulence.Atmosphere.isoplanetic_angle">
+<span class="sig-name descname"><span class="pre">isoplanetic_angle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.turbulence.Atmosphere.isoplanetic_angle" title="Link to this definition">¶</a></dt>
+<dd><p>Get the isoplanetic angle [rad].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.turbulence.Atmosphere.phase_psd">
+<span class="sig-name descname"><span class="pre">phase_psd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wvl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zenith</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.turbulence.Atmosphere.phase_psd" title="Link to this definition">¶</a></dt>
+<dd><p>Get the electromagnetic phase PSD [rad²m²].</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>freq</strong> (<em>np.array</em>) – The spatial frequencies to compute the PSD.</p></li>
+<li><p><strong>wvl</strong> (<em>float</em>) – The wavelength [m].</p></li>
+<li><p><strong>zenith</strong> (<em>float</em><em>, </em><em>default=0</em>) – Zenithal angle [rad].</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.turbulence.Atmosphere.opd_psd">
+<span class="sig-name descname"><span class="pre">opd_psd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zenith</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.turbulence.Atmosphere.opd_psd" title="Link to this definition">¶</a></dt>
+<dd><p>Get the atmosphere optical path difference PSD [m²m²].</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>freq</strong> (<em>np.array</em>) – The spatial frequencies to compute the PSD.</p></li>
+<li><p><strong>wvl</strong> (<em>float</em>) – The wavelength [m].</p></li>
+<li><p><strong>zenith</strong> (<em>float</em><em>, </em><em>default=0</em>) – Zenithal angle [rad].</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.turbulence.Atmosphere.logamp_psd">
+<span class="sig-name descname"><span class="pre">logamp_psd</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wvl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zenith</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">layer</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.turbulence.Atmosphere.logamp_psd" title="Link to this definition">¶</a></dt>
+<dd><p>Get the electromagnetic log-amplitude PSD [m²].</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>freq</strong> (<em>np.array</em>) – The spatial frequencies to compute the PSD.</p></li>
+<li><p><strong>wvl</strong> (<em>float</em>) – The wavelength [m].</p></li>
+<li><p><strong>zenith</strong> (<em>float</em><em>, </em><em>default=0</em>) – Zenithal angle [rad].</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="aopera.otfpsf.Pupil">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aopera.otfpsf.</span></span><span class="sig-name descname"><span class="pre">Pupil</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.otfpsf.Pupil" title="Link to this definition">¶</a></dt>
+<dd><p>Class representing both the telescope pupil and the deformable mirror.
+The class is initialised with a dictionary.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><code class="xref py py-obj docutils literal notranslate"><span class="pre">aopera.readconfig.INFO_PUPIL_OCC</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">aopera.readconfig.INFO_PUPIL_FILE</span></code></p>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.otfpsf.Pupil.from_file">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">category</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pupil'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.otfpsf.Pupil.from_file" title="Link to this definition">¶</a></dt>
+<dd><p>Load a Pupil from a file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.otfpsf.Pupil.from_file_tiptop">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_file_tiptop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.otfpsf.Pupil.from_file_tiptop" title="Link to this definition">¶</a></dt>
+<dd><p>Load a Pupil from a Tiptop file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.otfpsf.Pupil.from_oopao">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_oopao</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dm</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reconstructor</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.otfpsf.Pupil.from_oopao" title="Link to this definition">¶</a></dt>
+<dd><p>Load a Pupil from a OOPAO Telescope, DeformableMirror and a reconstructor.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="aopera.otfpsf.Pupil.surface">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">surface</span></span><a class="headerlink" href="#aopera.otfpsf.Pupil.surface" title="Link to this definition">¶</a></dt>
+<dd><p>The telescope surface [m²].</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="aopera.otfpsf.Pupil.mode_max">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">mode_max</span></span><a class="headerlink" href="#aopera.otfpsf.Pupil.mode_max" title="Link to this definition">¶</a></dt>
+<dd><p>The maximal number of corrected modes.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="aopera.otfpsf.Pupil.pitch_dm">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pitch_dm</span></span><a class="headerlink" href="#aopera.otfpsf.Pupil.pitch_dm" title="Link to this definition">¶</a></dt>
+<dd><p>The deformable mirror pitch [m].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.otfpsf.Pupil.otf_diffraction">
+<span class="sig-name descname"><span class="pre">otf_diffraction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_cpu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.otfpsf.Pupil.otf_diffraction" title="Link to this definition">¶</a></dt>
+<dd><p>The OTF at diffraction limit.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.otfpsf.Pupil.psf_diffraction">
+<span class="sig-name descname"><span class="pre">psf_diffraction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_cpu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.otfpsf.Pupil.psf_diffraction" title="Link to this definition">¶</a></dt>
+<dd><p>The PSF at diffraction limit.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.otfpsf.Pupil.otf_ao">
+<span class="sig-name descname"><span class="pre">otf_ao</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">psd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wvl_scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_cpu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.otfpsf.Pupil.otf_ao" title="Link to this definition">¶</a></dt>
+<dd><p>Compute the AO OTF.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>psd</strong> (<em>np.array</em>) – The phase PSD [rad²m²].</p></li>
+<li><p><strong>samp</strong> (<em>float</em>) – The PSF sampling. The PSD frequencies should match the sampling!</p></li>
+<li><p><strong>wvl_scale</strong> (<em>float</em><em>, </em><em>default=1.0</em>) – Wavelength scaling, to compute the PSF at another wavelength.</p></li>
+<li><p><strong>return_cpu</strong> (<em>bool</em><em>, </em><em>default=True</em>) – Return the OTF as a CPU array.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.otfpsf.Pupil.psf_ao">
+<span class="sig-name descname"><span class="pre">psf_ao</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_cpu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.otfpsf.Pupil.psf_ao" title="Link to this definition">¶</a></dt>
+<dd><p>Compute the AO PSF.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#aopera.otfpsf.Pupil.otf_ao" title="aopera.otfpsf.Pupil.otf_ao"><code class="xref py py-obj docutils literal notranslate"><span class="pre">aopera.otfpsf.Pupil.otf_ao</span></code></a></p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="aopera.otfpsf.VLTPupil">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aopera.otfpsf.</span></span><span class="sig-name descname"><span class="pre">VLTPupil</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t_spiders</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.00625</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle_spiders</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transpose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.otfpsf.VLTPupil" title="Link to this definition">¶</a></dt>
+<dd><p>VLT pupil with central obstruction and 4 spiders (see utils.vlt_aperture).</p>
+<p>The surface used for the photon budget is the one of the obstructed disc, without the
+spiders, as for the photon counts of COMPASS (flux x subaperture area).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dictionary</strong> (<em>dict</em>) – Same as Pupil (with ‘occultation’).</p></li>
+<li><p><strong>t_spiders</strong> (<em>float</em>) – Width of the spiders in units of the diameter (VLT: 5cm/8m = 0.00625).</p></li>
+<li><p><strong>angle_spiders</strong> (<em>float</em>) – Angle of the spiders [deg].</p></li>
+<li><p><strong>transpose</strong> (<em>bool</em>) – Swap the axes of the aperture.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="aopera.otfpsf.VLTPupil.surface">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">surface</span></span><a class="headerlink" href="#aopera.otfpsf.VLTPupil.surface" title="Link to this definition">¶</a></dt>
+<dd><p>The telescope surface [m²].</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="aopera.control.RTC">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aopera.control.</span></span><span class="sig-name descname"><span class="pre">RTC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.control.RTC" title="Link to this definition">¶</a></dt>
+<dd><p>Implement the temporal behaviour of the AO loop.
+RTC is initialised from a dictionary of parameters.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><code class="xref py py-obj docutils literal notranslate"><span class="pre">aopera.readconfig.INFO_RTC</span></code></p>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.control.RTC.from_file">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">category</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rtc'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.control.RTC.from_file" title="Link to this definition">¶</a></dt>
+<dd><p>Load a RTC from a file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.control.RTC.from_file_tiptop">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_file_tiptop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.control.RTC.from_file_tiptop" title="Link to this definition">¶</a></dt>
+<dd><p>Load a RTC from a Tiptop file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.control.RTC.from_oopao">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_oopao</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ao_freq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">oopao_frame_delay</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gainCL</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">leak</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.control.RTC.from_oopao" title="Link to this definition">¶</a></dt>
+<dd><p>Load a RTC from a set of parameters.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="aopera.control.RTC.nb_frame_delay">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">nb_frame_delay</span></span><a class="headerlink" href="#aopera.control.RTC.nb_frame_delay" title="Link to this definition">¶</a></dt>
+<dd><p>The number of frame delay.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="aopera.control.RTC.bandwidth">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bandwidth</span></span><a class="headerlink" href="#aopera.control.RTC.bandwidth" title="Link to this definition">¶</a></dt>
+<dd><p>The temporal bandwidth [Hz].</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="aopera.control.RTC.bandwidth_noise">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bandwidth_noise</span></span><a class="headerlink" href="#aopera.control.RTC.bandwidth_noise" title="Link to this definition">¶</a></dt>
+<dd><p>The noise temporal bandwidth [Hz].</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.control.RTC.set_reconstructor_pinv">
+<span class="sig-name descname"><span class="pre">set_reconstructor_pinv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.control.RTC.set_reconstructor_pinv" title="Link to this definition">¶</a></dt>
+<dd><p>Use a pseudo-inverse reconstructor (default).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.control.RTC.set_reconstructor_mmse">
+<span class="sig-name descname"><span class="pre">set_reconstructor_mmse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.control.RTC.set_reconstructor_mmse" title="Link to this definition">¶</a></dt>
+<dd><p>Use a MMSE reconstructor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nx</strong> (<em>int</em>) – Number of pixels of the array.</p></li>
+<li><p><strong>samp</strong> (<em>float</em>) – Sampling.</p></li>
+<li><p><strong>*args</strong> (<em>set</em><em> of </em><em>AOPERA objects</em>) – Must include an Atmosphere, a Pupil, a SourceScience, a SourceWFS, a FFWFS or a SHWFS.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.control.RTC.open_loop_transfer">
+<span class="sig-name descname"><span class="pre">open_loop_transfer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ft</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intersampling</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.control.RTC.open_loop_transfer" title="Link to this definition">¶</a></dt>
+<dd><p>Get the open loop transfer function.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.control.RTC.closed_loop_transfer">
+<span class="sig-name descname"><span class="pre">closed_loop_transfer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ft</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intersampling</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.control.RTC.closed_loop_transfer" title="Link to this definition">¶</a></dt>
+<dd><p>Get the closed loop transfer function.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.control.RTC.noise_transfer">
+<span class="sig-name descname"><span class="pre">noise_transfer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ft</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.control.RTC.noise_transfer" title="Link to this definition">¶</a></dt>
+<dd><p>Get the noise transfer function.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="aopera.ffwfs.FFWFS">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aopera.ffwfs.</span></span><span class="sig-name descname"><span class="pre">FFWFS</span></span><a class="headerlink" href="#aopera.ffwfs.FFWFS" title="Link to this definition">¶</a></dt>
+<dd><p>Abstract class for Fourier Filtering WFS.
+It implements the basic functions for any FFWFS subclass.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.ffwfs.FFWFS.modulation_path">
+<span class="sig-name descname"><span class="pre">modulation_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.ffwfs.FFWFS.modulation_path" title="Link to this definition">¶</a></dt>
+<dd><p>Get the circular modulation path.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.ffwfs.FFWFS.impulse_response">
+<span class="sig-name descname"><span class="pre">impulse_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logamp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.ffwfs.FFWFS.impulse_response" title="Link to this definition">¶</a></dt>
+<dd><p>Get the impulse response.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.ffwfs.FFWFS.transfer_function">
+<span class="sig-name descname"><span class="pre">transfer_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logamp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.ffwfs.FFWFS.transfer_function" title="Link to this definition">¶</a></dt>
+<dd><p>Get the transfer function.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.ffwfs.FFWFS.sensitivity">
+<span class="sig-name descname"><span class="pre">sensitivity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psf_calib</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logamp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.ffwfs.FFWFS.sensitivity" title="Link to this definition">¶</a></dt>
+<dd><p>Get the FFWFS sensitivity using convolutive model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>samp</strong> (<em>float</em>) – Sampling of the PSFs.</p></li>
+<li><p><strong>psf_calib</strong> (<em>np.array</em>) – PSF at calibration at WFS wavelength.</p></li>
+<li><p><strong>psf</strong> (<em>np.array</em>) – Current PSF at WFS wavelength.</p></li>
+<li><p><strong>modu</strong> (<em>bool</em><em>, </em><em>default=True</em>) – Activate or not the modulation.</p></li>
+<li><p><strong>logamp</strong> (<em>bool</em><em>, </em><em>default=False</em>) – Compute log-amplitude sensitivity instead of phase sensitivity.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.ffwfs.FFWFS.optical_gain">
+<span class="sig-name descname"><span class="pre">optical_gain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psf_calib</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psf_onsky</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.ffwfs.FFWFS.optical_gain" title="Link to this definition">¶</a></dt>
+<dd><p>Get the optical gains.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="aopera.ffwfs.PWFS">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aopera.ffwfs.</span></span><span class="sig-name descname"><span class="pre">PWFS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.ffwfs.PWFS" title="Link to this definition">¶</a></dt>
+<dd><p>Pyramid wavefront sensor.
+The PWFS is initialised with a dictionary of parameters.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><code class="xref py py-obj docutils literal notranslate"><span class="pre">aopera.readconfig.INFO_PWFS</span></code>, <a class="reference internal" href="#aopera.ffwfs.FFWFS" title="aopera.ffwfs.FFWFS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">aopera.ffwfs.FFWFS</span></code></a></p>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.ffwfs.PWFS.from_file">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">category</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pwfs'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.ffwfs.PWFS.from_file" title="Link to this definition">¶</a></dt>
+<dd><p>Load a PWFS from a file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.ffwfs.PWFS.from_file_tiptop">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_file_tiptop</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.ffwfs.PWFS.from_file_tiptop" title="Link to this definition">¶</a></dt>
+<dd><p>Load a PWFS from a Tiptop file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.ffwfs.PWFS.from_oopao">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_oopao</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wfs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.ffwfs.PWFS.from_oopao" title="Link to this definition">¶</a></dt>
+<dd><p>Create a PWFS from a OOPAO Pyramid object.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.ffwfs.PWFS.focal_plane_mask">
+<span class="sig-name descname"><span class="pre">focal_plane_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.ffwfs.PWFS.focal_plane_mask" title="Link to this definition">¶</a></dt>
+<dd><p>Get the complex focal plane mask.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.ffwfs.PWFS.sensitivity">
+<span class="sig-name descname"><span class="pre">sensitivity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psf_calib</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logamp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.ffwfs.PWFS.sensitivity" title="Link to this definition">¶</a></dt>
+<dd><p>Get the PWFS sensitivity.
+The convolutive model is used at high frequencies.
+A ramp law is applied at low frequencies if logamp=False and modulated PWFS.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>samp</strong> (<em>float</em>) – Sampling of the PSFs.</p></li>
+<li><p><strong>psf_calib</strong> (<em>np.array</em>) – PSF at calibration at WFS wavelength.</p></li>
+<li><p><strong>psf</strong> (<em>np.array</em>) – Current PSF at WFS wavelength.</p></li>
+<li><p><strong>modu</strong> (<em>bool</em><em>, </em><em>default=True</em>) – Activate or not on-sky modulation.</p></li>
+<li><p><strong>logamp</strong> (<em>bool</em><em>, </em><em>default=False</em>) – Compute log-amplitude sensitivity instead of phase sensitivity.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.ffwfs.PWFS.optical_gain">
+<span class="sig-name descname"><span class="pre">optical_gain</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psf_calib</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psf_onsky</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.ffwfs.PWFS.optical_gain" title="Link to this definition">¶</a></dt>
+<dd><p>Get the optical gains.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="aopera.photometry.SourceWFS">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aopera.photometry.</span></span><span class="sig-name descname"><span class="pre">SourceWFS</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.photometry.SourceWFS" title="Link to this definition">¶</a></dt>
+<dd><p>The source for the wavefront sensor.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="aopera.photometry.SourceWFS.is_extended">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">is_extended</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#aopera.photometry.SourceWFS.is_extended" title="Link to this definition">¶</a></dt>
+<dd><p>Whether the WFS source has a non-zero spatial extent.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="aopera.photometry.SourceWFS.equivalent_size">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">equivalent_size</span></span><a class="headerlink" href="#aopera.photometry.SourceWFS.equivalent_size" title="Link to this definition">¶</a></dt>
+<dd><p>Return the characteristic WFS source size [arcsec].</p>
+<p>For a custom source image, this is the side length of the uniform square
+having the same brightness-weighted radial second moment as the image.
+For a parametric source, the configured geometric <code class="docutils literal notranslate"><span class="pre">size</span></code> is returned.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.photometry.SourceWFS.image">
+<span class="sig-name descname"><span class="pre">image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tel_diameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.photometry.SourceWFS.image" title="Link to this definition">¶</a></dt>
+<dd><p>Build the normalized 2D brightness distribution of the WFS source.
+If <cite>custom_image</cite> is provided, the supplied source morphology is resampled
+to the angular sampling and field size expected by AOPERA.
+Otherwise, the parametric source model is used:
+- <cite>square=True</cite>: uniform square of side <cite>size</cite>;
+- <cite>square=False</cite>: uniform disk of diameter <cite>size</cite>.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="aopera.photometry.SourceScience">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aopera.photometry.</span></span><span class="sig-name descname"><span class="pre">SourceScience</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dictionary</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.photometry.SourceScience" title="Link to this definition">¶</a></dt>
+<dd><p>The source for the science.</p>
+</dd></dl>
+
+</section>
+<section id="sh-wfs">
+<h2>SH-WFS<a class="headerlink" href="#sh-wfs" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="aopera.shwfs.shwfs_sensitivity">
+<span class="sig-prename descclassname"><span class="pre">aopera.shwfs.</span></span><span class="sig-name descname"><span class="pre">shwfs_sensitivity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dpup</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.shwfs.shwfs_sensitivity" title="Link to this definition">¶</a></dt>
+<dd><p>Compute the sensitivity map of a SH-WFS in the (fx,fy) domain. If classic cog: G-tilt formula. If tight wcog: Z-tilt formula.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fx</strong> (<em>np.array</em>) – Array of X frequencies [1/m].</p></li>
+<li><p><strong>fy</strong> (<em>np.array</em>) – Array of Y frequencies [1/m].</p></li>
+<li><p><strong>dpup</strong> (<em>float</em><em> (</em><em>&gt;0</em><em>)</em>) – Sub-aperture size [m].</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<p>Rigaut, 1998, SPIE proceedings
+Neichel, 2008, PhD thesis, pp 138-139, eq 6.10
+Olivier Martin, <a class="reference external" href="https://github.com/oliviermartin-lam/P3/blob/main/aoSystem/fourierModel.py">https://github.com/oliviermartin-lam/P3/blob/main/aoSystem/fourierModel.py</a>
+Griffiths et al, 2026, <a class="reference external" href="https://arxiv.org/pdf/2603.02817">https://arxiv.org/pdf/2603.02817</a> (equation 41)</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aopera.shwfs.shwfs_spot_fwhm">
+<span class="sig-prename descclassname"><span class="pre">aopera.shwfs.</span></span><span class="sig-name descname"><span class="pre">shwfs_spot_fwhm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">r0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pitch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wvl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">src_size</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.shwfs.shwfs_spot_fwhm" title="Link to this definition">¶</a></dt>
+<dd><p>Compute Shack-Hartmann spot FWHM (in units of wvl/D).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>r0</strong> (<em>float</em><em> (</em><em>&gt;0</em><em>)</em>) – Fried parameter at WFS wavelength [m].</p></li>
+<li><p><strong>pitch</strong> (<em>float</em><em> (</em><em>&gt;0</em><em>)</em>) – DM actuator pitch [m].</p></li>
+<li><p><strong>wvl</strong> (<em>float</em><em> (</em><em>&gt;0</em><em>)</em>) – WFS wavelength [m].</p></li>
+<li><p><strong>src_size</strong> (<em>float</em><em> (</em><em>&gt;=0</em><em>)</em>) – Source physical extension [rad].</p></li>
+<li><p><strong>samp</strong> (<em>float</em><em> (</em><em>&gt;0</em><em>)</em>) – SH detector sampling.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="ff-wfs">
+<h2>FF-WFS<a class="headerlink" href="#ff-wfs" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="aopera.ffwfs.modulation">
+<span class="sig-prename descclassname"><span class="pre">aopera.ffwfs.</span></span><span class="sig-name descname"><span class="pre">modulation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rmod</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.ffwfs.modulation" title="Link to this definition">¶</a></dt>
+<dd><p>Build the modulation ring</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nx</strong> (<em>number</em><em> of </em><em>pixels.</em>)</p></li>
+<li><p><strong>rmod</strong> (<em>modulation radius</em><em> [</em><em>lambda/D</em><em>]</em><em>.</em>)</p></li>
+<li><p><strong>samp</strong> (<em>sampling</em><em> (</em><em>2=Shannon</em><em>)</em><em>.</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aopera.ffwfs.pyramid_mask">
+<span class="sig-prename descclassname"><span class="pre">aopera.ffwfs.</span></span><span class="sig-name descname"><span class="pre">pyramid_mask</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nFaces</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.35</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">theta_ref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">four_pixels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.ffwfs.pyramid_mask" title="Link to this definition">¶</a></dt>
+<dd><p>Build the pyramid mask</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nx</strong> (<em>number</em><em> of </em><em>pixels.</em>)</p></li>
+<li><p><strong>nFaces</strong> (<em>number</em><em> of </em><em>faces for the pyramidal mask.</em>)</p></li>
+<li><p><strong>angle</strong> (<em>angle</em><em> of </em><em>the pyramid  #TODO: definition? which unit?</em>)</p></li>
+<li><p><strong>theta_ref</strong> (<em>rotation angle</em><em> of </em><em>the pyramid faces.</em>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aopera.ffwfs.ffwfs_impulse_response">
+<span class="sig-prename descclassname"><span class="pre">aopera.ffwfs.</span></span><span class="sig-name descname"><span class="pre">ffwfs_impulse_response</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modu_pth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logamp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.ffwfs.ffwfs_impulse_response" title="Link to this definition">¶</a></dt>
+<dd><p>Compute the impulse response of a FF-WFS.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mask</strong> (<em>np.array</em>) – The complex mask of the FF-WFS.</p></li>
+<li><p><strong>modu_pth</strong> (<em>np.array</em>) – The modulation path.</p></li>
+<li><p><strong>psf</strong> (<em>np.array</em>) – Current PSF at the WFS wavelength.</p></li>
+<li><p><strong>logamp</strong> (<em>bool</em><em>, </em><em>default=False</em>) – Get the response to the log-amplitude (scintillation) instead of phase.</p></li>
+<li><p><strong>modu</strong> (<em>bool</em><em>, </em><em>default=True</em>) – Apply modulation of <cite>modu_pth</cite> to the PSF.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aopera.ffwfs.ffwfs_transfer_function">
+<span class="sig-prename descclassname"><span class="pre">aopera.ffwfs.</span></span><span class="sig-name descname"><span class="pre">ffwfs_transfer_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.ffwfs.ffwfs_transfer_function" title="Link to this definition">¶</a></dt>
+<dd><p>Compute the transfer function of a FF-WFS.
+All arguments and keywords are passed to <cite>ffwfs_impulse_response</cite>.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#aopera.ffwfs.ffwfs_impulse_response" title="aopera.ffwfs.ffwfs_impulse_response"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ffwfs_impulse_response</span></code></a></p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aopera.ffwfs.ffwfs_sensitivity">
+<span class="sig-prename descclassname"><span class="pre">aopera.ffwfs.</span></span><span class="sig-name descname"><span class="pre">ffwfs_sensitivity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mask</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modu_pth</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psf_calib</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">psf</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.ffwfs.ffwfs_sensitivity" title="Link to this definition">¶</a></dt>
+<dd><p>Compute the sensitivity map of a FF-WFS in the (fx,fy) domain, using the convolutive model.
+This is the continuous sensitivity, it needs to be multiplied by the sinc of the pixel filtering.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>mask</strong> (<em>np.array</em>) – The complex mask of the FF-WFS.</p></li>
+<li><p><strong>modu_pth</strong> (<em>np.array</em>) – The modulation path.</p></li>
+<li><p><strong>psf_calib</strong> (<em>np.array</em>) – PSF at calibration.</p></li>
+<li><p><strong>psf</strong> (<em>np.array</em>) – Current PSF at the WFS wavelength.</p></li>
+<li><p><strong>**kwargs</strong> (<em>list</em><em> of </em><em>keywords</em>) – Keywords passed to <cite>ffwfs_transfer_function</cite>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aopera.ffwfs.sensitivity_ramp">
+<span class="sig-prename descclassname"><span class="pre">aopera.ffwfs.</span></span><span class="sig-name descname"><span class="pre">sensitivity_ramp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sensi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.ffwfs.sensitivity_ramp" title="Link to this definition">¶</a></dt>
+<dd><p>Low-order correction of a (centered) sensitivity map: inside the radius <cite>radius</cite> [lambda/D],
+the map is replaced, along each direction, by a linear ramp from 0 at the null frequency to its
+value on the circle of radius <cite>radius</cite> (slope-sensor regime of the modulated pyramid).</p>
+<div class="math notranslate nohighlight">
+\[S_{new}(f) = S(f_r) * |f| / radius,  f_r = radius * f/|f|\]</div>
+<p>Outside the radius the map is unchanged.</p>
+</dd></dl>
+
+</section>
+<section id="photometric-tools">
+<h2>Photometric tools<a class="headerlink" href="#photometric-tools" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="aopera.photometry.black_body">
+<span class="sig-prename descclassname"><span class="pre">aopera.photometry.</span></span><span class="sig-name descname"><span class="pre">black_body</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wvl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">temp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">photon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.photometry.black_body" title="Link to this definition">¶</a></dt>
+<dd><p>Black body spectrum [W/m2/sr/m]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wvl</strong> (<em>float</em><em>, </em><em>np.array</em>) – Wavelengths [m] at which to compute the spectrum.</p></li>
+<li><p><strong>temp</strong> (<em>float</em>) – Temperature [K] of the black body.</p></li>
+<li><p><strong>Keywords</strong></p></li>
+<li><p><strong>--------</strong></p></li>
+<li><p><strong>photon</strong> (<em>bool</em>) – If True, return spectrum in units [photon/s/m2/sr/m].</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aopera.photometry.black_body_sun">
+<span class="sig-prename descclassname"><span class="pre">aopera.photometry.</span></span><span class="sig-name descname"><span class="pre">black_body_sun</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wvl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">photon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.photometry.black_body_sun" title="Link to this definition">¶</a></dt>
+<dd><p>Sun black body spectrum [W/m2/m] as seen from Earth distance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wvl</strong> (<em>float</em><em>, </em><em>np.array</em>) – Wavelengths [m] at which to compute the spectrum.</p></li>
+<li><p><strong>Keywords</strong></p></li>
+<li><p><strong>--------</strong></p></li>
+<li><p><strong>photon</strong> (<em>bool</em>) – If True, return spectrum in units [photon/s/m2/m].</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="aopera.photometry.Band">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">aopera.photometry.</span></span><span class="sig-name descname"><span class="pre">Band</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">band</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.photometry.Band" title="Link to this definition">¶</a></dt>
+<dd><p>Photometric system.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="aopera.photometry.Band.wavelength">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">wavelength</span></span><a class="headerlink" href="#aopera.photometry.Band.wavelength" title="Link to this definition">¶</a></dt>
+<dd><p>Central wavelength of the band [m]</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="aopera.photometry.Band.bandwidth">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">bandwidth</span></span><a class="headerlink" href="#aopera.photometry.Band.bandwidth" title="Link to this definition">¶</a></dt>
+<dd><p>Bandwidth [m]</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="aopera.photometry.Band.zeropoint">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">zeropoint</span></span><a class="headerlink" href="#aopera.photometry.Band.zeropoint" title="Link to this definition">¶</a></dt>
+<dd><p>Photon per m2 per second at magnitude 0</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.photometry.Band.photon2mag">
+<span class="sig-name descname"><span class="pre">photon2mag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nphot</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.photometry.Band.photon2mag" title="Link to this definition">¶</a></dt>
+<dd><p>Convert number of photons per m2 per second in magnitude</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="aopera.photometry.Band.mag2photon">
+<span class="sig-name descname"><span class="pre">mag2photon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mag</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.photometry.Band.mag2photon" title="Link to this definition">¶</a></dt>
+<dd><p>Convert magnitude to number of photons per m2 per second</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="control-tools">
+<h2>Control tools<a class="headerlink" href="#control-tools" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="aopera.control.open_loop_transfer">
+<span class="sig-prename descclassname"><span class="pre">aopera.control.</span></span><span class="sig-name descname"><span class="pre">open_loop_transfer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">freq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ao_freq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ki</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nb_frame_delay</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">discrete</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">leak</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">intersampling</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wfs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dm_freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dm_damp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.7</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.control.open_loop_transfer" title="Link to this definition">¶</a></dt>
+<dd><p>Return the temporal open loop transfer function for a proportional-integrator controller.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>freq</strong> (<em>np.array</em>) – Array of temporal frequencies to evaluate the CLTF on.</p></li>
+<li><p><strong>ao_freq</strong> (<em>float</em>) – The sampling temporal frequency of the AO loop.</p></li>
+<li><p><strong>ki</strong> (<em>float</em>) – Integrator gain.</p></li>
+<li><p><strong>nb_frame_delay</strong> (<em>float</em>) – Number of frame delay.
+Must include: RTC, pixel transfert, DM rise.
+Must not include: WFS integration, DM zero-order-hold.</p></li>
+<li><p><strong>kp</strong> (<em>float</em><em>, </em><em>default=0</em>) – Proportional gain.</p></li>
+<li><p><strong>discrete</strong> (<em>bool</em><em>, </em><em>default=False</em>) – Choose to use discrete formalism.</p></li>
+<li><p><strong>leak</strong> (<em>float</em><em>, </em><em>default=1.0</em>) – Leaky integrator.</p></li>
+<li><p><strong>wfs</strong> (<em>bool</em><em>, </em><em>default=True</em>) – Include the WFS in the computation.</p></li>
+<li><p><strong>dm_freq</strong> (<em>float</em><em>, </em><em>default=np.inf</em>) – DM (second order low pass) characteristic frequency [Hz].</p></li>
+<li><p><strong>dm_damp</strong> (<em>float</em><em>, </em><em>default=0.7</em>) – DM (second order low pass) damping.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aopera.control.closed_loop_transfer">
+<span class="sig-prename descclassname"><span class="pre">aopera.control.</span></span><span class="sig-name descname"><span class="pre">closed_loop_transfer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.control.closed_loop_transfer" title="Link to this definition">¶</a></dt>
+<dd><p>Return the temporal closed loop transfer function.
+See the open_loop_transfer arguments.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aopera.control.noise_transfer">
+<span class="sig-prename descclassname"><span class="pre">aopera.control.</span></span><span class="sig-name descname"><span class="pre">noise_transfer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.control.noise_transfer" title="Link to this definition">¶</a></dt>
+<dd><p>Return the noise transfer function.
+See the open_loop_transfer arguments.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aopera.control.bandwidth">
+<span class="sig-prename descclassname"><span class="pre">aopera.control.</span></span><span class="sig-name descname"><span class="pre">bandwidth</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ki</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nb_frame_delay</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ao_freq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.control.bandwidth" title="Link to this definition">¶</a></dt>
+<dd><p>Compute the AO bandwidth for an integrator control law.</p>
+<div class="math notranslate nohighlight">
+\[BW_{db} = \frac{F}{2\pi}\frac{k_i}{\sqrt{k_i(2N_d+1)+10^{-db}-1}}\]</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ki</strong> (<em>float</em>) – Gain of the integrator law</p></li>
+<li><p><strong>nb_frame_delay</strong> (<em>float</em>) – Number of frame delay (exposure frame excluded)</p></li>
+<li><p><strong>ao_freq</strong> (<em>float</em>) – Loop frequency [Hz]</p></li>
+<li><p><strong>db</strong> (<em>float</em><em>, </em><em>default=0</em>) – The cutoff in decibel.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aopera.control.bandwidth_noise">
+<span class="sig-prename descclassname"><span class="pre">aopera.control.</span></span><span class="sig-name descname"><span class="pre">bandwidth_noise</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ki</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nb_frame_delay</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ao_freq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-4.5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.control.bandwidth_noise" title="Link to this definition">¶</a></dt>
+<dd><p>Compute the noise bandwidth for an integrator control law.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ki</strong> (<em>float</em>) – Gain of the integrator law</p></li>
+<li><p><strong>nb_frame_delay</strong> (<em>float</em>) – Number of frame delay (exposure frame excluded)</p></li>
+<li><p><strong>ao_freq</strong> (<em>float</em>) – Loop frequency [Hz]</p></li>
+<li><p><strong>db</strong> (<em>float</em><em>, </em><em>default=-4.5</em>) – The cutoff in decibel.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>A bandwidth at -4.5 dB is chosen so we get the equality between the integration
+of <a href="#id1"><span class="problematic" id="id2">|</span></a>NTF|² (in the discrete domain) and the bandwidth_noise expression.</p>
+<div class="math notranslate nohighlight">
+\[BW_{noise} \simeq \int_0^{+\infty}|NTF(f)|^2 df\]</div>
+<p>So it has to be multiplied by 2 to account for both positive and negative frequencies.</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aopera.control.lqg_controller">
+<span class="sig-prename descclassname"><span class="pre">aopera.control.</span></span><span class="sig-name descname"><span class="pre">lqg_controller</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phase_psd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_psd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cn2dh_ratio</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_speed</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wind_direction</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ao_freq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_wind_speed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">diameter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.control.lqg_controller" title="Link to this definition">¶</a></dt>
+<dd><p>Compute LQG controller for each spatial frequency (fx,fy).
+Only valid for two frames delay (1 for WFS integration, 1 for pixel transfer and RTC computation).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fx</strong> (<em>list</em><em> of </em><em>floats</em>) – Spatial frequencies [1/m] along X.</p></li>
+<li><p><strong>fy</strong> (<em>list</em><em> of </em><em>floats</em>) – Spatial frequencies [1/m] along Y.</p></li>
+<li><p><strong>phase_psd</strong> (<em>list</em><em> of </em><em>floats</em>) – PSD of the turbulent phase [rad²m²] at (fx,fy).</p></li>
+<li><p><strong>noise_psd</strong> (<em>list</em><em> of </em><em>floats</em>) – PSD of the noise [rad²m²] at (fx,fy).</p></li>
+<li><p><strong>cn2dh_ratio</strong> (<em>list</em><em> of </em><em>floats</em>) – Cn²*dh ratio (sum=1) of turbulence layers.</p></li>
+<li><p><strong>wind_speed</strong> (<em>list</em><em> of </em><em>floats</em>) – Wind speed [m/s] of turbulence layers.</p></li>
+<li><p><strong>wind_direction</strong> (<em>list</em><em> of </em><em>floats</em>) – Wind direction [deg] of turbulence layers.</p></li>
+<li><p><strong>ao_freq</strong> (<em>float</em>) – AO loop frequency [Hz].</p></li>
+<li><p><strong>Keywords</strong></p></li>
+<li><p><strong>--------</strong></p></li>
+<li><p><strong>delta_wind_speed</strong> (<em>float</em>) – Uncertainty on wind speed estimation [m/s].</p></li>
+<li><p><strong>diameter</strong> (<em>float</em>) – Telescope diameter [m].</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – Print iterations while you drink a cup of tea.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>List of LQG controllers (functions) for each spatial frequency, to be evaluated on Z transform domain.</em></p></li>
+<li><p>Thus <cite>output[i](z)</cite> is the LQG controller of (fx[i], fy[i]) evaluated at <cite>z</cite>.</p></li>
+<li><p><em>Reference</em></p></li>
+<li><p><em>———</em></p></li>
+<li><p><em>Correia et al, 2017,</em></p></li>
+<li><p><em>Modelling astronomical adaptive optics performance with temporally-filtered Wiener reconstruction of slope data</em></p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="utilitary-functions">
+<h2>Utilitary functions<a class="headerlink" href="#utilitary-functions" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="aopera.utils.rfftconvolve">
+<span class="sig-prename descclassname"><span class="pre">aopera.utils.</span></span><span class="sig-name descname"><span class="pre">rfftconvolve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rfft_2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.utils.rfftconvolve" title="Link to this definition">¶</a></dt>
+<dd><p>Convolve two real arrays using FFT.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> (<em>np.array</em>) – First array to convolve.</p></li>
+<li><p><strong>b</strong> (<em>np.array</em>) – Second array to convolve, same size as first array.</p></li>
+<li><p><strong>rfft_2</strong> (<em>bool</em><em>, </em><em>default=False</em>) – If True, assumes that <cite>rfft2(fftshift(.))</cite> has been performed on the second array.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aopera.utils.rad2arcsec">
+<span class="sig-prename descclassname"><span class="pre">aopera.utils.</span></span><span class="sig-name descname"><span class="pre">rad2arcsec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rad</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.utils.rad2arcsec" title="Link to this definition">¶</a></dt>
+<dd><p>Convert radians to arcsec</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aopera.utils.arcsec2rad">
+<span class="sig-prename descclassname"><span class="pre">aopera.utils.</span></span><span class="sig-name descname"><span class="pre">arcsec2rad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">arcsec</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.utils.arcsec2rad" title="Link to this definition">¶</a></dt>
+<dd><p>Convert arcsec to radians</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aopera.utils.polar">
+<span class="sig-prename descclassname"><span class="pre">aopera.utils.</span></span><span class="sig-name descname"><span class="pre">polar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">npix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.utils.polar" title="Link to this definition">¶</a></dt>
+<dd><p>Compute polar coordinates (rho[pix], theta[rad])</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aopera.utils.polar_radius">
+<span class="sig-prename descclassname"><span class="pre">aopera.utils.</span></span><span class="sig-name descname"><span class="pre">polar_radius</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.utils.polar_radius" title="Link to this definition">¶</a></dt>
+<dd><p>Compute the polar radius coordinate rho [pix].</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="aopera.utils.circavg">
+<span class="sig-prename descclassname"><span class="pre">aopera.utils.</span></span><span class="sig-name descname"><span class="pre">circavg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tab</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#aopera.utils.circavg" title="Link to this definition">¶</a></dt>
+<dd><p>Compute the circular average of a given array</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tab</strong> (<em>numpy.ndarray</em><em> (</em><em>dim=2</em><em>)</em>) – Two-dimensional array to compute its circular average.</p></li>
+<li><p><strong>center</strong> (<em>list</em><em> of </em><em>two floats</em><em> or </em><em>ints</em><em>, </em><em>default=None</em>) – Center (in pixels) around which compute the average.</p></li>
+<li><p><strong>rmax</strong> (<em>float</em><em> or </em><em>int</em><em>, </em><em>default=None</em>) – Maximal radius (in pixels) to compute the circular average.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>vec</strong> – Vector containing the circular average from center</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>numpy.ndarray (dim=1)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+</article>
+    <nav class="pager" aria-label="Previous and next page"><a class="prev" href="examples/short_exposure_atmo.html"><small>Previous</small>Short exposures without AO</a><a class="next" href="validation.html"><small>Next</small>Code validation</a>
+    </nav>
+  </main>
+  <aside class="side-right">
+    <div class="nav-group">On this page</div>
+    <ul>
+<li><a class="reference internal" href="#">Code documentation</a><ul>
+<li><a class="reference internal" href="#simulation">Simulation</a><ul>
+<li><a class="reference internal" href="#aopera.simulation.simulation"><code class="docutils literal notranslate"><span class="pre">simulation()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.simulation.SimulationResult"><code class="docutils literal notranslate"><span class="pre">SimulationResult</span></code></a><ul>
+<li><a class="reference internal" href="#aopera.simulation.SimulationResult.psd_total"><code class="docutils literal notranslate"><span class="pre">SimulationResult.psd_total</span></code></a></li>
+<li><a class="reference internal" href="#aopera.simulation.SimulationResult.otf_diffraction"><code class="docutils literal notranslate"><span class="pre">SimulationResult.otf_diffraction()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.simulation.SimulationResult.psf_diffraction"><code class="docutils literal notranslate"><span class="pre">SimulationResult.psf_diffraction()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.simulation.SimulationResult.otf_ao"><code class="docutils literal notranslate"><span class="pre">SimulationResult.otf_ao()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.simulation.SimulationResult.psf_ao"><code class="docutils literal notranslate"><span class="pre">SimulationResult.psf_ao()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.simulation.SimulationResult.strehl"><code class="docutils literal notranslate"><span class="pre">SimulationResult.strehl()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#main-ao-classes">Main AO classes</a><ul>
+<li><a class="reference internal" href="#aopera.turbulence.Atmosphere"><code class="docutils literal notranslate"><span class="pre">Atmosphere</span></code></a><ul>
+<li><a class="reference internal" href="#aopera.turbulence.Atmosphere.from_file"><code class="docutils literal notranslate"><span class="pre">Atmosphere.from_file()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.turbulence.Atmosphere.from_file_tiptop"><code class="docutils literal notranslate"><span class="pre">Atmosphere.from_file_tiptop()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.turbulence.Atmosphere.from_oopao"><code class="docutils literal notranslate"><span class="pre">Atmosphere.from_oopao()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.turbulence.Atmosphere.cn2dh"><code class="docutils literal notranslate"><span class="pre">Atmosphere.cn2dh</span></code></a></li>
+<li><a class="reference internal" href="#aopera.turbulence.Atmosphere.equivalent_altitude"><code class="docutils literal notranslate"><span class="pre">Atmosphere.equivalent_altitude</span></code></a></li>
+<li><a class="reference internal" href="#aopera.turbulence.Atmosphere.equivalent_wind_speed"><code class="docutils literal notranslate"><span class="pre">Atmosphere.equivalent_wind_speed</span></code></a></li>
+<li><a class="reference internal" href="#aopera.turbulence.Atmosphere.squeeze_layers"><code class="docutils literal notranslate"><span class="pre">Atmosphere.squeeze_layers()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.turbulence.Atmosphere.r0"><code class="docutils literal notranslate"><span class="pre">Atmosphere.r0()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.turbulence.Atmosphere.coherence_time"><code class="docutils literal notranslate"><span class="pre">Atmosphere.coherence_time()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.turbulence.Atmosphere.isoplanetic_angle"><code class="docutils literal notranslate"><span class="pre">Atmosphere.isoplanetic_angle()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.turbulence.Atmosphere.phase_psd"><code class="docutils literal notranslate"><span class="pre">Atmosphere.phase_psd()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.turbulence.Atmosphere.opd_psd"><code class="docutils literal notranslate"><span class="pre">Atmosphere.opd_psd()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.turbulence.Atmosphere.logamp_psd"><code class="docutils literal notranslate"><span class="pre">Atmosphere.logamp_psd()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#aopera.otfpsf.Pupil"><code class="docutils literal notranslate"><span class="pre">Pupil</span></code></a><ul>
+<li><a class="reference internal" href="#aopera.otfpsf.Pupil.from_file"><code class="docutils literal notranslate"><span class="pre">Pupil.from_file()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.otfpsf.Pupil.from_file_tiptop"><code class="docutils literal notranslate"><span class="pre">Pupil.from_file_tiptop()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.otfpsf.Pupil.from_oopao"><code class="docutils literal notranslate"><span class="pre">Pupil.from_oopao()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.otfpsf.Pupil.surface"><code class="docutils literal notranslate"><span class="pre">Pupil.surface</span></code></a></li>
+<li><a class="reference internal" href="#aopera.otfpsf.Pupil.mode_max"><code class="docutils literal notranslate"><span class="pre">Pupil.mode_max</span></code></a></li>
+<li><a class="reference internal" href="#aopera.otfpsf.Pupil.pitch_dm"><code class="docutils literal notranslate"><span class="pre">Pupil.pitch_dm</span></code></a></li>
+<li><a class="reference internal" href="#aopera.otfpsf.Pupil.otf_diffraction"><code class="docutils literal notranslate"><span class="pre">Pupil.otf_diffraction()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.otfpsf.Pupil.psf_diffraction"><code class="docutils literal notranslate"><span class="pre">Pupil.psf_diffraction()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.otfpsf.Pupil.otf_ao"><code class="docutils literal notranslate"><span class="pre">Pupil.otf_ao()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.otfpsf.Pupil.psf_ao"><code class="docutils literal notranslate"><span class="pre">Pupil.psf_ao()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#aopera.otfpsf.VLTPupil"><code class="docutils literal notranslate"><span class="pre">VLTPupil</span></code></a><ul>
+<li><a class="reference internal" href="#aopera.otfpsf.VLTPupil.surface"><code class="docutils literal notranslate"><span class="pre">VLTPupil.surface</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#aopera.control.RTC"><code class="docutils literal notranslate"><span class="pre">RTC</span></code></a><ul>
+<li><a class="reference internal" href="#aopera.control.RTC.from_file"><code class="docutils literal notranslate"><span class="pre">RTC.from_file()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.control.RTC.from_file_tiptop"><code class="docutils literal notranslate"><span class="pre">RTC.from_file_tiptop()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.control.RTC.from_oopao"><code class="docutils literal notranslate"><span class="pre">RTC.from_oopao()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.control.RTC.nb_frame_delay"><code class="docutils literal notranslate"><span class="pre">RTC.nb_frame_delay</span></code></a></li>
+<li><a class="reference internal" href="#aopera.control.RTC.bandwidth"><code class="docutils literal notranslate"><span class="pre">RTC.bandwidth</span></code></a></li>
+<li><a class="reference internal" href="#aopera.control.RTC.bandwidth_noise"><code class="docutils literal notranslate"><span class="pre">RTC.bandwidth_noise</span></code></a></li>
+<li><a class="reference internal" href="#aopera.control.RTC.set_reconstructor_pinv"><code class="docutils literal notranslate"><span class="pre">RTC.set_reconstructor_pinv()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.control.RTC.set_reconstructor_mmse"><code class="docutils literal notranslate"><span class="pre">RTC.set_reconstructor_mmse()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.control.RTC.open_loop_transfer"><code class="docutils literal notranslate"><span class="pre">RTC.open_loop_transfer()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.control.RTC.closed_loop_transfer"><code class="docutils literal notranslate"><span class="pre">RTC.closed_loop_transfer()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.control.RTC.noise_transfer"><code class="docutils literal notranslate"><span class="pre">RTC.noise_transfer()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#aopera.ffwfs.FFWFS"><code class="docutils literal notranslate"><span class="pre">FFWFS</span></code></a><ul>
+<li><a class="reference internal" href="#aopera.ffwfs.FFWFS.modulation_path"><code class="docutils literal notranslate"><span class="pre">FFWFS.modulation_path()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.ffwfs.FFWFS.impulse_response"><code class="docutils literal notranslate"><span class="pre">FFWFS.impulse_response()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.ffwfs.FFWFS.transfer_function"><code class="docutils literal notranslate"><span class="pre">FFWFS.transfer_function()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.ffwfs.FFWFS.sensitivity"><code class="docutils literal notranslate"><span class="pre">FFWFS.sensitivity()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.ffwfs.FFWFS.optical_gain"><code class="docutils literal notranslate"><span class="pre">FFWFS.optical_gain()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#aopera.ffwfs.PWFS"><code class="docutils literal notranslate"><span class="pre">PWFS</span></code></a><ul>
+<li><a class="reference internal" href="#aopera.ffwfs.PWFS.from_file"><code class="docutils literal notranslate"><span class="pre">PWFS.from_file()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.ffwfs.PWFS.from_file_tiptop"><code class="docutils literal notranslate"><span class="pre">PWFS.from_file_tiptop()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.ffwfs.PWFS.from_oopao"><code class="docutils literal notranslate"><span class="pre">PWFS.from_oopao()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.ffwfs.PWFS.focal_plane_mask"><code class="docutils literal notranslate"><span class="pre">PWFS.focal_plane_mask()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.ffwfs.PWFS.sensitivity"><code class="docutils literal notranslate"><span class="pre">PWFS.sensitivity()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.ffwfs.PWFS.optical_gain"><code class="docutils literal notranslate"><span class="pre">PWFS.optical_gain()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#aopera.photometry.SourceWFS"><code class="docutils literal notranslate"><span class="pre">SourceWFS</span></code></a><ul>
+<li><a class="reference internal" href="#aopera.photometry.SourceWFS.is_extended"><code class="docutils literal notranslate"><span class="pre">SourceWFS.is_extended</span></code></a></li>
+<li><a class="reference internal" href="#aopera.photometry.SourceWFS.equivalent_size"><code class="docutils literal notranslate"><span class="pre">SourceWFS.equivalent_size</span></code></a></li>
+<li><a class="reference internal" href="#aopera.photometry.SourceWFS.image"><code class="docutils literal notranslate"><span class="pre">SourceWFS.image()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#aopera.photometry.SourceScience"><code class="docutils literal notranslate"><span class="pre">SourceScience</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sh-wfs">SH-WFS</a><ul>
+<li><a class="reference internal" href="#aopera.shwfs.shwfs_sensitivity"><code class="docutils literal notranslate"><span class="pre">shwfs_sensitivity()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.shwfs.shwfs_spot_fwhm"><code class="docutils literal notranslate"><span class="pre">shwfs_spot_fwhm()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#ff-wfs">FF-WFS</a><ul>
+<li><a class="reference internal" href="#aopera.ffwfs.modulation"><code class="docutils literal notranslate"><span class="pre">modulation()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.ffwfs.pyramid_mask"><code class="docutils literal notranslate"><span class="pre">pyramid_mask()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.ffwfs.ffwfs_impulse_response"><code class="docutils literal notranslate"><span class="pre">ffwfs_impulse_response()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.ffwfs.ffwfs_transfer_function"><code class="docutils literal notranslate"><span class="pre">ffwfs_transfer_function()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.ffwfs.ffwfs_sensitivity"><code class="docutils literal notranslate"><span class="pre">ffwfs_sensitivity()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.ffwfs.sensitivity_ramp"><code class="docutils literal notranslate"><span class="pre">sensitivity_ramp()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#photometric-tools">Photometric tools</a><ul>
+<li><a class="reference internal" href="#aopera.photometry.black_body"><code class="docutils literal notranslate"><span class="pre">black_body()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.photometry.black_body_sun"><code class="docutils literal notranslate"><span class="pre">black_body_sun()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.photometry.Band"><code class="docutils literal notranslate"><span class="pre">Band</span></code></a><ul>
+<li><a class="reference internal" href="#aopera.photometry.Band.wavelength"><code class="docutils literal notranslate"><span class="pre">Band.wavelength</span></code></a></li>
+<li><a class="reference internal" href="#aopera.photometry.Band.bandwidth"><code class="docutils literal notranslate"><span class="pre">Band.bandwidth</span></code></a></li>
+<li><a class="reference internal" href="#aopera.photometry.Band.zeropoint"><code class="docutils literal notranslate"><span class="pre">Band.zeropoint</span></code></a></li>
+<li><a class="reference internal" href="#aopera.photometry.Band.photon2mag"><code class="docutils literal notranslate"><span class="pre">Band.photon2mag()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.photometry.Band.mag2photon"><code class="docutils literal notranslate"><span class="pre">Band.mag2photon()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#control-tools">Control tools</a><ul>
+<li><a class="reference internal" href="#aopera.control.open_loop_transfer"><code class="docutils literal notranslate"><span class="pre">open_loop_transfer()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.control.closed_loop_transfer"><code class="docutils literal notranslate"><span class="pre">closed_loop_transfer()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.control.noise_transfer"><code class="docutils literal notranslate"><span class="pre">noise_transfer()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.control.bandwidth"><code class="docutils literal notranslate"><span class="pre">bandwidth()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.control.bandwidth_noise"><code class="docutils literal notranslate"><span class="pre">bandwidth_noise()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.control.lqg_controller"><code class="docutils literal notranslate"><span class="pre">lqg_controller()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#utilitary-functions">Utilitary functions</a><ul>
+<li><a class="reference internal" href="#aopera.utils.rfftconvolve"><code class="docutils literal notranslate"><span class="pre">rfftconvolve()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.utils.rad2arcsec"><code class="docutils literal notranslate"><span class="pre">rad2arcsec()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.utils.arcsec2rad"><code class="docutils literal notranslate"><span class="pre">arcsec2rad()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.utils.polar"><code class="docutils literal notranslate"><span class="pre">polar()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.utils.polar_radius"><code class="docutils literal notranslate"><span class="pre">polar_radius()</span></code></a></li>
+<li><a class="reference internal" href="#aopera.utils.circavg"><code class="docutils literal notranslate"><span class="pre">circavg()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  </aside>
+</div>
+
+<footer class="foot">
+  AOPERA 2.0.1 · <a href="https://gitlab.lam.fr/lam-grd-public/aopera">GitLab</a> · <a href="https://pypi.org/project/aopera/">PyPI</a> · <a href="https://gitlab.lam.fr/lam-grd-public/aopera/-/issues">Report an issue</a>
+</footer>
+
+  </body>
+</html>

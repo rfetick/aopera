@@ -1,0 +1,88 @@
+AOPERA
+======
+
+.. raw:: html
+
+   <section class="hero">
+     <div>
+       <p class="acro"><b>A</b>daptive <b>O</b>ptics <b>P</b>sf <b>E</b>stimation and <b>R</b>esiduals <b>A</b>nalysis</p>
+       <h2>Adaptive optics residuals, in seconds.</h2>
+       <p class="tag">A Fourier model of single-conjugate and cascaded AO: from a configuration file to the error budget, the phase PSD and the PSF.</p>
+       <div class="cta">
+         <a class="btn p" href="tutorial.html">Run your first simulation</a>
+         <a class="btn g" href="flow.html">See how it works</a>
+       </div>
+       <p class="pip">pip install aopera</p>
+     </div>
+     <div>
+
+.. raw:: html
+   :file: examples/_generated/hero_term.html
+
+.. raw:: html
+
+   <p class="hero-cap">Error budget printed by the code below.</p>
+   <a class="hero-psd" href="cascaded.html"><img src="gallery/hero_psd.svg" alt="Maps of the total residual phase PSD after the first and the second AO stage"></a>
+   <p class="hero-cap">Residual PSD after each stage of the <a href="cascaded.html">cascaded AO tutorial</a>.</p>
+     </div>
+   </section>
+
+   <h2 class="sec">A simulation in a few lines</h2>
+   <p class="sub">Presets are provided for several instruments, and the same parameters can be set directly from Python.</p>
+
+.. literalinclude:: tools/quickstart.py
+   :language: python
+
+.. raw:: html
+
+   <h2 class="sec">What you get</h2>
+   <p class="sub">The outputs of one simulation, and what it can model.</p>
+   <div class="feat">
+     <div><b>Phase PSD</b>In rad²·m², for each AO error term.</div>
+     <div><b>Error budget</b>The integral of each PSD, in nm RMS.</div>
+     <div><b>PSF</b>Long and short exposure, at any wavelength.</div>
+     <div><b>Fiber coupling</b>Coupling efficiency.</div>
+     <div><b>Fourier filtering WFS</b>Pyramid sensitivity and non-linearities with the convolutive formalism.</div>
+     <div><b>Cascaded AO</b>The result of one stage feeds the next one.</div>
+     <div><b>Light</b>Only needs numpy, scipy and astropy.</div>
+     <div><b>Compatible</b>TIPTOP ini files in SCAO mode, and the OOPAO end-to-end tool.</div>
+   </div>
+
+   <div class="flowteaser">
+     <div>
+       <h2>Follow the code, box by box</h2>
+       <p>An interactive diagram of what <code>simulation()</code> does: click a box for its equations and its place in the code. It also covers the available wavefront sensors, the coronagraph and the temporal binning of the cubes.</p>
+       <a class="btn p" href="flow.html">Open the code flow</a>
+     </div>
+     <ol class="steps">
+       <li>.ini files → objects</li>
+       <li>Calibration</li>
+       <li>Input: frozen flow, PSD, or previous stage</li>
+       <li>Spatio-temporal, aliasing, noise PSD</li>
+       <li class="o">Cube storage</li>
+       <li>Optical gain loop</li>
+       <li>SimulationResult → PSF, coronagraph</li>
+     </ol>
+   </div>
+
+   <h2 class="sec">Keep going</h2>
+   <div class="gallery">
+     <a class="card" href="installation.html"><div class="ctext"><b>Installation</b><span>From PyPI, or from the repository to contribute.</span></div></a>
+     <a class="card" href="tutorial.html"><div class="ctext"><b>Your first simulation</b><span>Step by step, from the presets to the PSF.</span></div></a>
+     <a class="card" href="cascaded.html"><div class="ctext"><b>Cascaded AO</b><span>Feed a second AO stage with the first one.</span></div></a>
+     <a class="card" href="examples/index.html"><div class="ctext"><b>Example gallery</b><span>The scripts of the repository, with their figures.</span></div></a>
+     <a class="card" href="api.html"><div class="ctext"><b>Code documentation</b><span>Functions and classes.</span></div></a>
+     <a class="card" href="validation.html"><div class="ctext"><b>Validation</b><span>Reference paper, tests, and how to check the code.</span></div></a>
+   </div>
+
+   <p class="refbox">Romain Fétick, Vincent Chambouleyron, Lisa-Marie Mazzolo, Arnaud Striffling. Reference: <a href="https://www.aanda.org/component/article?access=doi&doi=10.1051/0004-6361/202661016">Fetick, Chambouleyron, Mazzolo et al, 2026, Astronomy and Astrophysics</a>.</p>
+
+.. toctree::
+   :hidden:
+
+   installation
+   tutorial
+   cascaded
+   examples/index
+   api
+   validation

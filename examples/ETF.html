@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Transfer functions &#8212; AOPERA docs</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=92fd9be5" />
+    <link rel="stylesheet" type="text/css" href="../_static/aopera.css?v=ddfc3e89" />
+    <script src="../_static/documentation_options.js?v=f5cff4aa"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="MMSE reconstructor" href="reconstructor_MMSE.html" />
+    <link rel="prev" title="Pyramid pupils" href="pwfs_pupil.html" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,650&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../_static/topbar.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+  </head><body>
+<header class="topbar">
+  <a class="brand" href="../index.html">AOPERA<span class="ver">2.0.1</span></a>
+  <nav aria-label="Main">
+    <a href="../tutorial.html">Tutorials</a>
+    <a href="../flow.html">Code flow</a>
+    <a href="index.html" aria-current="true">Examples</a>
+    <a href="../api.html">API</a>
+    <a href="../validation.html">Validation</a>
+  </nav>
+  <form class="search" action="../search.html" method="get" role="search">
+    <input type="search" name="q" placeholder="Search the docs" aria-label="Search the docs">
+  </form>
+</header>
+
+<div class="page">
+  <aside class="side-left">
+    <div class="nav-group">Start</div>
+    <a class="nav-item" href="../installation.html">Installation</a>
+    <a class="nav-item" href="../tutorial.html">Your first simulation</a>
+    <a class="nav-item" href="../cascaded.html">Cascaded AO</a>
+    <div class="nav-group">Understand</div>
+    <a class="nav-item" href="../flow.html">Code flow</a>
+    <div class="nav-group">Examples</div>
+    <a class="nav-item on" href="index.html">Example gallery</a>
+    <div class="nav-group">Reference</div>
+    <a class="nav-item" href="../api.html">Code documentation</a>
+    <a class="nav-item" href="../validation.html">Validation</a>
+  </aside>
+  <main class="doc" role="main">
+    <article>
+  <section id="transfer-functions">
+<h1>Transfer functions<a class="headerlink" href="#transfer-functions" title="Link to this heading">¶</a></h1>
+<p>ETF in continuous and discrete transforms, NTF, and the analytical bandwidths.</p>
+<p>Script: <code class="docutils literal notranslate"><span class="pre">example/ETF.py</span></code></p>
+<section id="result">
+<h2>Result<a class="headerlink" href="#result" title="Link to this heading">¶</a></h2>
+<div class="figs"><a href="../gallery/ETF/fig_1.svg"><img src="../gallery/ETF/fig_1.svg" alt="Figure 1 of ETF.py" loading="lazy"></a></div></section>
+<section id="code">
+<h2>Code<a class="headerlink" href="#code" title="Link to this heading">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Compute ETF in continuous (Laplace) and discrete (Z) transforms, for comparison.</span>
+<span class="sd">Compute the noise-transfer function (NTF) in continuous transform.</span>
+<span class="sd">Compare with the analytical formulas for bandwidths.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">matplotlib.patches</span> <span class="kn">import</span> <span class="n">Circle</span>
+<span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="kn">import</span> <span class="n">trapezoid</span>
+<span class="kn">from</span> <span class="nn">aopera.control</span> <span class="kn">import</span> <span class="n">open_loop_transfer</span><span class="p">,</span> <span class="n">closed_loop_transfer</span><span class="p">,</span> <span class="n">bandwidth</span><span class="p">,</span> <span class="n">noise_transfer</span><span class="p">,</span> <span class="n">bandwidth_noise</span><span class="p">,</span> <span class="n">second_order</span>
+
+<span class="n">Fao</span> <span class="o">=</span> <span class="mi">1000</span> <span class="c1"># AO loop frequency [Hz]</span>
+<span class="n">ki</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="c1"># integrator gain</span>
+<span class="n">delay_ms</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="c1"># pure delay (WFS frame excluded) [ms] </span>
+<span class="n">db</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># choosen cutoff of the ETF [dB]</span>
+<span class="n">dbn</span> <span class="o">=</span> <span class="o">-</span><span class="mf">4.5</span> <span class="c1"># chosen cutoff of the NTF [dB]</span>
+<span class="n">leak</span> <span class="o">=</span> <span class="mf">0.995</span>
+
+<span class="n">dm_freq</span> <span class="o">=</span> <span class="mi">1000</span> <span class="c1"># DM frequency [Hz]</span>
+<span class="n">dm_damp</span> <span class="o">=</span> <span class="mf">0.2</span> <span class="c1"># DM damping</span>
+
+<span class="n">freq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">Fao</span><span class="p">),</span> <span class="n">num</span><span class="o">=</span><span class="mi">5000</span><span class="p">)</span>
+
+<span class="c1">#%% TRANSFER FUNCTION</span>
+<span class="n">frame_delay</span> <span class="o">=</span> <span class="n">delay_ms</span> <span class="o">*</span> <span class="mf">1e-3</span> <span class="o">*</span> <span class="n">Fao</span> <span class="c1"># pure frame delay (WFS integration excluded)</span>
+
+<span class="n">cl_cont</span> <span class="o">=</span> <span class="n">closed_loop_transfer</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="n">Fao</span><span class="p">,</span> <span class="n">ki</span><span class="p">,</span> <span class="n">frame_delay</span><span class="p">,</span> <span class="n">discrete</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">leak</span><span class="o">=</span><span class="n">leak</span><span class="p">,</span> <span class="n">dm_freq</span><span class="o">=</span><span class="n">dm_freq</span><span class="p">,</span> <span class="n">dm_damp</span><span class="o">=</span><span class="n">dm_damp</span><span class="p">)</span>
+<span class="n">etf2_cont</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">cl_cont</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+<span class="n">cl_disc</span> <span class="o">=</span> <span class="n">closed_loop_transfer</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="n">Fao</span><span class="p">,</span> <span class="n">ki</span><span class="p">,</span> <span class="n">frame_delay</span><span class="p">,</span> <span class="n">discrete</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">leak</span><span class="o">=</span><span class="n">leak</span><span class="p">,</span> <span class="n">dm_freq</span><span class="o">=</span><span class="n">dm_freq</span><span class="p">,</span> <span class="n">dm_damp</span><span class="o">=</span><span class="n">dm_damp</span><span class="p">)</span>
+<span class="n">etf2_disc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">cl_disc</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+
+<span class="n">bw</span> <span class="o">=</span> <span class="n">bandwidth</span><span class="p">(</span><span class="n">ki</span><span class="p">,</span> <span class="n">frame_delay</span><span class="p">,</span> <span class="n">Fao</span><span class="p">,</span> <span class="n">db</span><span class="o">=</span><span class="n">db</span><span class="p">)</span>
+
+<span class="c1">#%% NOISE TRANSFER</span>
+<span class="n">ntf2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">noise_transfer</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="n">Fao</span><span class="p">,</span> <span class="n">ki</span><span class="p">,</span> <span class="n">frame_delay</span><span class="p">,</span> <span class="n">discrete</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">leak</span><span class="o">=</span><span class="n">leak</span><span class="p">,</span> <span class="n">dm_freq</span><span class="o">=</span><span class="n">dm_freq</span><span class="p">,</span> <span class="n">dm_damp</span><span class="o">=</span><span class="n">dm_damp</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span>
+
+<span class="n">vld</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">freq</span><span class="o">&lt;</span><span class="p">(</span><span class="n">Fao</span><span class="o">/</span><span class="mi">2</span><span class="p">))</span>
+<span class="n">noise_propa</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">trapezoid</span><span class="p">(</span><span class="n">ntf2</span><span class="p">[</span><span class="n">vld</span><span class="p">],</span> <span class="n">freq</span><span class="p">[</span><span class="n">vld</span><span class="p">])</span><span class="o">/</span><span class="n">Fao</span> <span class="c1"># numerical integration</span>
+
+<span class="n">bwn</span> <span class="o">=</span> <span class="n">bandwidth_noise</span><span class="p">(</span><span class="n">ki</span><span class="p">,</span> <span class="n">frame_delay</span><span class="p">,</span> <span class="n">Fao</span><span class="p">,</span> <span class="n">db</span><span class="o">=</span><span class="n">dbn</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;bilateral integral of |NTF|²/Fao : </span><span class="si">%.2f</span><span class="s1">&#39;</span><span class="o">%</span><span class="n">noise_propa</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;4 * BW / Fao                     : </span><span class="si">%.2f</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="mi">4</span><span class="o">*</span><span class="n">bw</span><span class="o">/</span><span class="n">Fao</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;2 * BW_noise / Fao               : </span><span class="si">%.2f</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">bwn</span><span class="o">/</span><span class="n">Fao</span><span class="p">))</span>
+
+<span class="c1">#%% PLOT</span>
+
+<span class="k">def</span> <span class="nf">setplt</span><span class="p">():</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">Fao</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;F / 2&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">freq</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">freq</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">visible</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s1">&#39;major&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">visible</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s1">&#39;minor&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Frequency [Hz]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower right&#39;</span><span class="p">)</span>
+
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">17</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">131</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;DM&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">second_order</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="n">dm_freq</span><span class="p">,</span> <span class="n">dm_damp</span><span class="p">)),</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">setplt</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">132</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Transfer function&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="n">etf2_cont</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;ETF continu.&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="n">etf2_disc</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;ETF discrete&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="n">ntf2</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;NTF discrete&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">bw</span><span class="p">,</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="n">db</span><span class="o">/</span><span class="mi">10</span><span class="p">),</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;C1&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;BW&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">bw</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;C1&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">bwn</span><span class="p">,</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="n">dbn</span><span class="o">/</span><span class="mi">10</span><span class="p">),</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;C2&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;BW noise&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">bwn</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;C2&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mf">1e-3</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">setplt</span><span class="p">()</span>
+
+<span class="n">oltf</span> <span class="o">=</span> <span class="n">open_loop_transfer</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="n">Fao</span><span class="p">,</span> <span class="n">ki</span><span class="p">,</span> <span class="n">frame_delay</span><span class="p">,</span> <span class="n">dm_freq</span><span class="o">=</span><span class="n">dm_freq</span><span class="p">,</span> <span class="n">dm_damp</span><span class="o">=</span><span class="n">dm_damp</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">133</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Open loop stability criterion&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">oltf</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">imag</span><span class="p">(</span><span class="n">oltf</span><span class="p">),</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;open loop&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;critical point&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">add_artist</span><span class="p">(</span><span class="n">Circle</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="n">fc</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">ec</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;|OL|=1&#39;</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;$</span><span class="se">\\</span><span class="s1">Delta</span><span class="se">\\</span><span class="s1">phi_</span><span class="si">{OL}</span><span class="s1">=45°$&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;image&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Real part&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Imaginary part&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower right&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+<details><summary>Console output</summary><div class="highlight-text notranslate"><div class="highlight"><pre><span></span>bilateral integral of |NTF|²/Fao : 0.60
+4 * BW / Fao                     : 0.26
+2 * BW_noise / Fao               : 0.41
+</pre></div>
+</div>
+</details></section>
+</section>
+
+</article>
+    <nav class="pager" aria-label="Previous and next page"><a class="prev" href="pwfs_pupil.html"><small>Previous</small>Pyramid pupils</a><a class="next" href="reconstructor_MMSE.html"><small>Next</small>MMSE reconstructor</a>
+    </nav>
+  </main>
+  <aside class="side-right">
+    <div class="nav-group">On this page</div>
+    <ul>
+<li><a class="reference internal" href="#">Transfer functions</a><ul>
+<li><a class="reference internal" href="#result">Result</a></li>
+<li><a class="reference internal" href="#code">Code</a></li>
+</ul>
+</li>
+</ul>
+
+  </aside>
+</div>
+
+<footer class="foot">
+  AOPERA 2.0.1 · <a href="https://gitlab.lam.fr/lam-grd-public/aopera">GitLab</a> · <a href="https://pypi.org/project/aopera/">PyPI</a> · <a href="https://gitlab.lam.fr/lam-grd-public/aopera/-/issues">Report an issue</a>
+</footer>
+
+  </body>
+</html>

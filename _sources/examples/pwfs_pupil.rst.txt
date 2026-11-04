@@ -1,0 +1,19 @@
+Pyramid pupils
+==============
+
+Script working with the pyramid signal on a random turbulent phase.
+
+Script: ``example/pwfs_pupil.py``
+
+Result
+------
+
+.. raw:: html
+
+   <div class="figs"><a href="../gallery/pwfs_pupil/fig_1.svg"><img src="../gallery/pwfs_pupil/fig_1.svg" alt="Figure 1 of pwfs_pupil.py" loading="lazy"></a></div>
+
+Code
+----
+
+.. literalinclude:: ../../example/pwfs_pupil.py
+   :language: python

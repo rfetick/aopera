@@ -1,0 +1,113 @@
+Cascaded AO
+===========
+
+A first-stage result fed into a second AO stage, down to the science PSF.
+
+Script: ``example/AO_cascaded_simulation.py``
+
+Result
+------
+
+.. raw:: html
+
+   <div class="figs"><a href="../gallery/AO_cascaded_simulation/fig_1.svg"><img src="../gallery/AO_cascaded_simulation/fig_1.svg" alt="Figure 1 of AO_cascaded_simulation.py" loading="lazy"></a><a href="../gallery/AO_cascaded_simulation/fig_2.svg"><img src="../gallery/AO_cascaded_simulation/fig_2.svg" alt="Figure 2 of AO_cascaded_simulation.py" loading="lazy"></a><a href="../gallery/AO_cascaded_simulation/fig_3.svg"><img src="../gallery/AO_cascaded_simulation/fig_3.svg" alt="Figure 3 of AO_cascaded_simulation.py" loading="lazy"></a><a href="../gallery/AO_cascaded_simulation/fig_4.svg"><img src="../gallery/AO_cascaded_simulation/fig_4.svg" alt="Figure 4 of AO_cascaded_simulation.py" loading="lazy"></a><a href="../gallery/AO_cascaded_simulation/fig_5.svg"><img src="../gallery/AO_cascaded_simulation/fig_5.svg" alt="Figure 5 of AO_cascaded_simulation.py" loading="lazy"></a><a href="../gallery/AO_cascaded_simulation/fig_6.svg"><img src="../gallery/AO_cascaded_simulation/fig_6.svg" alt="Figure 6 of AO_cascaded_simulation.py" loading="lazy"></a></div>
+
+The script makes 7 figures; the first 6 are shown.
+
+Code
+----
+
+.. literalinclude:: ../../example/AO_cascaded_simulation.py
+   :language: python
+
+.. raw:: html
+
+   <details><summary>Console output</summary>
+
+.. code:: text
+
+   ##### First stage ####
+   ═════════════════════════
+         SourceScience
+   —————————————————————————
+   wvl    : 1650 nm
+   zenith : 0 deg
+   —————————————————————————
+
+   ═════════════════════════
+           SourceWFS
+   —————————————————————————
+   wvl       : 690 nm
+   flux      : 1.1e+07 ph/m²/s
+   separation: 0.000 arcsec
+   size      : 0.00 arcsec
+   —————————————————————————
+
+   ═════════════════════════
+          Atmosphere
+   —————————————————————————
+   seeing    : 0.40 arcsec
+   nb layer  : 35
+   altitude  : 4.4 km
+   wind speed: 8.9 m/s
+   —————————————————————————
+
+   ═════════════════════════
+           VLTPupil
+   —————————————————————————
+   diameter   : 8.0 m
+   occultation: 14 %
+   nb act     : 41
+   mode ratio : 0.62
+   ncpa       : 0 nm
+   jitter     : (0, 0) mas RMS
+   spiders    : 5.0 cm at 50.5 deg
+   —————————————————————————
+
+   ═════════════════════════
+              RTC
+   —————————————————————————
+   freq  : 1380 Hz
+   delay : 0.8 ms
+   ki    : 0.15
+   —————————————————————————
+
+   ═════════════════════════
+             SHWFS
+   —————————————————————————
+   throughput: 100 %
+   lenslet   : 40 
+   ron       : 0.1 e-
+   EMCCD     : False
+   sampling  : 2.0
+   npix CoG  : 36
+   filter    : 1.25 λ/d
+   —————————————————————————
+
+   ##### Second stage ####
+   ═════════════════════════
+           VLTPupil
+   —————————————————————————
+   diameter   : 8.0 m
+   occultation: 14 %
+   nb act     : 34
+   mode ratio : 0.47
+   ncpa       : 0 nm
+   jitter     : (0, 0) mas RMS
+   spiders    : 5.0 cm at 50.5 deg
+   —————————————————————————
+
+   ═════════════════════════
+           SourceWFS
+   —————————————————————————
+   wvl       : 1043 nm
+   flux      : 4.9e+06 ph/m²/s
+   separation: 0.000 arcsec
+   size      : 0.00 arcsec
+   —————————————————————————
+
+   [...]
+
+.. raw:: html
+
+   </details>

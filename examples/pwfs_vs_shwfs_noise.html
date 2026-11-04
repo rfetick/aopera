@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Pyramid vs Shack-Hartmann: noise &#8212; AOPERA docs</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=92fd9be5" />
+    <link rel="stylesheet" type="text/css" href="../_static/aopera.css?v=ddfc3e89" />
+    <script src="../_static/documentation_options.js?v=f5cff4aa"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Pyramid vs Shack-Hartmann: extended objects" href="pwfs_vs_shwfs_extended_obj.html" />
+    <link rel="prev" title="Modulation abacus" href="modulation_abacus.html" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,650&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../_static/topbar.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+  </head><body>
+<header class="topbar">
+  <a class="brand" href="../index.html">AOPERA<span class="ver">2.0.1</span></a>
+  <nav aria-label="Main">
+    <a href="../tutorial.html">Tutorials</a>
+    <a href="../flow.html">Code flow</a>
+    <a href="index.html" aria-current="true">Examples</a>
+    <a href="../api.html">API</a>
+    <a href="../validation.html">Validation</a>
+  </nav>
+  <form class="search" action="../search.html" method="get" role="search">
+    <input type="search" name="q" placeholder="Search the docs" aria-label="Search the docs">
+  </form>
+</header>
+
+<div class="page">
+  <aside class="side-left">
+    <div class="nav-group">Start</div>
+    <a class="nav-item" href="../installation.html">Installation</a>
+    <a class="nav-item" href="../tutorial.html">Your first simulation</a>
+    <a class="nav-item" href="../cascaded.html">Cascaded AO</a>
+    <div class="nav-group">Understand</div>
+    <a class="nav-item" href="../flow.html">Code flow</a>
+    <div class="nav-group">Examples</div>
+    <a class="nav-item on" href="index.html">Example gallery</a>
+    <div class="nav-group">Reference</div>
+    <a class="nav-item" href="../api.html">Code documentation</a>
+    <a class="nav-item" href="../validation.html">Validation</a>
+  </aside>
+  <main class="doc" role="main">
+    <article>
+  <section id="pyramid-vs-shack-hartmann-noise">
+<h1>Pyramid vs Shack-Hartmann: noise<a class="headerlink" href="#pyramid-vs-shack-hartmann-noise" title="Link to this heading">¶</a></h1>
+<p>Comparison of the two sensors.</p>
+<p>Script: <code class="docutils literal notranslate"><span class="pre">example/pwfs_vs_shwfs_noise.py</span></code></p>
+<section id="result">
+<h2>Result<a class="headerlink" href="#result" title="Link to this heading">¶</a></h2>
+<div class="figs"><a href="../gallery/pwfs_vs_shwfs_noise/fig_1.svg"><img src="../gallery/pwfs_vs_shwfs_noise/fig_1.svg" alt="Figure 1 of pwfs_vs_shwfs_noise.py" loading="lazy"></a><a href="../gallery/pwfs_vs_shwfs_noise/fig_2.svg"><img src="../gallery/pwfs_vs_shwfs_noise/fig_2.svg" alt="Figure 2 of pwfs_vs_shwfs_noise.py" loading="lazy"></a></div></section>
+<section id="code">
+<h2>Code<a class="headerlink" href="#code" title="Link to this heading">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Comparison between Shack-Hartmann and Pyramid WFS</span>
+
+<span class="sd">date: Fri Dec  5 10:10:29 2025</span>
+<span class="sd">author: rfetick</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="kn">from</span> <span class="nn">aopera.utils</span> <span class="kn">import</span> <span class="n">circavg</span>
+<span class="kn">from</span> <span class="nn">aopera.turbulence</span> <span class="kn">import</span> <span class="n">Atmosphere</span>
+<span class="kn">from</span> <span class="nn">aopera.control</span> <span class="kn">import</span> <span class="n">RTC</span>
+<span class="kn">from</span> <span class="nn">aopera.otfpsf</span> <span class="kn">import</span> <span class="n">Pupil</span>
+<span class="kn">from</span> <span class="nn">aopera.ffwfs</span> <span class="kn">import</span> <span class="n">PWFS</span>
+<span class="kn">from</span> <span class="nn">aopera.shwfs</span> <span class="kn">import</span> <span class="n">SHWFS</span>
+<span class="kn">from</span> <span class="nn">aopera.photometry</span> <span class="kn">import</span> <span class="n">SourceScience</span><span class="p">,</span> <span class="n">SourceWFS</span><span class="p">,</span> <span class="n">Band</span>
+<span class="kn">from</span> <span class="nn">aopera.otfpsf</span> <span class="kn">import</span> <span class="n">psd2otf</span><span class="p">,</span> <span class="n">otf2psf</span>
+<span class="kn">from</span> <span class="nn">aopera.simulation</span> <span class="kn">import</span> <span class="n">simulation</span>
+
+<span class="c1">#%% PARAMETERS</span>
+
+<span class="c1">### SIMULATION</span>
+<span class="n">nx</span> <span class="o">=</span> <span class="mi">512</span>
+<span class="n">samp</span> <span class="o">=</span> <span class="mi">4</span>
+
+<span class="c1">### SNR</span>
+<span class="n">throughput</span> <span class="o">=</span> <span class="mf">0.1</span>
+<span class="n">emccd</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">ron</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">magV</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">obj_size</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="c1">### TURBULENCE</span>
+<span class="n">seeing</span> <span class="o">=</span> <span class="mf">2.5</span>
+<span class="n">windspeed</span> <span class="o">=</span> <span class="mi">7</span>
+
+<span class="c1">### TELESCOPE, RTC and DM</span>
+<span class="n">diameter</span> <span class="o">=</span> <span class="mf">1.5</span>
+<span class="n">occultation</span> <span class="o">=</span> <span class="mf">0.25</span>
+<span class="n">nact</span> <span class="o">=</span> <span class="mi">35</span>
+<span class="n">ao_freq</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">frame_delay</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">ki</span> <span class="o">=</span> <span class="mf">0.5</span>
+<span class="n">nmode_ratio</span> <span class="o">=</span> <span class="mf">0.9</span>
+
+<span class="c1">### WAVEFRONT SENSORS</span>
+<span class="n">r_modul</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">og_compensation</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">npix_cog</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">wfs_band</span> <span class="o">=</span> <span class="s1">&#39;R&#39;</span>
+
+
+<span class="c1">#%% INIT CLASSES</span>
+<span class="n">src_wvl_nm</span> <span class="o">=</span> <span class="n">Band</span><span class="p">(</span><span class="n">wfs_band</span><span class="p">)</span><span class="o">.</span><span class="n">wavelength</span> <span class="o">*</span> <span class="mf">1e9</span>
+
+<span class="n">src_sci</span> <span class="o">=</span> <span class="n">SourceScience</span><span class="p">({</span><span class="s1">&#39;wvl_nm&#39;</span><span class="p">:</span><span class="n">src_wvl_nm</span><span class="p">,</span>
+                         <span class="s1">&#39;zenith_deg&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">})</span>
+
+<span class="n">src_wfs</span> <span class="o">=</span> <span class="n">SourceWFS</span><span class="p">({</span><span class="s1">&#39;wvl_nm&#39;</span><span class="p">:</span><span class="n">src_wvl_nm</span><span class="p">,</span>
+                     <span class="s1">&#39;flux&#39;</span><span class="p">:</span><span class="mf">1e8</span><span class="p">,</span> <span class="c1"># will be updated in loop</span>
+                     <span class="s1">&#39;separation&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;angle&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;size&#39;</span><span class="p">:</span><span class="mi">0</span><span class="p">})</span>
+
+<span class="n">atm</span> <span class="o">=</span> <span class="n">Atmosphere</span><span class="p">({</span><span class="s1">&#39;lext&#39;</span><span class="p">:</span><span class="mi">25</span><span class="p">,</span>
+                  <span class="s1">&#39;altitude&#39;</span><span class="p">:[</span><span class="mi">0</span><span class="p">],</span>
+                  <span class="s1">&#39;wind_speed&#39;</span><span class="p">:[</span><span class="n">windspeed</span><span class="p">],</span>
+                  <span class="s1">&#39;wind_direction&#39;</span><span class="p">:[</span><span class="mi">0</span><span class="p">],</span>
+                  <span class="s1">&#39;seeing&#39;</span><span class="p">:</span><span class="n">seeing</span><span class="p">,</span>
+                  <span class="s1">&#39;cn2dh_ratio&#39;</span><span class="p">:[</span><span class="mf">1.0</span><span class="p">]})</span>
+
+<span class="n">tel</span> <span class="o">=</span> <span class="n">Pupil</span><span class="p">({</span><span class="s1">&#39;diameter&#39;</span><span class="p">:</span><span class="n">diameter</span><span class="p">,</span> 
+               <span class="s1">&#39;occultation&#39;</span><span class="p">:</span><span class="n">occultation</span><span class="p">,</span>
+               <span class="s1">&#39;nact&#39;</span><span class="p">:</span><span class="n">nact</span><span class="p">,</span>
+               <span class="s1">&#39;nmode_ratio&#39;</span><span class="p">:</span><span class="n">nmode_ratio</span><span class="p">})</span>
+
+<span class="n">rtc</span> <span class="o">=</span> <span class="n">RTC</span><span class="p">({</span><span class="s1">&#39;freq&#39;</span><span class="p">:</span><span class="n">ao_freq</span><span class="p">,</span>
+           <span class="s1">&#39;delay&#39;</span><span class="p">:</span><span class="n">frame_delay</span><span class="o">/</span><span class="n">ao_freq</span><span class="o">*</span><span class="mi">1000</span><span class="p">,</span>
+           <span class="s1">&#39;ki&#39;</span><span class="p">:</span><span class="n">ki</span><span class="p">})</span>
+
+<span class="n">shwfs</span> <span class="o">=</span> <span class="n">SHWFS</span><span class="p">({</span><span class="s1">&#39;lenslet&#39;</span><span class="p">:</span><span class="n">nact</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+               <span class="s1">&#39;ron&#39;</span><span class="p">:</span><span class="n">ron</span><span class="p">,</span>
+               <span class="s1">&#39;emccd&#39;</span><span class="p">:</span><span class="n">emccd</span><span class="p">,</span>
+               <span class="s1">&#39;samp&#39;</span><span class="p">:</span><span class="mf">1.0</span><span class="p">,</span>
+               <span class="s1">&#39;npix_cog&#39;</span><span class="p">:</span><span class="n">npix_cog</span><span class="p">})</span>
+
+<span class="n">pwfs</span> <span class="o">=</span> <span class="n">PWFS</span><span class="p">({</span><span class="s1">&#39;lenslet&#39;</span><span class="p">:</span><span class="n">nact</span><span class="p">,</span>
+             <span class="s1">&#39;ron&#39;</span><span class="p">:</span><span class="n">ron</span><span class="p">,</span>
+             <span class="s1">&#39;emccd&#39;</span><span class="p">:</span><span class="n">emccd</span><span class="p">,</span>
+             <span class="s1">&#39;modulation&#39;</span><span class="p">:</span><span class="n">r_modul</span><span class="p">})</span>
+
+
+<span class="c1">#%% AO PSD BUDGET</span>
+
+<span class="n">strehl_pwfs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">magV</span><span class="p">))</span>
+<span class="n">strehl_shwfs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">magV</span><span class="p">))</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">tel</span><span class="o">.</span><span class="n">frequency_step</span><span class="p">(</span><span class="n">samp</span><span class="p">)</span>
+<span class="n">otf_diff</span> <span class="o">=</span> <span class="n">tel</span><span class="o">.</span><span class="n">otf_diffraction</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span> <span class="n">samp</span><span class="p">)</span>
+<span class="n">psf_diff</span> <span class="o">=</span> <span class="n">tel</span><span class="o">.</span><span class="n">psf_diffraction</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span> <span class="n">samp</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">magV</span><span class="p">)):</span>
+    
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="o">*</span><span class="mi">40</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Iteration </span><span class="si">%2u</span><span class="s1">/</span><span class="si">%u</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">magV</span><span class="p">)))</span>
+    <span class="nb">print</span><span class="p">()</span>
+    
+    <span class="c1">### UPDATE FLUX and OBJECT</span>
+    <span class="n">src_wfs</span><span class="o">.</span><span class="n">flux</span> <span class="o">=</span> <span class="n">Band</span><span class="p">(</span><span class="s1">&#39;V&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mag2photon</span><span class="p">(</span><span class="n">magV</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">*</span> <span class="n">throughput</span>
+    <span class="n">src_wfs</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="n">obj_size</span>
+    <span class="n">pwfs</span><span class="o">.</span><span class="n">og_compensation</span> <span class="o">=</span> <span class="n">og_compensation</span>
+    <span class="n">pwfs</span><span class="o">.</span><span class="n">modulation_sky</span> <span class="o">=</span> <span class="p">(</span><span class="n">obj_size</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span>
+    
+    <span class="c1">### PWFS SIMULATION</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">simulation</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span> <span class="n">samp</span><span class="p">,</span> <span class="n">tel</span><span class="p">,</span> <span class="n">atm</span><span class="p">,</span> <span class="n">rtc</span><span class="p">,</span> <span class="n">pwfs</span><span class="p">,</span> <span class="n">src_sci</span><span class="p">,</span> <span class="n">src_wfs</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">psd_total</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">out</span><span class="o">.</span><span class="n">psd</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">psd</span><span class="o">.</span><span class="n">keys</span><span class="p">()])</span>
+    <span class="n">psf_ao</span> <span class="o">=</span> <span class="n">otf2psf</span><span class="p">(</span><span class="n">psd2otf</span><span class="p">(</span><span class="n">psd_total</span><span class="p">,</span> <span class="n">df</span><span class="p">)</span><span class="o">*</span><span class="n">otf_diff</span><span class="p">)</span>
+    <span class="n">strehl_pwfs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">psf_ao</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">psf_diff</span><span class="p">)</span>
+    
+    <span class="c1">### SHWFS SIMULATION</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">simulation</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span> <span class="n">samp</span><span class="p">,</span> <span class="n">tel</span><span class="p">,</span> <span class="n">atm</span><span class="p">,</span> <span class="n">rtc</span><span class="p">,</span> <span class="n">shwfs</span><span class="p">,</span> <span class="n">src_sci</span><span class="p">,</span> <span class="n">src_wfs</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">psd_total</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">out</span><span class="o">.</span><span class="n">psd</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">psd</span><span class="o">.</span><span class="n">keys</span><span class="p">()])</span>
+    <span class="n">psf_ao</span> <span class="o">=</span> <span class="n">otf2psf</span><span class="p">(</span><span class="n">psd2otf</span><span class="p">(</span><span class="n">psd_total</span><span class="p">,</span> <span class="n">df</span><span class="p">)</span><span class="o">*</span><span class="n">otf_diff</span><span class="p">)</span>
+    <span class="n">strehl_shwfs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">psf_ao</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">psf_diff</span><span class="p">)</span>
+    
+    <span class="c1">### PRINT</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Strehl P-WFS  : </span><span class="si">%.1f%%</span><span class="s1">&#39;</span><span class="o">%</span><span class="n">strehl_pwfs</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Strehl SH-WFS : </span><span class="si">%.1f%%</span><span class="s1">&#39;</span><span class="o">%</span><span class="n">strehl_shwfs</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">()</span>
+
+<span class="c1">#%% PLOT</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Strehl [</span><span class="si">%%</span><span class="s1">] at </span><span class="si">%u</span><span class="s1">nm&#39;</span><span class="o">%</span><span class="n">src_wvl_nm</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">magV</span><span class="p">,</span> <span class="n">strehl_pwfs</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;P-WFS&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">magV</span><span class="p">,</span> <span class="n">strehl_shwfs</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;SH-WFS&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;mag V&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">magV</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">magV</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">110</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+
+<span class="n">spot_size</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">sx</span><span class="p">,</span><span class="n">sy</span> <span class="o">=</span> <span class="n">shwfs</span><span class="o">.</span><span class="n">sensitivity</span><span class="p">(</span><span class="o">*</span><span class="n">tel</span><span class="o">.</span><span class="n">frequency_grid</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span> <span class="n">samp</span><span class="p">),</span> <span class="n">tel</span><span class="o">.</span><span class="n">diameter</span><span class="p">)</span>
+<span class="n">sensi_sh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">sx</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">sy</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">sensi_pwfs</span> <span class="o">=</span> <span class="n">pwfs</span><span class="o">.</span><span class="n">sensitivity</span><span class="p">(</span><span class="n">samp</span><span class="p">,</span> <span class="n">psf_diff</span><span class="p">,</span> <span class="n">psf_diff</span><span class="p">)</span>
+
+<span class="n">noise_sh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span> <span class="o">*</span> <span class="n">spot_size</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">sensi_sh</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="mf">1e-8</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
+<span class="n">noise_pwfs</span> <span class="o">=</span> <span class="mi">1</span><span class="o">/</span><span class="n">sensi_pwfs</span><span class="o">**</span><span class="mi">2</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">nx</span><span class="o">//</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">tel</span><span class="o">.</span><span class="n">frequency_step</span><span class="p">(</span><span class="n">samp</span><span class="p">)</span> <span class="o">*</span> <span class="n">tel</span><span class="o">.</span><span class="n">diameter</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">circavg</span><span class="p">(</span><span class="n">noise_sh</span><span class="p">,</span> <span class="n">rmax</span><span class="o">=</span><span class="n">nx</span><span class="o">//</span><span class="mi">2</span><span class="p">),</span> <span class="n">lw</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;SH WFS&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">circavg</span><span class="p">(</span><span class="n">noise_pwfs</span><span class="p">,</span> <span class="n">rmax</span><span class="o">=</span><span class="n">nx</span><span class="o">//</span><span class="mi">2</span><span class="p">),</span> <span class="n">lw</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;P-WFS&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">pwfs</span><span class="o">.</span><span class="n">modulation</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;C1&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;$r_</span><span class="si">{mod}</span><span class="s1">$&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Frequency [cycle/pup]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Noise propagation&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">40</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">tel</span><span class="o">.</span><span class="n">nact</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+<details><summary>Console output</summary><div class="highlight-text notranslate"><div class="highlight"><pre><span></span>----------------------------------------
+Iteration  1/12
+
+
+Spatiotemporal ✓   Noise ✓   Spatial-aliasing ✓
+[OG iter. 1/3]   OG = 0.86   WFE =  76 nm
+
+Spatiotemporal ✓   Noise ✓   Spatial-aliasing ✓
+[OG iter. 2/3]   OG = 0.86   WFE =  76 nm
+
+Spatiotemporal ✓   Noise ✓   Spatial-aliasing ✓
+[OG iter. 3/3]   OG = 0.86   WFE =  76 nm
+
+══════════════════════════════════════════════════
+             WAVEFRONT ERROR [nm RMS]
+—————————————————▾———————▾———————▾———————▾———————▾
+  temporal   62  |■■■■■■■■■■■■■■■■■■■■           |
+   fitting   38  |■■■■■■■■                       |
+  aliasing   22  |■■                             |
+    photon    7  |                               |
+    jitter    0  |                               |
+       ron    0  |                               |
+—————————————————▴———————▴———————▴———————▴———————▴
+     total   76
+══════════════════════════════════════════════════
+
+Spatiotemporal ✓   Noise ✓   Spatial-aliasing ✓
+[OG iter. 1/1]   OG = 1.00   WFE =  78 nm
+
+══════════════════════════════════════════════════
+             WAVEFRONT ERROR [nm RMS]
+—————————————————▾———————▾———————▾———————▾———————▾
+  temporal   62  |■■■■■■■■■■■■■■■■■■■            |
+   fitting   38  |■■■■■■■                        |
+  aliasing   26  |■■■                            |
+    photon   13  |■                              |
+    jitter    0  |                               |
+       ron    0  |                               |
+—————————————————▴———————▴———————▴———————▴———————▴
+     total   78
+══════════════════════════════════════════════════
+Strehl P-WFS  : 56.9%
+Strehl SH-WFS : 55.5%
+
+----------------------------------------
+Iteration  2/12
+
+
+Spatiotemporal ✓   Noise ✓   Spatial-aliasing ✓
+[OG iter. 1/3]   OG = 0.86   WFE =  76 nm
+
+Spatiotemporal ✓   Noise ✓   Spatial-aliasing ✓
+[OG iter. 2/3]   OG = 0.86   WFE =  76 nm
+
+Spatiotemporal ✓   Noise ✓   Spatial-aliasing ✓
+[OG iter. 3/3]   OG = 0.86   WFE =  76 nm
+
+══════════════════════════════════════════════════
+             WAVEFRONT ERROR [nm RMS]
+—————————————————▾———————▾———————▾———————▾———————▾
+  temporal   62  |■■■■■■■■■■■■■■■■■■■■           |
+   fitting   38  |■■■■■■■■                       |
+  aliasing   22  |■■                             |
+    photon    9  |                               |
+    jitter    0  |                               |
+       ron    0  |                               |
+—————————————————▴———————▴———————▴———————▴———————▴
+     total   77
+══════════════════════════════════════════════════
+
+Spatiotemporal ✓   Noise ✓   Spatial-aliasing ✓
+[OG iter. 1/1]   OG = 1.00   WFE =  79 nm
+
+══════════════════════════════════════════════════
+             WAVEFRONT ERROR [nm RMS]
+—————————————————▾———————▾———————▾———————▾———————▾
+  temporal   62  |■■■■■■■■■■■■■■■■■■■            |
+   fitting   38  |■■■■■■■                        |
+  aliasing   26  |■■■                            |
+    photon   18  |■■                             |
+[...]
+</pre></div>
+</div>
+</details></section>
+</section>
+
+</article>
+    <nav class="pager" aria-label="Previous and next page"><a class="prev" href="modulation_abacus.html"><small>Previous</small>Modulation abacus</a><a class="next" href="pwfs_vs_shwfs_extended_obj.html"><small>Next</small>Pyramid vs Shack-Hartmann: extended objects</a>
+    </nav>
+  </main>
+  <aside class="side-right">
+    <div class="nav-group">On this page</div>
+    <ul>
+<li><a class="reference internal" href="#">Pyramid vs Shack-Hartmann: noise</a><ul>
+<li><a class="reference internal" href="#result">Result</a></li>
+<li><a class="reference internal" href="#code">Code</a></li>
+</ul>
+</li>
+</ul>
+
+  </aside>
+</div>
+
+<footer class="foot">
+  AOPERA 2.0.1 · <a href="https://gitlab.lam.fr/lam-grd-public/aopera">GitLab</a> · <a href="https://pypi.org/project/aopera/">PyPI</a> · <a href="https://gitlab.lam.fr/lam-grd-public/aopera/-/issues">Report an issue</a>
+</footer>
+
+  </body>
+</html>

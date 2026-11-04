@@ -1,0 +1,44 @@
+Installation
+============
+
+AOPERA is lightweight and only requires ``numpy``, ``scipy`` and ``astropy`` to run.
+Thus, there is very little risk of package incompatibility with other Python tools.
+
+Installation for end users
+--------------------------
+
+Use this option if you want a stable version of the library:
+
+.. code:: bash
+
+   pip install aopera
+
+This is a clean installation, but you may not have access to the tutorial examples. However, they can be found on the gitlab repository.
+
+Installation for contributors
+-----------------------------
+
+Use this option if you wish to actively contribute to AOPERA, or benefit from the very last commits.
+Navigate to the folder where to locate the AOPERA library and clone the git repository:
+
+.. code:: bash
+
+   git clone https://gitlab.lam.fr/lam-grd-public/aopera.git
+
+Then add AOPERA to your Python libraries
+
+.. code:: bash
+   
+   cd aopera
+   pip install -e .
+   
+Check your AOPERA version
+-------------------------
+
+You may know your current AOPERA version with the ``pip list`` command if AOPERA has been installed using ``pip``.
+The version number is also available with the following Python commands:
+
+.. code:: python
+   
+   import aopera
+   print(aopera.__version__)

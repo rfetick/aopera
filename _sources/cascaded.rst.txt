@@ -1,0 +1,71 @@
+.. role:: raw-html(raw)
+   :format: html
+
+Cascaded AO
+===========
+
+A second AO stage does not see the atmosphere: it sees what the first stage left behind.
+In AOPERA, the result of a first ``simulation`` is simply given as input to a second one.
+This tutorial follows ``example/AO_cascaded_simulation.py``, and the code shown here is read from that script.
+You should have done :doc:`tutorial` first.
+
+.. raw:: html
+
+   <p>The same path is drawn on the <a href="flow.html#second-stage">Second Stage AO tab of the code flow</a>.</p>
+
+Parameters
+----------
+
+Each stage has its own ``.ini`` file. ``CUBE_BINS`` keeps the temporal PSD cubes at a bounded size: this is what the second stage receives.
+
+.. literalinclude:: ../example/AO_cascaded_simulation.py
+   :language: python
+   :start-after: #%% PARAMETERS
+   :end-before: #%% READ CONFIG FILE
+
+Objects of the two stages
+-------------------------
+
+The atmosphere is common. Each stage has its own WFS source, RTC, WFS and pupil, and the sampling of the second stage follows from the ratio of the WFS wavelengths.
+
+.. literalinclude:: ../example/AO_cascaded_simulation.py
+   :language: python
+   :start-after: #%% READ CONFIG FILE
+   :end-before: print('##### First stage ####')
+
+First stage
+-----------
+
+This is a normal simulation. Its temporal PSD cubes stay in the result (``keep_cubes`` is true by default), gathered in ``cube_bins`` temporal bins. ``nu_max`` sets the maximal temporal frequency, here the loop frequency of the next stage.
+
+.. literalinclude:: ../example/AO_cascaded_simulation.py
+   :language: python
+   :start-after: #%% AO first stage
+   :end-before: #%% AO second stage
+
+Second stage
+------------
+
+The output PSD of a stage is given at the wavelength of its WFS, so the cubes and their temporal frequencies are first scaled to the wavelength of the next WFS. The result of the first stage then takes the place of the frozen-flow input.
+
+.. literalinclude:: ../example/AO_cascaded_simulation.py
+   :language: python
+   :start-after: #%% AO second stage
+   :end-before: #%%
+
+From the PSD to the science PSF
+-------------------------------
+
+Here too the PSD is at the wavelength of the second WFS, and must be scaled to the science wavelength.
+
+.. literalinclude:: ../example/AO_cascaded_simulation.py
+   :language: python
+   :start-after: #%% PSD SCALING from WFS WVL to SCIENCE WVL
+   :end-before: #%% GET CIRCAVG for PLOT
+
+Result
+------
+
+.. raw:: html
+
+   <div class="figs"><a href="gallery/AO_cascaded_simulation/fig_1.svg"><img src="gallery/AO_cascaded_simulation/fig_1.svg" alt="PSD of each error term after the second stage"></a><a href="gallery/AO_cascaded_simulation/fig_2.svg"><img src="gallery/AO_cascaded_simulation/fig_2.svg" alt="PSF at the second-stage WFS and science wavelengths"></a></div>

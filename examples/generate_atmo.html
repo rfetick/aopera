@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Generate an atmosphere &#8212; AOPERA docs</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=92fd9be5" />
+    <link rel="stylesheet" type="text/css" href="../_static/aopera.css?v=ddfc3e89" />
+    <script src="../_static/documentation_options.js?v=f5cff4aa"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Tip-tilt temporal PSD" href="turbulence_tiptilt.html" />
+    <link rel="prev" title="MMSE reconstructor" href="reconstructor_MMSE.html" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,650&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../_static/topbar.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+  </head><body>
+<header class="topbar">
+  <a class="brand" href="../index.html">AOPERA<span class="ver">2.0.1</span></a>
+  <nav aria-label="Main">
+    <a href="../tutorial.html">Tutorials</a>
+    <a href="../flow.html">Code flow</a>
+    <a href="index.html" aria-current="true">Examples</a>
+    <a href="../api.html">API</a>
+    <a href="../validation.html">Validation</a>
+  </nav>
+  <form class="search" action="../search.html" method="get" role="search">
+    <input type="search" name="q" placeholder="Search the docs" aria-label="Search the docs">
+  </form>
+</header>
+
+<div class="page">
+  <aside class="side-left">
+    <div class="nav-group">Start</div>
+    <a class="nav-item" href="../installation.html">Installation</a>
+    <a class="nav-item" href="../tutorial.html">Your first simulation</a>
+    <a class="nav-item" href="../cascaded.html">Cascaded AO</a>
+    <div class="nav-group">Understand</div>
+    <a class="nav-item" href="../flow.html">Code flow</a>
+    <div class="nav-group">Examples</div>
+    <a class="nav-item on" href="index.html">Example gallery</a>
+    <div class="nav-group">Reference</div>
+    <a class="nav-item" href="../api.html">Code documentation</a>
+    <a class="nav-item" href="../validation.html">Validation</a>
+  </aside>
+  <main class="doc" role="main">
+    <article>
+  <section id="generate-an-atmosphere">
+<h1>Generate an atmosphere<a class="headerlink" href="#generate-an-atmosphere" title="Link to this heading">¶</a></h1>
+<p>Random phase and log-amplitude screens from a turbulence profile.</p>
+<p>Script: <code class="docutils literal notranslate"><span class="pre">example/generate_atmo.py</span></code></p>
+<section id="result">
+<h2>Result<a class="headerlink" href="#result" title="Link to this heading">¶</a></h2>
+<div class="figs"><a href="../gallery/generate_atmo/fig_1.svg"><img src="../gallery/generate_atmo/fig_1.svg" alt="Figure 1 of generate_atmo.py" loading="lazy"></a><a href="../gallery/generate_atmo/fig_2.svg"><img src="../gallery/generate_atmo/fig_2.svg" alt="Figure 2 of generate_atmo.py" loading="lazy"></a></div></section>
+<section id="code">
+<h2>Code<a class="headerlink" href="#code" title="Link to this heading">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Generate an atmosphere</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">aopera.turbulence</span> <span class="kn">import</span> <span class="n">cn2dh_to_r0</span><span class="p">,</span> <span class="n">phase_psd</span><span class="p">,</span> <span class="n">random_sample</span><span class="p">,</span> <span class="n">logamp_psd</span><span class="p">,</span> <span class="n">logamp_variance</span>
+
+<span class="c1">#%% PARAMETERS</span>
+
+<span class="c1">### SOURCE</span>
+<span class="n">wvl</span> <span class="o">=</span> <span class="mf">500e-9</span>
+<span class="n">zenith</span> <span class="o">=</span> <span class="mi">30</span>  <span class="c1"># zenith angle [deg]</span>
+<span class="n">src_alt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+
+<span class="c1">### ATMOSPHERE</span>
+<span class="n">cn2dh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">])</span><span class="o">*</span><span class="mf">1e-12</span>  <span class="c1"># layers cn2dh</span>
+<span class="n">alt</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10000</span><span class="p">]</span>  <span class="c1"># layers altitude [m]</span>
+<span class="n">lext</span> <span class="o">=</span> <span class="mi">15</span>  <span class="c1"># Von-Karman outer scale [m]</span>
+<span class="n">lint</span> <span class="o">=</span> <span class="mf">5e-3</span>  <span class="c1"># Von-Karman internal scale [m]</span>
+
+<span class="c1">### SIMULATION</span>
+<span class="n">npix</span> <span class="o">=</span> <span class="mi">1024</span>  <span class="c1"># number of pixels</span>
+<span class="n">length</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># size of phase screen array [m]</span>
+
+<span class="c1">#%% COMPUTE r0 and log-amplitude variance</span>
+<span class="n">zenith_rad</span> <span class="o">=</span> <span class="n">zenith</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">180</span>
+<span class="n">r0</span> <span class="o">=</span> <span class="n">cn2dh_to_r0</span><span class="p">(</span><span class="n">cn2dh</span><span class="p">,</span> <span class="n">wvl</span><span class="p">,</span> <span class="n">zenith</span><span class="o">=</span><span class="n">zenith_rad</span><span class="p">)</span>
+<span class="n">logamp_var</span> <span class="o">=</span> <span class="n">logamp_variance</span><span class="p">(</span><span class="n">alt</span><span class="p">,</span> <span class="n">cn2dh</span><span class="p">,</span> <span class="n">wvl</span><span class="p">,</span> <span class="n">zenith</span><span class="o">=</span><span class="n">zenith_rad</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;r0 : </span><span class="si">%.1f</span><span class="s2"> cm (wvl=</span><span class="si">%u</span><span class="s2">nm, z=</span><span class="si">%u</span><span class="s2">°)&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">r0</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span> <span class="n">wvl</span><span class="o">*</span><span class="mf">1e9</span><span class="p">,</span><span class="n">zenith</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;log-amp variance : </span><span class="si">%.2f</span><span class="s2">&quot;</span><span class="o">%</span><span class="n">logamp_var</span><span class="p">)</span>
+
+<span class="c1">#%% GET PSD 1D</span>
+<span class="n">f_1d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="n">npix</span><span class="p">)</span>
+<span class="n">psd_1d</span> <span class="o">=</span> <span class="n">phase_psd</span><span class="p">(</span><span class="n">f_1d</span><span class="p">,</span> <span class="n">r0</span><span class="p">,</span> <span class="n">lext</span><span class="o">=</span><span class="n">lext</span><span class="p">,</span> <span class="n">lint</span><span class="o">=</span><span class="n">lint</span><span class="p">)</span>
+<span class="n">psd_1d_logamp</span> <span class="o">=</span> <span class="n">logamp_psd</span><span class="p">(</span><span class="n">f_1d</span><span class="p">,</span> <span class="n">alt</span><span class="p">,</span> <span class="n">cn2dh</span><span class="p">,</span> <span class="n">wvl</span><span class="p">,</span> <span class="n">lext</span><span class="o">=</span><span class="n">lext</span><span class="p">,</span> <span class="n">lint</span><span class="o">=</span><span class="n">lint</span><span class="p">,</span> <span class="n">zenith</span><span class="o">=</span><span class="n">zenith_rad</span><span class="p">)</span>
+
+<span class="c1">#%% GET PSD 2D</span>
+<span class="n">fx</span><span class="p">,</span><span class="n">fy</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mgrid</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">npix</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="n">npix</span><span class="p">]</span> <span class="o">-</span> <span class="n">npix</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">length</span>
+<span class="n">f_2d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">fx</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">fy</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">psd_2d</span> <span class="o">=</span> <span class="n">phase_psd</span><span class="p">(</span><span class="n">f_2d</span><span class="p">,</span> <span class="n">r0</span><span class="p">,</span> <span class="n">lext</span><span class="o">=</span><span class="n">lext</span><span class="p">,</span> <span class="n">lint</span><span class="o">=</span><span class="n">lint</span><span class="p">)</span>
+<span class="n">psd_2d_logamp</span> <span class="o">=</span> <span class="n">logamp_psd</span><span class="p">(</span><span class="n">f_2d</span><span class="p">,</span> <span class="n">alt</span><span class="p">,</span> <span class="n">cn2dh</span><span class="p">,</span> <span class="n">wvl</span><span class="p">,</span> <span class="n">lext</span><span class="o">=</span><span class="n">lext</span><span class="p">,</span> <span class="n">lint</span><span class="o">=</span><span class="n">lint</span><span class="p">,</span> <span class="n">zenith</span><span class="o">=</span><span class="n">zenith_rad</span><span class="p">)</span>
+
+<span class="c1">#%% PLOT</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">121</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;OPD PSD [um² m²]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">f_1d</span><span class="p">,</span> <span class="n">psd_1d</span><span class="o">*</span><span class="p">(</span><span class="n">wvl</span><span class="o">*</span><span class="mf">1e6</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mf">1e-2</span><span class="p">,</span> <span class="mf">1e3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mf">1e-14</span><span class="p">,</span> <span class="mf">1e4</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Frequency [1/m]&quot;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">122</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Log-amplitude PSD [m²]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">f_1d</span><span class="p">,</span> <span class="n">psd_1d_logamp</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mf">1e-2</span><span class="p">,</span> <span class="mf">1e3</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mf">1e-8</span><span class="p">,</span> <span class="mf">1e-2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Frequency [1/m]&quot;</span><span class="p">)</span>
+
+
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">num</span><span class="o">=</span><span class="n">npix</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">121</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;OPD [um]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">pcolormesh</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">random_sample</span><span class="p">(</span><span class="n">psd_2d</span><span class="p">,</span> <span class="n">length</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">wvl</span><span class="o">*</span><span class="mf">1e6</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;image&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;X [m]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Y [m]&quot;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">122</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Log-amplitude&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">pcolormesh</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">random_sample</span><span class="p">(</span><span class="n">psd_2d_logamp</span><span class="p">,</span> <span class="n">length</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;image&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;X [m]&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Y [m]&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<details><summary>Console output</summary><div class="highlight-text notranslate"><div class="highlight"><pre><span></span>r0 : 6.6 cm (wvl=500nm, z=30°)
+log-amp variance : 0.05
+</pre></div>
+</div>
+</details></section>
+</section>
+
+</article>
+    <nav class="pager" aria-label="Previous and next page"><a class="prev" href="reconstructor_MMSE.html"><small>Previous</small>MMSE reconstructor</a><a class="next" href="turbulence_tiptilt.html"><small>Next</small>Tip-tilt temporal PSD</a>
+    </nav>
+  </main>
+  <aside class="side-right">
+    <div class="nav-group">On this page</div>
+    <ul>
+<li><a class="reference internal" href="#">Generate an atmosphere</a><ul>
+<li><a class="reference internal" href="#result">Result</a></li>
+<li><a class="reference internal" href="#code">Code</a></li>
+</ul>
+</li>
+</ul>
+
+  </aside>
+</div>
+
+<footer class="foot">
+  AOPERA 2.0.1 · <a href="https://gitlab.lam.fr/lam-grd-public/aopera">GitLab</a> · <a href="https://pypi.org/project/aopera/">PyPI</a> · <a href="https://gitlab.lam.fr/lam-grd-public/aopera/-/issues">Report an issue</a>
+</footer>
+
+  </body>
+</html>

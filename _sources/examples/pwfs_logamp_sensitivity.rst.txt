@@ -1,0 +1,19 @@
+Pyramid log-amplitude sensitivity
+=================================
+
+Phase and log-amplitude sensitivity of a pyramid WFS.
+
+Script: ``example/pwfs_logamp_sensitivity.py``
+
+Result
+------
+
+.. raw:: html
+
+   <div class="figs"><a href="../gallery/pwfs_logamp_sensitivity/fig_1.svg"><img src="../gallery/pwfs_logamp_sensitivity/fig_1.svg" alt="Figure 1 of pwfs_logamp_sensitivity.py" loading="lazy"></a><a href="../gallery/pwfs_logamp_sensitivity/fig_2.svg"><img src="../gallery/pwfs_logamp_sensitivity/fig_2.svg" alt="Figure 2 of pwfs_logamp_sensitivity.py" loading="lazy"></a></div>
+
+Code
+----
+
+.. literalinclude:: ../../example/pwfs_logamp_sensitivity.py
+   :language: python

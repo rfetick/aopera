@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Example gallery &#8212; AOPERA docs</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=92fd9be5" />
+    <link rel="stylesheet" type="text/css" href="../_static/aopera.css?v=ddfc3e89" />
+    <script src="../_static/documentation_options.js?v=f5cff4aa"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Single-stage AO" href="AO_simulation.html" />
+    <link rel="prev" title="Cascaded AO" href="../cascaded.html" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,650&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../_static/topbar.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+  </head><body>
+<header class="topbar">
+  <a class="brand" href="../index.html">AOPERA<span class="ver">2.0.1</span></a>
+  <nav aria-label="Main">
+    <a href="../tutorial.html">Tutorials</a>
+    <a href="../flow.html">Code flow</a>
+    <a href="#" aria-current="true">Examples</a>
+    <a href="../api.html">API</a>
+    <a href="../validation.html">Validation</a>
+  </nav>
+  <form class="search" action="../search.html" method="get" role="search">
+    <input type="search" name="q" placeholder="Search the docs" aria-label="Search the docs">
+  </form>
+</header>
+
+<div class="page">
+  <aside class="side-left">
+    <div class="nav-group">Start</div>
+    <a class="nav-item" href="../installation.html">Installation</a>
+    <a class="nav-item" href="../tutorial.html">Your first simulation</a>
+    <a class="nav-item" href="../cascaded.html">Cascaded AO</a>
+    <div class="nav-group">Understand</div>
+    <a class="nav-item" href="../flow.html">Code flow</a>
+    <div class="nav-group">Examples</div>
+    <a class="nav-item on" href="#">Example gallery</a>
+    <div class="nav-group">Reference</div>
+    <a class="nav-item" href="../api.html">Code documentation</a>
+    <a class="nav-item" href="../validation.html">Validation</a>
+  </aside>
+  <main class="doc" role="main">
+    <article>
+  <section id="example-gallery">
+<h1>Example gallery<a class="headerlink" href="#example-gallery" title="Link to this heading">¶</a></h1>
+<p>The scripts of the <code class="docutils literal notranslate"><span class="pre">example/</span></code> folder. The figures come from running them.</p>
+<section id="full-ao-simulations">
+<h2>Full AO simulations<a class="headerlink" href="#full-ao-simulations" title="Link to this heading">¶</a></h2>
+<div class="gallery">
+<a class="card" href="AO_simulation.html"><div class="thumb"><img src="../gallery/AO_simulation/fig_1.svg" alt="First figure of AO_simulation.py" loading="lazy"></div><div class="ctext"><b>Single-stage AO</b><span>The complete run behind the tutorial: error budget, PSD, PSF and Strehl ratio.</span></div></a>
+<a class="card" href="AO_cascaded_simulation.html"><div class="thumb"><img src="../gallery/AO_cascaded_simulation/fig_1.svg" alt="First figure of AO_cascaded_simulation.py" loading="lazy"></div><div class="ctext"><b>Cascaded AO</b><span>A first-stage result fed into a second AO stage, down to the science PSF.</span></div></a>
+<a class="card" href="harmoni-scao.html"><div class="thumb"><em>Did not run in the test build</em></div><div class="ctext"><b>ELT/HARMONI-SCAO</b><span>Phase PSD and PSF for an ELT instrument.</span></div></a>
+<a class="card" href="modulation_abacus.html"><div class="thumb"><img src="../gallery/modulation_abacus/fig_1.svg" alt="First figure of modulation_abacus.py" loading="lazy"></div><div class="ctext"><b>Modulation abacus</b><span>Strehl ratio and optical gain against the guide star magnitude, for several pyramid modulations.</span></div></a>
+</div></section>
+<section id="wavefront-sensors">
+<h2>Wavefront sensors<a class="headerlink" href="#wavefront-sensors" title="Link to this heading">¶</a></h2>
+<div class="gallery">
+<a class="card" href="pwfs_vs_shwfs_noise.html"><div class="thumb"><img src="../gallery/pwfs_vs_shwfs_noise/fig_1.svg" alt="First figure of pwfs_vs_shwfs_noise.py" loading="lazy"></div><div class="ctext"><b>Pyramid vs Shack-Hartmann: noise</b><span>Comparison of the two sensors.</span></div></a>
+<a class="card" href="pwfs_vs_shwfs_extended_obj.html"><div class="thumb"><img src="../gallery/pwfs_vs_shwfs_extended_obj/fig_1.svg" alt="First figure of pwfs_vs_shwfs_extended_obj.py" loading="lazy"></div><div class="ctext"><b>Pyramid vs Shack-Hartmann: extended objects</b><span>Comparison of the two sensors on extended objects.</span></div></a>
+<a class="card" href="pwfs_sensitivity.html"><div class="thumb"><img src="../gallery/pwfs_sensitivity/fig_1.svg" alt="First figure of pwfs_sensitivity.py" loading="lazy"></div><div class="ctext"><b>Pyramid sensitivity</b><span>RON sensitivity of a pyramid WFS.</span></div></a>
+<a class="card" href="pwfs_logamp_sensitivity.html"><div class="thumb"><img src="../gallery/pwfs_logamp_sensitivity/fig_1.svg" alt="First figure of pwfs_logamp_sensitivity.py" loading="lazy"></div><div class="ctext"><b>Pyramid log-amplitude sensitivity</b><span>Phase and log-amplitude sensitivity of a pyramid WFS.</span></div></a>
+<a class="card" href="pwfs_pupil.html"><div class="thumb"><img src="../gallery/pwfs_pupil/fig_1.svg" alt="First figure of pwfs_pupil.py" loading="lazy"></div><div class="ctext"><b>Pyramid pupils</b><span>Script working with the pyramid signal on a random turbulent phase.</span></div></a>
+</div></section>
+<section id="control-and-reconstruction">
+<h2>Control and reconstruction<a class="headerlink" href="#control-and-reconstruction" title="Link to this heading">¶</a></h2>
+<div class="gallery">
+<a class="card" href="ETF.html"><div class="thumb"><img src="../gallery/ETF/fig_1.svg" alt="First figure of ETF.py" loading="lazy"></div><div class="ctext"><b>Transfer functions</b><span>ETF in continuous and discrete transforms, NTF, and the analytical bandwidths.</span></div></a>
+<a class="card" href="reconstructor_MMSE.html"><div class="thumb"><img src="../gallery/reconstructor_MMSE/fig_1.svg" alt="First figure of reconstructor_MMSE.py" loading="lazy"></div><div class="ctext"><b>MMSE reconstructor</b><span>AO simulation with an MMSE reconstructor.</span></div></a>
+</div></section>
+<section id="turbulence-and-short-exposures">
+<h2>Turbulence and short exposures<a class="headerlink" href="#turbulence-and-short-exposures" title="Link to this heading">¶</a></h2>
+<div class="gallery">
+<a class="card" href="generate_atmo.html"><div class="thumb"><img src="../gallery/generate_atmo/fig_1.svg" alt="First figure of generate_atmo.py" loading="lazy"></div><div class="ctext"><b>Generate an atmosphere</b><span>Random phase and log-amplitude screens from a turbulence profile.</span></div></a>
+<a class="card" href="turbulence_tiptilt.html"><div class="thumb"><img src="../gallery/turbulence_tiptilt/fig_1.svg" alt="First figure of turbulence_tiptilt.py" loading="lazy"></div><div class="ctext"><b>Tip-tilt temporal PSD</b><span>Temporal PSD of the turbulence tip-tilt.</span></div></a>
+<a class="card" href="short_exposure_ao.html"><div class="thumb"><img src="../gallery/short_exposure_ao/fig_1.svg" alt="First figure of short_exposure_ao.py" loading="lazy"></div><div class="ctext"><b>Short exposures with AO</b><span>Minimal AO example without OG computation, with short exposures.</span></div></a>
+<a class="card" href="short_exposure_atmo.html"><div class="thumb"><img src="../gallery/short_exposure_atmo/fig_1.svg" alt="First figure of short_exposure_atmo.py" loading="lazy"></div><div class="ctext"><b>Short exposures without AO</b><span>Short exposures through the turbulence alone.</span></div></a>
+</div><div class="toctree-wrapper compound">
+</div>
+</section>
+</section>
+
+</article>
+    <nav class="pager" aria-label="Previous and next page"><a class="prev" href="../cascaded.html"><small>Previous</small>Cascaded AO</a><a class="next" href="AO_simulation.html"><small>Next</small>Single-stage AO</a>
+    </nav>
+  </main>
+  <aside class="side-right">
+    <div class="nav-group">On this page</div>
+    <ul>
+<li><a class="reference internal" href="#">Example gallery</a><ul>
+<li><a class="reference internal" href="#full-ao-simulations">Full AO simulations</a></li>
+<li><a class="reference internal" href="#wavefront-sensors">Wavefront sensors</a></li>
+<li><a class="reference internal" href="#control-and-reconstruction">Control and reconstruction</a></li>
+<li><a class="reference internal" href="#turbulence-and-short-exposures">Turbulence and short exposures</a></li>
+</ul>
+</li>
+</ul>
+
+  </aside>
+</div>
+
+<footer class="foot">
+  AOPERA 2.0.1 · <a href="https://gitlab.lam.fr/lam-grd-public/aopera">GitLab</a> · <a href="https://pypi.org/project/aopera/">PyPI</a> · <a href="https://gitlab.lam.fr/lam-grd-public/aopera/-/issues">Report an issue</a>
+</footer>
+
+  </body>
+</html>

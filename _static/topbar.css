@@ -1,0 +1,17 @@
+/* Shared with the code flow page, which has its own tokens. */
+.topbar { position: sticky; top: 0; z-index: 20; display: flex; align-items: center; gap: 22px; height: 54px; padding: 0 22px;
+  background: var(--panel); border-bottom: 1px solid var(--line); font-family: var(--f-body); box-sizing: border-box; }
+.topbar .brand { font: 650 19px var(--f-display); color: var(--ink); text-decoration: none; white-space: nowrap; }
+.topbar .ver { margin-left: 8px; font: 500 11.5px var(--f-mono); color: var(--muted); }
+.topbar nav { display: flex; gap: 4px; flex: 1; min-width: 0; overflow-x: auto; scrollbar-width: none; }
+.topbar nav a { padding: 6px 10px; border-radius: 6px; color: var(--muted); font-size: 14px; font-weight: 500; text-decoration: none; white-space: nowrap; }
+.topbar nav a:hover { color: var(--ink); background: var(--bg); }
+.topbar nav a[aria-current] { color: var(--accent); background: var(--accent-soft); }
+.topbar .search input { width: 170px; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--ink); font: 13.5px var(--f-body); }
+.topbar .search input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+@media (max-width: 760px) {
+  .topbar { flex-wrap: wrap; height: auto; padding: 8px 16px; gap: 6px 12px; }
+  .topbar nav { order: 3; flex-basis: 100%; }
+  .topbar .search { margin-left: auto; }
+  .topbar .search input { width: 130px; }
+}

@@ -1,0 +1,19 @@
+Short exposures without AO
+==========================
+
+Short exposures through the turbulence alone.
+
+Script: ``example/short_exposure_atmo.py``
+
+Result
+------
+
+.. raw:: html
+
+   <div class="figs"><a href="../gallery/short_exposure_atmo/fig_1.svg"><img src="../gallery/short_exposure_atmo/fig_1.svg" alt="Figure 1 of short_exposure_atmo.py" loading="lazy"></a></div>
+
+Code
+----
+
+.. literalinclude:: ../../example/short_exposure_atmo.py
+   :language: python

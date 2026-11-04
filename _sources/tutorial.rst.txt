@@ -1,0 +1,174 @@
+.. role:: raw-html(raw)
+   :format: html
+
+Tutorial
+========
+
+Welcome! This beginner tutorial shows you how to use AOPERA to run a full AO simulation.
+We wish this tutorial easy and complete enough for you to be able to define your own observing scenario as soon as you reach the bottom of this page.
+
+The tutorial is split below section by section for a pedagogic approach, however the full code is available at:
+
+https://gitlab.lam.fr/lam-grd-public/aopera/-/blob/main/example/AO_simulation.py
+
+Imports
+-------
+
+Let's start our journey by importing all functions and classes we will need for the tutorial.
+
+.. code:: python
+
+   import numpy as np
+   import matplotlib.pyplot as plt
+   from matplotlib.colors import LogNorm
+   from aopera.turbulence import Atmosphere
+   from aopera.control import RTC
+   from aopera.otfpsf import Pupil
+   from aopera.ffwfs import PWFS
+   from aopera.shwfs import SHWFS
+   from aopera.photometry import SourceScience, SourceWFS, Band
+   from aopera.utils import rad2arcsec
+   from aopera.simulation import simulation
+   
+Simulation case
+---------------
+
+There are two ways of defining an observation scenario with AOPERA:
+
+* Entering the parameters directly from your python script (useful to automatically chain codes or iterate over some parameters).
+* Loading configuration files (useful to share a defined observation scenario between users).
+
+Here, for the sake of simplicity, we will define the scenario from two preset files: one for the atmosphere, one for the telescope and AO instrument.
+These files are located in the ``aopera/aopera/data/`` folder if you want to look at their parameters.
+You can also define your own files if needed and write down their paths below.
+   
+.. code:: python
+   
+   file_atmo = 'ohp.ini'
+   file_instru = 'papyrus.ini'
+   nx = 512 # number of pixels for simulation
+   samp = 3 # sampling at WFS wavelength
+
+Loading data from files
+-----------------------
+
+The files are now read and transformed into Python objects. We need six objects in order to run a simulation:
+
+* ``Atmosphere`` : the mighty turbulent atmosphere,
+* ``Pupil`` : the telescope pupil and the AO deformable mirror,
+* ``SourceScience`` : the scientific target,
+* ``SourceWFS`` : the wavefront sensor guiding source,
+* ``PWFS`` or ``SHWFS`` : the AO wavefront sensor,
+* ``RTC`` : the real time computer and the AO temporal behaviour.
+
+.. code:: python
+
+   src_sci = SourceScience.from_file(file_instru)
+   src_wfs = SourceWFS.from_file(file_instru)
+   atm = Atmosphere.from_file(file_atmo)
+   tel = Pupil.from_file(file_instru)
+   rtc = RTC.from_file(file_instru)
+   try:
+       wfs = PWFS.from_file(file_instru)
+   except:
+       wfs = SHWFS.from_file(file_instru)
+	   
+Attributes from the objects may be updated after loading. We will modify here the zenithal angle of the scientific source and the flux of the WFS source.
+   
+.. code:: python
+
+   zenith_deg = 30
+   magV = 6
+   src_sci.zenith_deg = zenith_deg
+   src_wfs.flux = Band('V').mag2photon(magV)
+
+Let's print our objects to see what they look like and give a final check before continuing.
+
+.. code:: python
+
+   print(src_sci)
+   print(src_wfs)
+   print(atm)
+   print(tel)
+   print(rtc)
+   print(wfs)
+   
+Run the simulation
+------------------
+
+We are all set to launch the simulation. Good luck!
+
+.. code:: python
+   
+   result = simulation(nx, samp, tel, atm, rtc, wfs, src_sci, src_wfs, verbose=True)
+
+The ``verbose`` keyword prints the error budget to give you a quick look at your AO system performance. The following table is shown in the console.
+
+.. code:: text
+   
+   ══════════════════════════════════════════════════
+                WAVEFRONT ERROR [nm RMS]
+   —————————————————▾———————▾———————▾———————▾———————▾
+     temporal  151  |■■■■■■■■■■■■■■■■■■■            |
+      fitting   73  |■■■■                           |
+       jitter   65  |■■■■                           |
+         ncpa   50  |■■                             |
+       photon   33  |■                              |
+     aliasing   22  |                               |
+    chromatic   21  |                               |
+   refraction   15  |                               |
+          ron    4  |                               |
+   —————————————————▴———————▴———————▴———————▴———————▴
+        total  192
+   ══════════════════════════════════════════════════
+
+The ``simulation`` function returns a ``SimulationResult`` object, containing a bunch of information.
+The major information is the ``psd`` attribute that is a dictionary storing all the AO residual PSD terms.
+From this PSD, the ``SimulationResult`` can compute the PSF and the Strehl ratio at any wavelength.
+For example, we compute here all metrics at the science wavelength. Enjoy!
+
+.. code:: python
+   
+   psf_ao = result.psf_ao(src_sci.wvl)
+   psf_diff = result.psf_diffraction(src_sci.wvl)
+   strehl = 100 * result.strehl(src_sci.wvl)
+   
+Plots
+-----
+
+You may eventually plot the PSFs.
+
+.. code:: python
+   
+   def setplt(tab, nc=256, hfov=2, norm=LogNorm(vmin=1e-7,vmax=1e-1), **kwargs):
+       pix_size_arcsec = rad2arcsec((src_wfs.wvl/tel.diameter) / samp)
+       ext = pix_size_arcsec*nc
+       plt.imshow(tab[nx//2-nc:nx//2+nc,nx//2-nc:nx//2+nc], extent=(-ext,ext)*2, norm=norm, **kwargs)
+       plt.axis('image')
+       plt.xlim(-hfov, hfov)
+       plt.ylim(-hfov, hfov)
+       plt.xlabel('Position [arcsec]')
+       plt.ylabel('Position [arcsec]')
+	   
+   plt.figure(2, figsize=(8,4))
+   plt.clf()
+   plt.subplot(121)
+   plt.title('PSF diffraction')
+   setplt(psf_diff)
+   plt.subplot(122)
+   plt.title('PSF AO : Sr=%.1f%%'%strehl)
+   setplt(psf_ao)
+   plt.tight_layout()
+   
+Our tutorial ends here! You may now have learnt the basics of running a simulation with AOPERA and might be ready to setup your own observing scenario.
+
+Going further
+-------------
+
+The figures below come from running ``example/AO_simulation.py``, the full code of this tutorial.
+
+.. raw:: html
+
+   <div class="figs"><a href="gallery/AO_simulation/fig_1.svg"><img src="gallery/AO_simulation/fig_1.svg" alt="Phase PSD per error term and cumulated OPD"></a><a href="gallery/AO_simulation/fig_2.svg"><img src="gallery/AO_simulation/fig_2.svg" alt="Diffraction and AO PSF at the WFS and science wavelengths"></a></div>
+
+Next: chain two AO stages in :doc:`cascaded`, read the :raw-html:`<a href="flow.html">code flow</a>` to see what ``simulation`` does, or browse the :doc:`examples/index`.

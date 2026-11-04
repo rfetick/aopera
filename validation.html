@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Code validation &#8212; AOPERA docs</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=92fd9be5" />
+    <link rel="stylesheet" type="text/css" href="_static/aopera.css?v=ddfc3e89" />
+    <script src="_static/documentation_options.js?v=f5cff4aa"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Code documentation" href="api.html" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,650&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="_static/topbar.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+  </head><body>
+<header class="topbar">
+  <a class="brand" href="index.html">AOPERA<span class="ver">2.0.1</span></a>
+  <nav aria-label="Main">
+    <a href="tutorial.html">Tutorials</a>
+    <a href="flow.html">Code flow</a>
+    <a href="examples/index.html">Examples</a>
+    <a href="api.html">API</a>
+    <a href="#" aria-current="true">Validation</a>
+  </nav>
+  <form class="search" action="search.html" method="get" role="search">
+    <input type="search" name="q" placeholder="Search the docs" aria-label="Search the docs">
+  </form>
+</header>
+
+<div class="page">
+  <aside class="side-left">
+    <div class="nav-group">Start</div>
+    <a class="nav-item" href="installation.html">Installation</a>
+    <a class="nav-item" href="tutorial.html">Your first simulation</a>
+    <a class="nav-item" href="cascaded.html">Cascaded AO</a>
+    <div class="nav-group">Understand</div>
+    <a class="nav-item" href="flow.html">Code flow</a>
+    <div class="nav-group">Examples</div>
+    <a class="nav-item" href="examples/index.html">Example gallery</a>
+    <div class="nav-group">Reference</div>
+    <a class="nav-item" href="api.html">Code documentation</a>
+    <a class="nav-item on" href="#">Validation</a>
+  </aside>
+  <main class="doc" role="main">
+    <article>
+  <section id="code-validation">
+<h1>Code validation<a class="headerlink" href="#code-validation" title="Link to this heading">¶</a></h1>
+<section id="published-paper">
+<h2>Published paper<a class="headerlink" href="#published-paper" title="Link to this heading">¶</a></h2>
+<p>The main justification of the code is the reference paper published in the <em>Astronomy and Astrophysics</em> journal.
+It explains the method, explicits the equations used within the code, and shows comparisons with end-to-end simulation tool.</p>
+<p><a class="reference external" href="https://www.aanda.org/component/article?access=doi&amp;doi=10.1051/0004-6361/202661016">Fetick, Chambouleyron, Mazzolo et al, 2026, Astronomy and Astrophysics</a></p>
+</section>
+<section id="logging">
+<h2>Logging<a class="headerlink" href="#logging" title="Link to this heading">¶</a></h2>
+<p>You may set the Python <code class="docutils literal notranslate"><span class="pre">logging</span></code> package to debug level and run a script of your choice to see the highest level of insight into the code.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">logging</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;aopera&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="pytest-suite">
+<h2>Pytest suite<a class="headerlink" href="#pytest-suite" title="Link to this heading">¶</a></h2>
+<p>AOPERA comes with some unitary tests to check basic functions and consistency of the library. Navigate to the AOPERA folder and execute the command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pytest<span class="w"> </span>-v
+</pre></div>
+</div>
+</section>
+<section id="test-scripts">
+<h2>Test scripts<a class="headerlink" href="#test-scripts" title="Link to this heading">¶</a></h2>
+<p>Tests more evolved than pytest are located in the test-script subfolder. You may run these tests to check AOPERA performances, to compare with litterature or other Python codes.</p>
+</section>
+</section>
+
+</article>
+    <nav class="pager" aria-label="Previous and next page"><a class="prev" href="api.html"><small>Previous</small>Code documentation</a>
+    </nav>
+  </main>
+  <aside class="side-right">
+    <div class="nav-group">On this page</div>
+    <ul>
+<li><a class="reference internal" href="#">Code validation</a><ul>
+<li><a class="reference internal" href="#published-paper">Published paper</a></li>
+<li><a class="reference internal" href="#logging">Logging</a></li>
+<li><a class="reference internal" href="#pytest-suite">Pytest suite</a></li>
+<li><a class="reference internal" href="#test-scripts">Test scripts</a></li>
+</ul>
+</li>
+</ul>
+
+  </aside>
+</div>
+
+<footer class="foot">
+  AOPERA 2.0.1 · <a href="https://gitlab.lam.fr/lam-grd-public/aopera">GitLab</a> · <a href="https://pypi.org/project/aopera/">PyPI</a> · <a href="https://gitlab.lam.fr/lam-grd-public/aopera/-/issues">Report an issue</a>
+</footer>
+
+  </body>
+</html>

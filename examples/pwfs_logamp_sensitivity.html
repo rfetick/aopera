@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Pyramid log-amplitude sensitivity &#8212; AOPERA docs</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=92fd9be5" />
+    <link rel="stylesheet" type="text/css" href="../_static/aopera.css?v=ddfc3e89" />
+    <script src="../_static/documentation_options.js?v=f5cff4aa"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Pyramid pupils" href="pwfs_pupil.html" />
+    <link rel="prev" title="Pyramid sensitivity" href="pwfs_sensitivity.html" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,650&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../_static/topbar.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+  </head><body>
+<header class="topbar">
+  <a class="brand" href="../index.html">AOPERA<span class="ver">2.0.1</span></a>
+  <nav aria-label="Main">
+    <a href="../tutorial.html">Tutorials</a>
+    <a href="../flow.html">Code flow</a>
+    <a href="index.html" aria-current="true">Examples</a>
+    <a href="../api.html">API</a>
+    <a href="../validation.html">Validation</a>
+  </nav>
+  <form class="search" action="../search.html" method="get" role="search">
+    <input type="search" name="q" placeholder="Search the docs" aria-label="Search the docs">
+  </form>
+</header>
+
+<div class="page">
+  <aside class="side-left">
+    <div class="nav-group">Start</div>
+    <a class="nav-item" href="../installation.html">Installation</a>
+    <a class="nav-item" href="../tutorial.html">Your first simulation</a>
+    <a class="nav-item" href="../cascaded.html">Cascaded AO</a>
+    <div class="nav-group">Understand</div>
+    <a class="nav-item" href="../flow.html">Code flow</a>
+    <div class="nav-group">Examples</div>
+    <a class="nav-item on" href="index.html">Example gallery</a>
+    <div class="nav-group">Reference</div>
+    <a class="nav-item" href="../api.html">Code documentation</a>
+    <a class="nav-item" href="../validation.html">Validation</a>
+  </aside>
+  <main class="doc" role="main">
+    <article>
+  <section id="pyramid-log-amplitude-sensitivity">
+<h1>Pyramid log-amplitude sensitivity<a class="headerlink" href="#pyramid-log-amplitude-sensitivity" title="Link to this heading">¶</a></h1>
+<p>Phase and log-amplitude sensitivity of a pyramid WFS.</p>
+<p>Script: <code class="docutils literal notranslate"><span class="pre">example/pwfs_logamp_sensitivity.py</span></code></p>
+<section id="result">
+<h2>Result<a class="headerlink" href="#result" title="Link to this heading">¶</a></h2>
+<div class="figs"><a href="../gallery/pwfs_logamp_sensitivity/fig_1.svg"><img src="../gallery/pwfs_logamp_sensitivity/fig_1.svg" alt="Figure 1 of pwfs_logamp_sensitivity.py" loading="lazy"></a><a href="../gallery/pwfs_logamp_sensitivity/fig_2.svg"><img src="../gallery/pwfs_logamp_sensitivity/fig_2.svg" alt="Figure 2 of pwfs_logamp_sensitivity.py" loading="lazy"></a></div></section>
+<section id="code">
+<h2>Code<a class="headerlink" href="#code" title="Link to this heading">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Compute P-WFS phase sensitivity and log-amplitude sensitivity</span>
+
+<span class="sd">date: Fri Apr 10 11:50:08 2026</span>
+<span class="sd">author: rfetick</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">numpy.fft</span> <span class="kn">import</span> <span class="n">fft2</span><span class="p">,</span> <span class="n">fftshift</span><span class="p">,</span> <span class="n">ifft2</span><span class="p">,</span> <span class="n">ifftshift</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">aopera.otfpsf</span> <span class="kn">import</span> <span class="n">otf_diffraction</span><span class="p">,</span> <span class="n">otf2psf</span>
+<span class="kn">from</span> <span class="nn">aopera.ffwfs</span> <span class="kn">import</span> <span class="n">modulation</span><span class="p">,</span> <span class="n">pyramid_mask</span><span class="p">,</span> <span class="n">ffwfs_transfer_function</span>
+
+<span class="c1">#%% PARAMETERS</span>
+<span class="n">nx</span> <span class="o">=</span> <span class="mi">512</span>
+<span class="n">samp</span> <span class="o">=</span> <span class="mi">8</span>
+<span class="n">rmod</span> <span class="o">=</span> <span class="mi">3</span>
+
+<span class="c1">#%% COMPUTE</span>
+<span class="k">def</span> <span class="nf">fftconvolve</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">real</span><span class="p">(</span><span class="n">ifftshift</span><span class="p">(</span><span class="n">ifft2</span><span class="p">(</span><span class="n">fft2</span><span class="p">(</span><span class="n">fftshift</span><span class="p">(</span><span class="n">a</span><span class="p">))</span><span class="o">*</span><span class="n">fft2</span><span class="p">(</span><span class="n">fftshift</span><span class="p">(</span><span class="n">b</span><span class="p">)))))</span>
+
+<span class="n">otf_diff</span> <span class="o">=</span> <span class="n">otf_diffraction</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span> <span class="n">occ</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">samp</span><span class="o">=</span><span class="n">samp</span><span class="p">)</span>
+<span class="n">psf_diff</span> <span class="o">=</span> <span class="n">otf2psf</span><span class="p">(</span><span class="n">otf_diff</span><span class="p">)</span>
+
+<span class="n">mask</span> <span class="o">=</span> <span class="n">pyramid_mask</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="n">modu_pth</span> <span class="o">=</span> <span class="n">modulation</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span> <span class="n">rmod</span><span class="p">,</span> <span class="n">samp</span><span class="p">)</span>
+
+<span class="n">tf_phi</span> <span class="o">=</span> <span class="n">ffwfs_transfer_function</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">modu_pth</span><span class="p">,</span> <span class="n">psf_diff</span><span class="p">,</span> <span class="n">logamp</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">tf_chi</span> <span class="o">=</span> <span class="n">ffwfs_transfer_function</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">modu_pth</span><span class="p">,</span> <span class="n">psf_diff</span><span class="p">,</span> <span class="n">logamp</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">sensi_phi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">fftconvolve</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">tf_phi</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">psf_diff</span><span class="p">))</span>
+<span class="n">sensi_chi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">fftconvolve</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">tf_chi</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">psf_diff</span><span class="p">))</span>
+<span class="n">sensi_cross</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">fftconvolve</span><span class="p">(</span><span class="n">tf_chi</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">conjugate</span><span class="p">(</span><span class="n">tf_phi</span><span class="p">),</span> <span class="n">psf_diff</span><span class="p">)))</span>
+
+<span class="n">rec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">conjugate</span><span class="p">(</span><span class="n">tf_phi</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">tf_phi</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+
+<span class="c1">#%% PLOT</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">131</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Phase sensitivity&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">sensi_phi</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;Spectral_r&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">132</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Log-amplitude sensitivity&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">sensi_chi</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;Spectral_r&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">133</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Cross-sensitivity&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">sensi_cross</span><span class="p">,</span> <span class="n">vmin</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;Spectral_r&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Sensitivity&#39;</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">sensi_phi</span><span class="p">[</span><span class="n">nx</span><span class="o">//</span><span class="mi">2</span><span class="p">:,</span><span class="n">nx</span><span class="o">//</span><span class="mi">2</span><span class="p">:])</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">))</span> <span class="o">/</span> <span class="n">samp</span> <span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">rmod</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Frequency [cycle/pup]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+</article>
+    <nav class="pager" aria-label="Previous and next page"><a class="prev" href="pwfs_sensitivity.html"><small>Previous</small>Pyramid sensitivity</a><a class="next" href="pwfs_pupil.html"><small>Next</small>Pyramid pupils</a>
+    </nav>
+  </main>
+  <aside class="side-right">
+    <div class="nav-group">On this page</div>
+    <ul>
+<li><a class="reference internal" href="#">Pyramid log-amplitude sensitivity</a><ul>
+<li><a class="reference internal" href="#result">Result</a></li>
+<li><a class="reference internal" href="#code">Code</a></li>
+</ul>
+</li>
+</ul>
+
+  </aside>
+</div>
+
+<footer class="foot">
+  AOPERA 2.0.1 · <a href="https://gitlab.lam.fr/lam-grd-public/aopera">GitLab</a> · <a href="https://pypi.org/project/aopera/">PyPI</a> · <a href="https://gitlab.lam.fr/lam-grd-public/aopera/-/issues">Report an issue</a>
+</footer>
+
+  </body>
+</html>

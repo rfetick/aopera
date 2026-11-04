@@ -1,0 +1,33 @@
+Transfer functions
+==================
+
+ETF in continuous and discrete transforms, NTF, and the analytical bandwidths.
+
+Script: ``example/ETF.py``
+
+Result
+------
+
+.. raw:: html
+
+   <div class="figs"><a href="../gallery/ETF/fig_1.svg"><img src="../gallery/ETF/fig_1.svg" alt="Figure 1 of ETF.py" loading="lazy"></a></div>
+
+Code
+----
+
+.. literalinclude:: ../../example/ETF.py
+   :language: python
+
+.. raw:: html
+
+   <details><summary>Console output</summary>
+
+.. code:: text
+
+   bilateral integral of |NTF|²/Fao : 0.60
+   4 * BW / Fao                     : 0.26
+   2 * BW_noise / Fao               : 0.41
+
+.. raw:: html
+
+   </details>

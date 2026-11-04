@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Cascaded AO &#8212; AOPERA docs</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=92fd9be5" />
+    <link rel="stylesheet" type="text/css" href="../_static/aopera.css?v=ddfc3e89" />
+    <script src="../_static/documentation_options.js?v=f5cff4aa"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="ELT/HARMONI-SCAO" href="harmoni-scao.html" />
+    <link rel="prev" title="Single-stage AO" href="AO_simulation.html" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,650&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../_static/topbar.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+  </head><body>
+<header class="topbar">
+  <a class="brand" href="../index.html">AOPERA<span class="ver">2.0.1</span></a>
+  <nav aria-label="Main">
+    <a href="../tutorial.html">Tutorials</a>
+    <a href="../flow.html">Code flow</a>
+    <a href="index.html" aria-current="true">Examples</a>
+    <a href="../api.html">API</a>
+    <a href="../validation.html">Validation</a>
+  </nav>
+  <form class="search" action="../search.html" method="get" role="search">
+    <input type="search" name="q" placeholder="Search the docs" aria-label="Search the docs">
+  </form>
+</header>
+
+<div class="page">
+  <aside class="side-left">
+    <div class="nav-group">Start</div>
+    <a class="nav-item" href="../installation.html">Installation</a>
+    <a class="nav-item" href="../tutorial.html">Your first simulation</a>
+    <a class="nav-item" href="../cascaded.html">Cascaded AO</a>
+    <div class="nav-group">Understand</div>
+    <a class="nav-item" href="../flow.html">Code flow</a>
+    <div class="nav-group">Examples</div>
+    <a class="nav-item on" href="index.html">Example gallery</a>
+    <div class="nav-group">Reference</div>
+    <a class="nav-item" href="../api.html">Code documentation</a>
+    <a class="nav-item" href="../validation.html">Validation</a>
+  </aside>
+  <main class="doc" role="main">
+    <article>
+  <section id="cascaded-ao">
+<h1>Cascaded AO<a class="headerlink" href="#cascaded-ao" title="Link to this heading">¶</a></h1>
+<p>A first-stage result fed into a second AO stage, down to the science PSF.</p>
+<p>Script: <code class="docutils literal notranslate"><span class="pre">example/AO_cascaded_simulation.py</span></code></p>
+<section id="result">
+<h2>Result<a class="headerlink" href="#result" title="Link to this heading">¶</a></h2>
+<div class="figs"><a href="../gallery/AO_cascaded_simulation/fig_1.svg"><img src="../gallery/AO_cascaded_simulation/fig_1.svg" alt="Figure 1 of AO_cascaded_simulation.py" loading="lazy"></a><a href="../gallery/AO_cascaded_simulation/fig_2.svg"><img src="../gallery/AO_cascaded_simulation/fig_2.svg" alt="Figure 2 of AO_cascaded_simulation.py" loading="lazy"></a><a href="../gallery/AO_cascaded_simulation/fig_3.svg"><img src="../gallery/AO_cascaded_simulation/fig_3.svg" alt="Figure 3 of AO_cascaded_simulation.py" loading="lazy"></a><a href="../gallery/AO_cascaded_simulation/fig_4.svg"><img src="../gallery/AO_cascaded_simulation/fig_4.svg" alt="Figure 4 of AO_cascaded_simulation.py" loading="lazy"></a><a href="../gallery/AO_cascaded_simulation/fig_5.svg"><img src="../gallery/AO_cascaded_simulation/fig_5.svg" alt="Figure 5 of AO_cascaded_simulation.py" loading="lazy"></a><a href="../gallery/AO_cascaded_simulation/fig_6.svg"><img src="../gallery/AO_cascaded_simulation/fig_6.svg" alt="Figure 6 of AO_cascaded_simulation.py" loading="lazy"></a></div><p>The script makes 7 figures; the first 6 are shown.</p>
+</section>
+<section id="code">
+<h2>Code<a class="headerlink" href="#code" title="Link to this heading">¶</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Compute phase PSD and PSF for the instrument VLT/SPHERE.</span>
+
+<span class="sd">date: Fri Apr 11 11:29:41 2025</span>
+<span class="sd">author: rfetick</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">matplotlib.colors</span> <span class="kn">import</span> <span class="n">LogNorm</span>
+
+<span class="kn">from</span> <span class="nn">aopera.turbulence</span> <span class="kn">import</span> <span class="n">Atmosphere</span>
+<span class="kn">from</span> <span class="nn">aopera.control</span> <span class="kn">import</span> <span class="n">RTC</span>
+<span class="kn">from</span> <span class="nn">aopera.otfpsf</span> <span class="kn">import</span> <span class="n">Pupil</span>
+<span class="kn">from</span> <span class="nn">aopera.ffwfs</span> <span class="kn">import</span> <span class="n">PWFS</span>
+<span class="kn">from</span> <span class="nn">aopera.shwfs</span> <span class="kn">import</span> <span class="n">SHWFS</span>
+<span class="kn">from</span> <span class="nn">aopera.photometry</span> <span class="kn">import</span> <span class="n">SourceScience</span><span class="p">,</span> <span class="n">SourceWFS</span><span class="p">,</span> <span class="n">Band</span>
+<span class="kn">from</span> <span class="nn">aopera.utils</span> <span class="kn">import</span> <span class="n">rad2arcsec</span><span class="p">,</span> <span class="n">circavg</span>
+<span class="kn">from</span> <span class="nn">aopera.otfpsf</span> <span class="kn">import</span> <span class="n">psd2otf</span><span class="p">,</span> <span class="n">otf2psf</span>
+<span class="kn">from</span> <span class="nn">aopera.aopsd</span> <span class="kn">import</span> <span class="n">psd_wvl_scaling</span><span class="p">,</span> <span class="n">psd_cube_wvl_scaling</span><span class="p">,</span> <span class="n">freq_cube_wvl_scaling</span>
+<span class="kn">from</span> <span class="nn">aopera.simulation</span> <span class="kn">import</span> <span class="n">simulation</span>
+<span class="kn">from</span> <span class="nn">aopera.otfpsf</span> <span class="kn">import</span> <span class="n">VLTPupil</span>
+<span class="kn">from</span> <span class="nn">aopera.readconfig</span> <span class="kn">import</span> <span class="n">read_config_file</span>
+
+<span class="c1">#%% PARAMETERS</span>
+<span class="n">file_first_stage</span> <span class="o">=</span> <span class="s1">&#39;saxo.ini&#39;</span>
+<span class="n">file_second_stage</span> <span class="o">=</span> <span class="s1">&#39;saxoplus.ini&#39;</span>
+
+<span class="n">nx</span> <span class="o">=</span> <span class="mi">512</span>
+<span class="n">samp</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">NB_ITER_OG</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">IGNORE</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;jitter&#39;</span><span class="p">,</span><span class="s1">&#39;ncpa&#39;</span><span class="p">,</span><span class="s1">&#39;chromatic&#39;</span><span class="p">,</span><span class="s1">&#39;refraction&#39;</span><span class="p">]</span>
+<span class="n">CUBE_BINS</span> <span class="o">=</span> <span class="mi">100</span>
+
+<span class="c1">#%% READ CONFIG FILE</span>
+<span class="c1"># Telescope and atmosphere</span>
+<span class="n">src_sci</span> <span class="o">=</span> <span class="n">SourceScience</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">file_second_stage</span><span class="p">)</span>
+<span class="n">atm</span> <span class="o">=</span> <span class="n">Atmosphere</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">file_first_stage</span><span class="p">)</span>
+
+<span class="c1"># First stage</span>
+<span class="n">src_wfs</span> <span class="o">=</span> <span class="n">SourceWFS</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">file_first_stage</span><span class="p">)</span>
+<span class="n">src_sci_wfs_2</span> <span class="o">=</span> <span class="n">SourceScience</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">file_second_stage</span><span class="p">)</span>
+<span class="n">tel</span> <span class="o">=</span> <span class="n">VLTPupil</span><span class="p">(</span><span class="n">read_config_file</span><span class="p">(</span><span class="n">file_first_stage</span><span class="p">,</span> <span class="s1">&#39;pupil&#39;</span><span class="p">),</span> <span class="n">t_spiders</span><span class="o">=</span><span class="mf">0.00625</span><span class="p">,</span> <span class="n">angle_spiders</span><span class="o">=</span><span class="mf">50.5</span><span class="p">)</span>
+<span class="n">rtc</span> <span class="o">=</span> <span class="n">RTC</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">file_first_stage</span><span class="p">)</span>
+<span class="n">wfs</span> <span class="o">=</span> <span class="n">SHWFS</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">file_first_stage</span><span class="p">)</span>
+
+<span class="c1"># Second stage</span>
+<span class="n">src_wfs_2</span> <span class="o">=</span> <span class="n">SourceWFS</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">file_second_stage</span><span class="p">)</span>
+<span class="n">rtc_2</span> <span class="o">=</span> <span class="n">RTC</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">file_second_stage</span><span class="p">)</span>
+<span class="n">wfs_2</span> <span class="o">=</span> <span class="n">PWFS</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">file_second_stage</span><span class="p">)</span>
+<span class="n">tel_2</span> <span class="o">=</span> <span class="n">VLTPupil</span><span class="p">(</span><span class="n">read_config_file</span><span class="p">(</span><span class="n">file_second_stage</span><span class="p">,</span> <span class="s1">&#39;pupil&#39;</span><span class="p">),</span> <span class="n">t_spiders</span><span class="o">=</span><span class="mf">0.00625</span><span class="p">,</span> <span class="n">angle_spiders</span><span class="o">=</span><span class="mf">50.5</span><span class="p">)</span>
+<span class="n">samp2</span> <span class="o">=</span> <span class="n">samp</span><span class="o">*</span><span class="n">src_wfs_2</span><span class="o">.</span><span class="n">wvl</span><span class="o">/</span><span class="n">src_wfs</span><span class="o">.</span><span class="n">wvl</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;##### First stage ####&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">src_sci</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">src_wfs</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">atm</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">tel</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">rtc</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">wfs</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;##### Second stage ####&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">tel_2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">src_wfs_2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">rtc_2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">wfs_2</span><span class="p">)</span>
+
+
+
+<span class="c1">#%% AO first stage</span>
+<span class="n">result_first_stage</span> <span class="o">=</span>  <span class="n">simulation</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span> <span class="n">samp</span><span class="p">,</span> <span class="n">tel</span><span class="p">,</span> <span class="n">atm</span><span class="p">,</span> <span class="n">rtc</span><span class="p">,</span> <span class="n">wfs</span><span class="p">,</span> <span class="n">src_sci_wfs_2</span><span class="p">,</span> <span class="n">src_wfs</span><span class="p">,</span> <span class="n">nu_max</span><span class="o">=</span><span class="n">rtc_2</span><span class="o">.</span><span class="n">freq</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="n">IGNORE</span><span class="p">,</span> <span class="n">cube_bins</span><span class="o">=</span><span class="n">CUBE_BINS</span><span class="p">)</span>
+
+<span class="n">psd</span><span class="p">,</span> <span class="n">var</span><span class="p">,</span> <span class="n">param</span> <span class="o">=</span> <span class="n">result_first_stage</span><span class="o">.</span><span class="n">psd</span><span class="p">,</span> <span class="n">result_first_stage</span><span class="o">.</span><span class="n">var</span><span class="p">,</span> <span class="n">result_first_stage</span><span class="o">.</span><span class="n">param</span>
+<span class="n">psd_total</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">psd</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">psd</span><span class="o">.</span><span class="n">keys</span><span class="p">()])</span>
+
+
+<span class="c1">#%% AO second stage</span>
+<span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">result_first_stage</span><span class="o">.</span><span class="n">psd_cube</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+    <span class="n">result_first_stage</span><span class="o">.</span><span class="n">psd_cube</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">psd_cube_wvl_scaling</span><span class="p">(</span><span class="n">result_first_stage</span><span class="o">.</span><span class="n">psd_cube</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">src_wfs</span><span class="o">.</span><span class="n">wvl</span><span class="o">/</span><span class="n">src_wfs_2</span><span class="o">.</span><span class="n">wvl</span><span class="p">)</span>
+    <span class="n">result_first_stage</span><span class="o">.</span><span class="n">frequency_cube</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">freq_cube_wvl_scaling</span><span class="p">(</span><span class="n">result_first_stage</span><span class="o">.</span><span class="n">frequency_cube</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">src_wfs</span><span class="o">.</span><span class="n">wvl</span><span class="o">/</span><span class="n">src_wfs_2</span><span class="o">.</span><span class="n">wvl</span><span class="p">)</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">simulation</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span> <span class="n">samp2</span><span class="p">,</span> <span class="n">result_first_stage</span><span class="p">,</span> <span class="n">tel_2</span><span class="p">,</span> <span class="n">atm</span><span class="p">,</span> <span class="n">rtc_2</span><span class="p">,</span> <span class="n">wfs_2</span><span class="p">,</span> <span class="n">src_sci</span><span class="p">,</span> <span class="n">src_wfs_2</span><span class="p">,</span> <span class="n">nu_max</span><span class="o">=</span><span class="n">rtc_2</span><span class="o">.</span><span class="n">freq</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">nb_iter_og</span><span class="o">=</span><span class="n">NB_ITER_OG</span><span class="p">,</span> <span class="n">ignore</span><span class="o">=</span><span class="n">IGNORE</span><span class="p">,</span> <span class="n">cube_bins</span><span class="o">=</span><span class="n">CUBE_BINS</span><span class="p">)</span>
+
+<span class="c1">#%%</span>
+
+<span class="n">psd_total</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">result</span><span class="o">.</span><span class="n">psd</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">psd</span><span class="o">.</span><span class="n">keys</span><span class="p">()])</span>
+
+<span class="n">df</span> <span class="o">=</span> <span class="n">tel</span><span class="o">.</span><span class="n">frequency_step</span><span class="p">(</span><span class="n">samp2</span><span class="p">)</span>
+<span class="n">otf_diff</span> <span class="o">=</span> <span class="n">tel</span><span class="o">.</span><span class="n">otf_diffraction</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span> <span class="n">samp2</span><span class="p">)</span>
+<span class="n">psf_diff</span> <span class="o">=</span> <span class="n">tel</span><span class="o">.</span><span class="n">psf_diffraction</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span> <span class="n">samp2</span><span class="p">)</span>
+<span class="n">psf_ao</span> <span class="o">=</span> <span class="n">otf2psf</span><span class="p">(</span><span class="n">psd2otf</span><span class="p">(</span><span class="n">psd_total</span><span class="p">,</span> <span class="n">df</span><span class="p">)</span><span class="o">*</span><span class="n">otf_diff</span><span class="p">)</span>
+<span class="n">strehl</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">psf_ao</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">psf_diff</span><span class="p">)</span>
+
+<span class="c1">#%% PSD SCALING from WFS WVL to SCIENCE WVL</span>
+<span class="n">wvl_wfs_sci</span> <span class="o">=</span> <span class="n">src_wfs_2</span><span class="o">.</span><span class="n">wvl</span> <span class="o">/</span> <span class="n">src_sci</span><span class="o">.</span><span class="n">wvl</span> 
+<span class="n">df_sci</span> <span class="o">=</span> <span class="n">df</span> <span class="o">*</span> <span class="n">wvl_wfs_sci</span>
+<span class="n">otf_diff_sci</span> <span class="o">=</span> <span class="n">tel</span><span class="o">.</span><span class="n">otf_diffraction</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span> <span class="n">samp2</span><span class="o">/</span><span class="n">wvl_wfs_sci</span><span class="p">)</span>
+<span class="n">psd_total_sci</span> <span class="o">=</span> <span class="n">psd_wvl_scaling</span><span class="p">(</span><span class="n">psd_total</span><span class="p">,</span> <span class="n">wvl_wfs_sci</span><span class="p">)</span>
+<span class="n">psf_ao_sci</span> <span class="o">=</span> <span class="n">otf2psf</span><span class="p">(</span><span class="n">psd2otf</span><span class="p">(</span><span class="n">psd_total_sci</span><span class="p">,</span> <span class="n">df_sci</span><span class="p">)</span><span class="o">*</span><span class="n">otf_diff_sci</span><span class="p">)</span>
+
+<span class="n">psf_diff_sci</span> <span class="o">=</span> <span class="n">tel</span><span class="o">.</span><span class="n">psf_diffraction</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span> <span class="n">samp2</span><span class="o">/</span><span class="n">wvl_wfs_sci</span><span class="p">)</span>
+
+<span class="n">strehl_sci</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">psf_ao_sci</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">psf_diff_sci</span><span class="p">)</span>
+
+<span class="c1">#%% GET CIRCAVG for PLOT</span>
+<span class="nb">print</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Computing circular averages...&#39;</span><span class="p">)</span>
+
+<span class="n">rad_to_nm</span> <span class="o">=</span> <span class="mf">1e9</span><span class="o">*</span><span class="n">src_wfs_2</span><span class="o">.</span><span class="n">wvl</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+<span class="n">psdtotavg</span> <span class="o">=</span> <span class="n">circavg</span><span class="p">(</span><span class="n">psd_total</span><span class="p">)</span> <span class="o">*</span> <span class="n">rad_to_nm</span><span class="o">**</span><span class="mi">2</span>
+
+<span class="n">psdavg</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">result</span><span class="o">.</span><span class="n">psd</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+    <span class="n">psdavg</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">circavg</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">psd</span><span class="p">[</span><span class="n">k</span><span class="p">])</span> <span class="o">*</span> <span class="n">rad_to_nm</span><span class="o">**</span><span class="mi">2</span>
+
+<span class="c1">#%% PLOT</span>
+<span class="n">lw</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">psdtotavg</span><span class="p">))</span><span class="o">*</span><span class="n">df</span>
+<span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">psdavg</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">psdavg</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">lw</span><span class="o">=</span><span class="n">lw</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span><span class="o">%</span><span class="n">k</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">psdtotavg</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="n">lw</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;AO total&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="mi">20</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mf">1e-1</span><span class="p">,</span><span class="mf">1e5</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;PSD [nm²m²]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Frequency [1/m]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handlelength</span><span class="o">=</span><span class="mf">1.2</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">setplt</span><span class="p">(</span><span class="n">tab</span><span class="p">,</span> <span class="n">nc</span><span class="o">=</span><span class="n">nx</span><span class="o">//</span><span class="mi">2</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">LogNorm</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="mf">1e-7</span><span class="p">,</span><span class="n">vmax</span><span class="o">=</span><span class="mf">1e-1</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">pix_size_arcsec</span> <span class="o">=</span> <span class="n">rad2arcsec</span><span class="p">((</span><span class="n">src_wfs_2</span><span class="o">.</span><span class="n">wvl</span><span class="o">/</span><span class="n">tel</span><span class="o">.</span><span class="n">diameter</span><span class="p">)</span> <span class="o">/</span> <span class="n">samp2</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">nc</span><span class="p">)</span><span class="o">-</span><span class="n">nc</span><span class="p">)</span> <span class="o">*</span> <span class="n">pix_size_arcsec</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">pcolormesh</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">tab</span><span class="p">[</span><span class="n">nx</span><span class="o">//</span><span class="mi">2</span><span class="o">-</span><span class="n">nc</span><span class="p">:</span><span class="n">nx</span><span class="o">//</span><span class="mi">2</span><span class="o">+</span><span class="n">nc</span><span class="p">,</span><span class="n">nx</span><span class="o">//</span><span class="mi">2</span><span class="o">-</span><span class="n">nc</span><span class="p">:</span><span class="n">nx</span><span class="o">//</span><span class="mi">2</span><span class="o">+</span><span class="n">nc</span><span class="p">],</span> <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;image&#39;</span><span class="p">)</span>
+    <span class="n">hfov</span> <span class="o">=</span> <span class="mf">0.5</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="o">-</span><span class="n">hfov</span><span class="p">,</span> <span class="n">hfov</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="o">-</span><span class="n">hfov</span><span class="p">,</span> <span class="n">hfov</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">out</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">7</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">221</span><span class="p">)</span>
+<span class="n">setplt</span><span class="p">(</span><span class="n">psf_diff</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Position [arcsec]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;WFS diffraction&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">222</span><span class="p">)</span>
+<span class="n">setplt</span><span class="p">(</span><span class="n">psf_ao</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;WFS AO : Sr=</span><span class="si">%.1f%%</span><span class="s1">&#39;</span><span class="o">%</span><span class="n">strehl</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">223</span><span class="p">)</span>
+<span class="n">setplt</span><span class="p">(</span><span class="n">psf_diff_sci</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Position [arcsec]&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;SCI diffraction&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">224</span><span class="p">)</span>
+<span class="n">out</span> <span class="o">=</span> <span class="n">setplt</span><span class="p">(</span><span class="n">psf_ao_sci</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;SCI AO : Sr=</span><span class="si">%.1f%%</span><span class="s1">&#39;</span><span class="o">%</span><span class="n">strehl_sci</span><span class="p">)</span>
+
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gcf</span><span class="p">()</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">right</span><span class="o">=</span><span class="mf">0.85</span><span class="p">)</span>
+<span class="n">cbar_ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_axes</span><span class="p">([</span><span class="mf">0.89</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">,</span> <span class="mf">0.03</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">])</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">cax</span><span class="o">=</span><span class="n">cbar_ax</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+
+<span class="n">psd</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">psd</span>
+
+<span class="k">for</span> <span class="n">l</span><span class="p">,</span><span class="n">k</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">psd</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">psd</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="n">l</span><span class="p">])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">psd</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">**</span><span class="mf">0.2</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+<span class="n">psd_total_first_stage</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">result_first_stage</span><span class="o">.</span><span class="n">psd</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">result_first_stage</span><span class="o">.</span><span class="n">psd</span><span class="o">.</span><span class="n">keys</span><span class="p">()])</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">psd_total_first_stage</span><span class="o">**</span><span class="mf">0.2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">block</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">psd_total</span><span class="o">**</span><span class="mf">0.2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<details><summary>Console output</summary><div class="highlight-text notranslate"><div class="highlight"><pre><span></span>##### First stage ####
+═════════════════════════
+      SourceScience
+—————————————————————————
+wvl    : 1650 nm
+zenith : 0 deg
+—————————————————————————
+
+═════════════════════════
+        SourceWFS
+—————————————————————————
+wvl       : 690 nm
+flux      : 1.1e+07 ph/m²/s
+separation: 0.000 arcsec
+size      : 0.00 arcsec
+—————————————————————————
+
+═════════════════════════
+       Atmosphere
+—————————————————————————
+seeing    : 0.40 arcsec
+nb layer  : 35
+altitude  : 4.4 km
+wind speed: 8.9 m/s
+—————————————————————————
+
+═════════════════════════
+        VLTPupil
+—————————————————————————
+diameter   : 8.0 m
+occultation: 14 %
+nb act     : 41
+mode ratio : 0.62
+ncpa       : 0 nm
+jitter     : (0, 0) mas RMS
+spiders    : 5.0 cm at 50.5 deg
+—————————————————————————
+
+═════════════════════════
+           RTC
+—————————————————————————
+freq  : 1380 Hz
+delay : 0.8 ms
+ki    : 0.15
+—————————————————————————
+
+═════════════════════════
+          SHWFS
+—————————————————————————
+throughput: 100 %
+lenslet   : 40
+ron       : 0.1 e-
+EMCCD     : False
+sampling  : 2.0
+npix CoG  : 36
+filter    : 1.25 λ/d
+—————————————————————————
+
+##### Second stage ####
+═════════════════════════
+        VLTPupil
+—————————————————————————
+diameter   : 8.0 m
+occultation: 14 %
+nb act     : 34
+mode ratio : 0.47
+ncpa       : 0 nm
+jitter     : (0, 0) mas RMS
+spiders    : 5.0 cm at 50.5 deg
+—————————————————————————
+
+═════════════════════════
+        SourceWFS
+—————————————————————————
+wvl       : 1043 nm
+flux      : 4.9e+06 ph/m²/s
+separation: 0.000 arcsec
+size      : 0.00 arcsec
+—————————————————————————
+
+[...]
+</pre></div>
+</div>
+</details></section>
+</section>
+
+</article>
+    <nav class="pager" aria-label="Previous and next page"><a class="prev" href="AO_simulation.html"><small>Previous</small>Single-stage AO</a><a class="next" href="harmoni-scao.html"><small>Next</small>ELT/HARMONI-SCAO</a>
+    </nav>
+  </main>
+  <aside class="side-right">
+    <div class="nav-group">On this page</div>
+    <ul>
+<li><a class="reference internal" href="#">Cascaded AO</a><ul>
+<li><a class="reference internal" href="#result">Result</a></li>
+<li><a class="reference internal" href="#code">Code</a></li>
+</ul>
+</li>
+</ul>
+
+  </aside>
+</div>
+
+<footer class="foot">
+  AOPERA 2.0.1 · <a href="https://gitlab.lam.fr/lam-grd-public/aopera">GitLab</a> · <a href="https://pypi.org/project/aopera/">PyPI</a> · <a href="https://gitlab.lam.fr/lam-grd-public/aopera/-/issues">Report an issue</a>
+</footer>
+
+  </body>
+</html>

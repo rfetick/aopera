@@ -1,0 +1,111 @@
+Short exposures with AO
+=======================
+
+Minimal AO example without OG computation, with short exposures.
+
+Script: ``example/short_exposure_ao.py``
+
+Result
+------
+
+.. raw:: html
+
+   <div class="figs"><a href="../gallery/short_exposure_ao/fig_1.svg"><img src="../gallery/short_exposure_ao/fig_1.svg" alt="Figure 1 of short_exposure_ao.py" loading="lazy"></a><a href="../gallery/short_exposure_ao/fig_2.svg"><img src="../gallery/short_exposure_ao/fig_2.svg" alt="Figure 2 of short_exposure_ao.py" loading="lazy"></a></div>
+
+Code
+----
+
+.. literalinclude:: ../../example/short_exposure_ao.py
+   :language: python
+
+.. raw:: html
+
+   <details><summary>Console output</summary>
+
+.. code:: text
+
+   ═════════════════════════
+         SourceScience
+   —————————————————————————
+   wvl    : 1000 nm
+   zenith : 20 deg
+   —————————————————————————
+
+   ═════════════════════════
+           SourceWFS
+   —————————————————————————
+   wvl       : 1000 nm
+   flux      : 1e+08 ph/m²/s
+   separation: 0.000 arcsec
+   size      : 0.00 arcsec
+   —————————————————————————
+
+   ═════════════════════════
+          Atmosphere
+   —————————————————————————
+   seeing    : 2.50 arcsec
+   nb layer  : 3
+   altitude  : 0.0 km
+   wind speed: 7.0 m/s
+   —————————————————————————
+
+   ═════════════════════════
+             Pupil
+   —————————————————————————
+   diameter   : 1.5 m
+   occultation: 0 %
+   nb act     : 14
+   mode ratio : 1.00
+   ncpa       : 0 nm
+   jitter     : (0, 0) mas RMS
+   —————————————————————————
+
+   ═════════════════════════
+              RTC
+   —————————————————————————
+   freq  : 500 Hz
+   delay : 0.0 ms
+   ki    : 0.40
+   —————————————————————————
+
+   ═════════════════════════
+             PWFS
+   —————————————————————————
+   throughput: 100 %
+   lenslet   : 14 
+   ron       : 0.0 e-
+   EMCCD     : False
+   R_modul   : 5.0 λ/D
+   OG comp   : False
+   FoV       : inf λ/D
+   —————————————————————————
+
+
+   Spatiotemporal ✓   Noise ✓   Spatial-aliasing ✓
+   [OG iter. 1/3]   OG = 0.82   WFE = 148 nm
+
+   Spatiotemporal ✓   Noise ✓   Spatial-aliasing ✓
+   [OG iter. 2/3]   OG = 0.81   WFE = 163 nm
+
+   Spatiotemporal ✓   Noise ✓   Spatial-aliasing ✓
+   [OG iter. 3/3]   OG = 0.81   WFE = 163 nm
+
+   ══════════════════════════════════════════════════
+                WAVEFRONT ERROR [nm RMS]
+   —————————————————▾———————▾———————▾———————▾———————▾
+     temporal  133  |■■■■■■■■■■■■■■■■■■■■           |
+      fitting   90  |■■■■■■■■■                      |
+     aliasing   31  |■                              |
+       photon    5  |                               |
+       jitter    0  |                               |
+          ron    0  |                               |
+   —————————————————▴———————▴———————▴———————▴———————▴
+        total  163
+   ══════════════════════════════════════════════════
+
+   Short exposure   1 / 300
+   [...]
+
+.. raw:: html
+
+   </details>

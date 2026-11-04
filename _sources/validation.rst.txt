@@ -1,0 +1,34 @@
+Code validation
+===============
+
+Published paper
+---------------
+
+The main justification of the code is the reference paper published in the *Astronomy and Astrophysics* journal.
+It explains the method, explicits the equations used within the code, and shows comparisons with end-to-end simulation tool.
+
+`Fetick, Chambouleyron, Mazzolo et al, 2026, Astronomy and Astrophysics <https://www.aanda.org/component/article?access=doi&doi=10.1051/0004-6361/202661016>`_
+
+Logging
+-------
+
+You may set the Python ``logging`` package to debug level and run a script of your choice to see the highest level of insight into the code.
+
+.. code:: python
+
+   import logging
+   logging.getLogger('aopera').setLevel(logging.DEBUG)
+
+Pytest suite
+------------
+
+AOPERA comes with some unitary tests to check basic functions and consistency of the library. Navigate to the AOPERA folder and execute the command:
+
+.. code:: bash
+
+   pytest -v
+
+Test scripts
+------------
+
+Tests more evolved than pytest are located in the test-script subfolder. You may run these tests to check AOPERA performances, to compare with litterature or other Python codes.

@@ -1,0 +1,70 @@
+Example gallery
+===============
+
+The scripts of the ``example/`` folder. The figures come from running them.
+
+Full AO simulations
+-------------------
+
+.. raw:: html
+
+   <div class="gallery">
+   <a class="card" href="AO_simulation.html"><div class="thumb"><img src="../gallery/AO_simulation/fig_1.svg" alt="First figure of AO_simulation.py" loading="lazy"></div><div class="ctext"><b>Single-stage AO</b><span>The complete run behind the tutorial: error budget, PSD, PSF and Strehl ratio.</span></div></a>
+   <a class="card" href="AO_cascaded_simulation.html"><div class="thumb"><img src="../gallery/AO_cascaded_simulation/fig_1.svg" alt="First figure of AO_cascaded_simulation.py" loading="lazy"></div><div class="ctext"><b>Cascaded AO</b><span>A first-stage result fed into a second AO stage, down to the science PSF.</span></div></a>
+   <a class="card" href="harmoni-scao.html"><div class="thumb"><em>Did not run in the test build</em></div><div class="ctext"><b>ELT/HARMONI-SCAO</b><span>Phase PSD and PSF for an ELT instrument.</span></div></a>
+   <a class="card" href="modulation_abacus.html"><div class="thumb"><img src="../gallery/modulation_abacus/fig_1.svg" alt="First figure of modulation_abacus.py" loading="lazy"></div><div class="ctext"><b>Modulation abacus</b><span>Strehl ratio and optical gain against the guide star magnitude, for several pyramid modulations.</span></div></a>
+   </div>
+
+Wavefront sensors
+-----------------
+
+.. raw:: html
+
+   <div class="gallery">
+   <a class="card" href="pwfs_vs_shwfs_noise.html"><div class="thumb"><img src="../gallery/pwfs_vs_shwfs_noise/fig_1.svg" alt="First figure of pwfs_vs_shwfs_noise.py" loading="lazy"></div><div class="ctext"><b>Pyramid vs Shack-Hartmann: noise</b><span>Comparison of the two sensors.</span></div></a>
+   <a class="card" href="pwfs_vs_shwfs_extended_obj.html"><div class="thumb"><img src="../gallery/pwfs_vs_shwfs_extended_obj/fig_1.svg" alt="First figure of pwfs_vs_shwfs_extended_obj.py" loading="lazy"></div><div class="ctext"><b>Pyramid vs Shack-Hartmann: extended objects</b><span>Comparison of the two sensors on extended objects.</span></div></a>
+   <a class="card" href="pwfs_sensitivity.html"><div class="thumb"><img src="../gallery/pwfs_sensitivity/fig_1.svg" alt="First figure of pwfs_sensitivity.py" loading="lazy"></div><div class="ctext"><b>Pyramid sensitivity</b><span>RON sensitivity of a pyramid WFS.</span></div></a>
+   <a class="card" href="pwfs_logamp_sensitivity.html"><div class="thumb"><img src="../gallery/pwfs_logamp_sensitivity/fig_1.svg" alt="First figure of pwfs_logamp_sensitivity.py" loading="lazy"></div><div class="ctext"><b>Pyramid log-amplitude sensitivity</b><span>Phase and log-amplitude sensitivity of a pyramid WFS.</span></div></a>
+   <a class="card" href="pwfs_pupil.html"><div class="thumb"><img src="../gallery/pwfs_pupil/fig_1.svg" alt="First figure of pwfs_pupil.py" loading="lazy"></div><div class="ctext"><b>Pyramid pupils</b><span>Script working with the pyramid signal on a random turbulent phase.</span></div></a>
+   </div>
+
+Control and reconstruction
+--------------------------
+
+.. raw:: html
+
+   <div class="gallery">
+   <a class="card" href="ETF.html"><div class="thumb"><img src="../gallery/ETF/fig_1.svg" alt="First figure of ETF.py" loading="lazy"></div><div class="ctext"><b>Transfer functions</b><span>ETF in continuous and discrete transforms, NTF, and the analytical bandwidths.</span></div></a>
+   <a class="card" href="reconstructor_MMSE.html"><div class="thumb"><img src="../gallery/reconstructor_MMSE/fig_1.svg" alt="First figure of reconstructor_MMSE.py" loading="lazy"></div><div class="ctext"><b>MMSE reconstructor</b><span>AO simulation with an MMSE reconstructor.</span></div></a>
+   </div>
+
+Turbulence and short exposures
+------------------------------
+
+.. raw:: html
+
+   <div class="gallery">
+   <a class="card" href="generate_atmo.html"><div class="thumb"><img src="../gallery/generate_atmo/fig_1.svg" alt="First figure of generate_atmo.py" loading="lazy"></div><div class="ctext"><b>Generate an atmosphere</b><span>Random phase and log-amplitude screens from a turbulence profile.</span></div></a>
+   <a class="card" href="turbulence_tiptilt.html"><div class="thumb"><img src="../gallery/turbulence_tiptilt/fig_1.svg" alt="First figure of turbulence_tiptilt.py" loading="lazy"></div><div class="ctext"><b>Tip-tilt temporal PSD</b><span>Temporal PSD of the turbulence tip-tilt.</span></div></a>
+   <a class="card" href="short_exposure_ao.html"><div class="thumb"><img src="../gallery/short_exposure_ao/fig_1.svg" alt="First figure of short_exposure_ao.py" loading="lazy"></div><div class="ctext"><b>Short exposures with AO</b><span>Minimal AO example without OG computation, with short exposures.</span></div></a>
+   <a class="card" href="short_exposure_atmo.html"><div class="thumb"><img src="../gallery/short_exposure_atmo/fig_1.svg" alt="First figure of short_exposure_atmo.py" loading="lazy"></div><div class="ctext"><b>Short exposures without AO</b><span>Short exposures through the turbulence alone.</span></div></a>
+   </div>
+
+.. toctree::
+   :hidden:
+
+   AO_simulation
+   AO_cascaded_simulation
+   harmoni-scao
+   modulation_abacus
+   pwfs_vs_shwfs_noise
+   pwfs_vs_shwfs_extended_obj
+   pwfs_sensitivity
+   pwfs_logamp_sensitivity
+   pwfs_pupil
+   ETF
+   reconstructor_MMSE
+   generate_atmo
+   turbulence_tiptilt
+   short_exposure_ao
+   short_exposure_atmo

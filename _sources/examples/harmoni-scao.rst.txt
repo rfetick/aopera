@@ -1,0 +1,20 @@
+ELT/HARMONI-SCAO
+================
+
+Phase PSD and PSF for an ELT instrument.
+
+Script: ``example/harmoni-scao.py``
+
+.. raw:: html
+
+   <p class="status">This script did not finish in the test run, so no figure is shown.</p>
+
+.. code:: text
+
+   FileNotFoundError: [Errno 2] No such file or directory: 'aopera/data/ELT_pupil.fits'
+
+Code
+----
+
+.. literalinclude:: ../../example/harmoni-scao.py
+   :language: python

@@ -1,0 +1,32 @@
+Generate an atmosphere
+======================
+
+Random phase and log-amplitude screens from a turbulence profile.
+
+Script: ``example/generate_atmo.py``
+
+Result
+------
+
+.. raw:: html
+
+   <div class="figs"><a href="../gallery/generate_atmo/fig_1.svg"><img src="../gallery/generate_atmo/fig_1.svg" alt="Figure 1 of generate_atmo.py" loading="lazy"></a><a href="../gallery/generate_atmo/fig_2.svg"><img src="../gallery/generate_atmo/fig_2.svg" alt="Figure 2 of generate_atmo.py" loading="lazy"></a></div>
+
+Code
+----
+
+.. literalinclude:: ../../example/generate_atmo.py
+   :language: python
+
+.. raw:: html
+
+   <details><summary>Console output</summary>
+
+.. code:: text
+
+   r0 : 6.6 cm (wvl=500nm, z=30°)
+   log-amp variance : 0.05
+
+.. raw:: html
+
+   </details>

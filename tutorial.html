@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Tutorial &#8212; AOPERA docs</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=92fd9be5" />
+    <link rel="stylesheet" type="text/css" href="_static/aopera.css?v=ddfc3e89" />
+    <script src="_static/documentation_options.js?v=f5cff4aa"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Cascaded AO" href="cascaded.html" />
+    <link rel="prev" title="Installation" href="installation.html" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,650&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="_static/topbar.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+  </head><body>
+<header class="topbar">
+  <a class="brand" href="index.html">AOPERA<span class="ver">2.0.1</span></a>
+  <nav aria-label="Main">
+    <a href="#" aria-current="true">Tutorials</a>
+    <a href="flow.html">Code flow</a>
+    <a href="examples/index.html">Examples</a>
+    <a href="api.html">API</a>
+    <a href="validation.html">Validation</a>
+  </nav>
+  <form class="search" action="search.html" method="get" role="search">
+    <input type="search" name="q" placeholder="Search the docs" aria-label="Search the docs">
+  </form>
+</header>
+
+<div class="page">
+  <aside class="side-left">
+    <div class="nav-group">Start</div>
+    <a class="nav-item" href="installation.html">Installation</a>
+    <a class="nav-item on" href="#">Your first simulation</a>
+    <a class="nav-item" href="cascaded.html">Cascaded AO</a>
+    <div class="nav-group">Understand</div>
+    <a class="nav-item" href="flow.html">Code flow</a>
+    <div class="nav-group">Examples</div>
+    <a class="nav-item" href="examples/index.html">Example gallery</a>
+    <div class="nav-group">Reference</div>
+    <a class="nav-item" href="api.html">Code documentation</a>
+    <a class="nav-item" href="validation.html">Validation</a>
+  </aside>
+  <main class="doc" role="main">
+    <article>
+  <section id="tutorial">
+<h1>Tutorial<a class="headerlink" href="#tutorial" title="Link to this heading">¶</a></h1>
+<p>Welcome! This beginner tutorial shows you how to use AOPERA to run a full AO simulation.
+We wish this tutorial easy and complete enough for you to be able to define your own observing scenario as soon as you reach the bottom of this page.</p>
+<p>The tutorial is split below section by section for a pedagogic approach, however the full code is available at:</p>
+<p><a class="reference external" href="https://gitlab.lam.fr/lam-grd-public/aopera/-/blob/main/example/AO_simulation.py">https://gitlab.lam.fr/lam-grd-public/aopera/-/blob/main/example/AO_simulation.py</a></p>
+<section id="imports">
+<h2>Imports<a class="headerlink" href="#imports" title="Link to this heading">¶</a></h2>
+<p>Let’s start our journey by importing all functions and classes we will need for the tutorial.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">matplotlib.colors</span> <span class="kn">import</span> <span class="n">LogNorm</span>
+<span class="kn">from</span> <span class="nn">aopera.turbulence</span> <span class="kn">import</span> <span class="n">Atmosphere</span>
+<span class="kn">from</span> <span class="nn">aopera.control</span> <span class="kn">import</span> <span class="n">RTC</span>
+<span class="kn">from</span> <span class="nn">aopera.otfpsf</span> <span class="kn">import</span> <span class="n">Pupil</span>
+<span class="kn">from</span> <span class="nn">aopera.ffwfs</span> <span class="kn">import</span> <span class="n">PWFS</span>
+<span class="kn">from</span> <span class="nn">aopera.shwfs</span> <span class="kn">import</span> <span class="n">SHWFS</span>
+<span class="kn">from</span> <span class="nn">aopera.photometry</span> <span class="kn">import</span> <span class="n">SourceScience</span><span class="p">,</span> <span class="n">SourceWFS</span><span class="p">,</span> <span class="n">Band</span>
+<span class="kn">from</span> <span class="nn">aopera.utils</span> <span class="kn">import</span> <span class="n">rad2arcsec</span>
+<span class="kn">from</span> <span class="nn">aopera.simulation</span> <span class="kn">import</span> <span class="n">simulation</span>
+</pre></div>
+</div>
+</section>
+<section id="simulation-case">
+<h2>Simulation case<a class="headerlink" href="#simulation-case" title="Link to this heading">¶</a></h2>
+<p>There are two ways of defining an observation scenario with AOPERA:</p>
+<ul class="simple">
+<li><p>Entering the parameters directly from your python script (useful to automatically chain codes or iterate over some parameters).</p></li>
+<li><p>Loading configuration files (useful to share a defined observation scenario between users).</p></li>
+</ul>
+<p>Here, for the sake of simplicity, we will define the scenario from two preset files: one for the atmosphere, one for the telescope and AO instrument.
+These files are located in the <code class="docutils literal notranslate"><span class="pre">aopera/aopera/data/</span></code> folder if you want to look at their parameters.
+You can also define your own files if needed and write down their paths below.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">file_atmo</span> <span class="o">=</span> <span class="s1">&#39;ohp.ini&#39;</span>
+<span class="n">file_instru</span> <span class="o">=</span> <span class="s1">&#39;papyrus.ini&#39;</span>
+<span class="n">nx</span> <span class="o">=</span> <span class="mi">512</span> <span class="c1"># number of pixels for simulation</span>
+<span class="n">samp</span> <span class="o">=</span> <span class="mi">3</span> <span class="c1"># sampling at WFS wavelength</span>
+</pre></div>
+</div>
+</section>
+<section id="loading-data-from-files">
+<h2>Loading data from files<a class="headerlink" href="#loading-data-from-files" title="Link to this heading">¶</a></h2>
+<p>The files are now read and transformed into Python objects. We need six objects in order to run a simulation:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Atmosphere</span></code> : the mighty turbulent atmosphere,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">Pupil</span></code> : the telescope pupil and the AO deformable mirror,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SourceScience</span></code> : the scientific target,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SourceWFS</span></code> : the wavefront sensor guiding source,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">PWFS</span></code> or <code class="docutils literal notranslate"><span class="pre">SHWFS</span></code> : the AO wavefront sensor,</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">RTC</span></code> : the real time computer and the AO temporal behaviour.</p></li>
+</ul>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">src_sci</span> <span class="o">=</span> <span class="n">SourceScience</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">file_instru</span><span class="p">)</span>
+<span class="n">src_wfs</span> <span class="o">=</span> <span class="n">SourceWFS</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">file_instru</span><span class="p">)</span>
+<span class="n">atm</span> <span class="o">=</span> <span class="n">Atmosphere</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">file_atmo</span><span class="p">)</span>
+<span class="n">tel</span> <span class="o">=</span> <span class="n">Pupil</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">file_instru</span><span class="p">)</span>
+<span class="n">rtc</span> <span class="o">=</span> <span class="n">RTC</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">file_instru</span><span class="p">)</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">wfs</span> <span class="o">=</span> <span class="n">PWFS</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">file_instru</span><span class="p">)</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="n">wfs</span> <span class="o">=</span> <span class="n">SHWFS</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">file_instru</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Attributes from the objects may be updated after loading. We will modify here the zenithal angle of the scientific source and the flux of the WFS source.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">zenith_deg</span> <span class="o">=</span> <span class="mi">30</span>
+<span class="n">magV</span> <span class="o">=</span> <span class="mi">6</span>
+<span class="n">src_sci</span><span class="o">.</span><span class="n">zenith_deg</span> <span class="o">=</span> <span class="n">zenith_deg</span>
+<span class="n">src_wfs</span><span class="o">.</span><span class="n">flux</span> <span class="o">=</span> <span class="n">Band</span><span class="p">(</span><span class="s1">&#39;V&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mag2photon</span><span class="p">(</span><span class="n">magV</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Let’s print our objects to see what they look like and give a final check before continuing.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">src_sci</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">src_wfs</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">atm</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">tel</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">rtc</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">wfs</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="run-the-simulation">
+<h2>Run the simulation<a class="headerlink" href="#run-the-simulation" title="Link to this heading">¶</a></h2>
+<p>We are all set to launch the simulation. Good luck!</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">result</span> <span class="o">=</span> <span class="n">simulation</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span> <span class="n">samp</span><span class="p">,</span> <span class="n">tel</span><span class="p">,</span> <span class="n">atm</span><span class="p">,</span> <span class="n">rtc</span><span class="p">,</span> <span class="n">wfs</span><span class="p">,</span> <span class="n">src_sci</span><span class="p">,</span> <span class="n">src_wfs</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">verbose</span></code> keyword prints the error budget to give you a quick look at your AO system performance. The following table is shown in the console.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>══════════════════════════════════════════════════
+             WAVEFRONT ERROR [nm RMS]
+—————————————————▾———————▾———————▾———————▾———————▾
+  temporal  151  |■■■■■■■■■■■■■■■■■■■            |
+   fitting   73  |■■■■                           |
+    jitter   65  |■■■■                           |
+      ncpa   50  |■■                             |
+    photon   33  |■                              |
+  aliasing   22  |                               |
+ chromatic   21  |                               |
+refraction   15  |                               |
+       ron    4  |                               |
+—————————————————▴———————▴———————▴———————▴———————▴
+     total  192
+══════════════════════════════════════════════════
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">simulation</span></code> function returns a <code class="docutils literal notranslate"><span class="pre">SimulationResult</span></code> object, containing a bunch of information.
+The major information is the <code class="docutils literal notranslate"><span class="pre">psd</span></code> attribute that is a dictionary storing all the AO residual PSD terms.
+From this PSD, the <code class="docutils literal notranslate"><span class="pre">SimulationResult</span></code> can compute the PSF and the Strehl ratio at any wavelength.
+For example, we compute here all metrics at the science wavelength. Enjoy!</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">psf_ao</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">psf_ao</span><span class="p">(</span><span class="n">src_sci</span><span class="o">.</span><span class="n">wvl</span><span class="p">)</span>
+<span class="n">psf_diff</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">psf_diffraction</span><span class="p">(</span><span class="n">src_sci</span><span class="o">.</span><span class="n">wvl</span><span class="p">)</span>
+<span class="n">strehl</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">result</span><span class="o">.</span><span class="n">strehl</span><span class="p">(</span><span class="n">src_sci</span><span class="o">.</span><span class="n">wvl</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="plots">
+<h2>Plots<a class="headerlink" href="#plots" title="Link to this heading">¶</a></h2>
+<p>You may eventually plot the PSFs.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">setplt</span><span class="p">(</span><span class="n">tab</span><span class="p">,</span> <span class="n">nc</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span> <span class="n">hfov</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">LogNorm</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="mf">1e-7</span><span class="p">,</span><span class="n">vmax</span><span class="o">=</span><span class="mf">1e-1</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">pix_size_arcsec</span> <span class="o">=</span> <span class="n">rad2arcsec</span><span class="p">((</span><span class="n">src_wfs</span><span class="o">.</span><span class="n">wvl</span><span class="o">/</span><span class="n">tel</span><span class="o">.</span><span class="n">diameter</span><span class="p">)</span> <span class="o">/</span> <span class="n">samp</span><span class="p">)</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="n">pix_size_arcsec</span><span class="o">*</span><span class="n">nc</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">tab</span><span class="p">[</span><span class="n">nx</span><span class="o">//</span><span class="mi">2</span><span class="o">-</span><span class="n">nc</span><span class="p">:</span><span class="n">nx</span><span class="o">//</span><span class="mi">2</span><span class="o">+</span><span class="n">nc</span><span class="p">,</span><span class="n">nx</span><span class="o">//</span><span class="mi">2</span><span class="o">-</span><span class="n">nc</span><span class="p">:</span><span class="n">nx</span><span class="o">//</span><span class="mi">2</span><span class="o">+</span><span class="n">nc</span><span class="p">],</span> <span class="n">extent</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="n">ext</span><span class="p">,</span><span class="n">ext</span><span class="p">)</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s1">&#39;image&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="o">-</span><span class="n">hfov</span><span class="p">,</span> <span class="n">hfov</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="o">-</span><span class="n">hfov</span><span class="p">,</span> <span class="n">hfov</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Position [arcsec]&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;Position [arcsec]&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">121</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;PSF diffraction&#39;</span><span class="p">)</span>
+<span class="n">setplt</span><span class="p">(</span><span class="n">psf_diff</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">122</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;PSF AO : Sr=</span><span class="si">%.1f%%</span><span class="s1">&#39;</span><span class="o">%</span><span class="n">strehl</span><span class="p">)</span>
+<span class="n">setplt</span><span class="p">(</span><span class="n">psf_ao</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Our tutorial ends here! You may now have learnt the basics of running a simulation with AOPERA and might be ready to setup your own observing scenario.</p>
+</section>
+<section id="going-further">
+<h2>Going further<a class="headerlink" href="#going-further" title="Link to this heading">¶</a></h2>
+<p>The figures below come from running <code class="docutils literal notranslate"><span class="pre">example/AO_simulation.py</span></code>, the full code of this tutorial.</p>
+<div class="figs"><a href="gallery/AO_simulation/fig_1.svg"><img src="gallery/AO_simulation/fig_1.svg" alt="Phase PSD per error term and cumulated OPD"></a><a href="gallery/AO_simulation/fig_2.svg"><img src="gallery/AO_simulation/fig_2.svg" alt="Diffraction and AO PSF at the WFS and science wavelengths"></a></div><p>Next: chain two AO stages in <a class="reference internal" href="cascaded.html"><span class="doc">Cascaded AO</span></a>, read the <span class="raw-html"><a href="flow.html">code flow</a></span> to see what <code class="docutils literal notranslate"><span class="pre">simulation</span></code> does, or browse the <a class="reference internal" href="examples/index.html"><span class="doc">Example gallery</span></a>.</p>
+</section>
+</section>
+
+</article>
+    <nav class="pager" aria-label="Previous and next page"><a class="prev" href="installation.html"><small>Previous</small>Installation</a><a class="next" href="cascaded.html"><small>Next</small>Cascaded AO</a>
+    </nav>
+  </main>
+  <aside class="side-right">
+    <div class="nav-group">On this page</div>
+    <ul>
+<li><a class="reference internal" href="#">Tutorial</a><ul>
+<li><a class="reference internal" href="#imports">Imports</a></li>
+<li><a class="reference internal" href="#simulation-case">Simulation case</a></li>
+<li><a class="reference internal" href="#loading-data-from-files">Loading data from files</a></li>
+<li><a class="reference internal" href="#run-the-simulation">Run the simulation</a></li>
+<li><a class="reference internal" href="#plots">Plots</a></li>
+<li><a class="reference internal" href="#going-further">Going further</a></li>
+</ul>
+</li>
+</ul>
+
+  </aside>
+</div>
+
+<footer class="foot">
+  AOPERA 2.0.1 · <a href="https://gitlab.lam.fr/lam-grd-public/aopera">GitLab</a> · <a href="https://pypi.org/project/aopera/">PyPI</a> · <a href="https://gitlab.lam.fr/lam-grd-public/aopera/-/issues">Report an issue</a>
+</footer>
+
+  </body>
+</html>

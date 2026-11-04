@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>AOPERA &#8212; AOPERA docs</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=92fd9be5" />
+    <link rel="stylesheet" type="text/css" href="_static/aopera.css?v=ddfc3e89" />
+    <script src="_static/documentation_options.js?v=f5cff4aa"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Installation" href="installation.html" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,650&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="_static/topbar.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+  </head><body>
+<header class="topbar">
+  <a class="brand" href="#">AOPERA<span class="ver">2.0.1</span></a>
+  <nav aria-label="Main">
+    <a href="tutorial.html">Tutorials</a>
+    <a href="flow.html">Code flow</a>
+    <a href="examples/index.html">Examples</a>
+    <a href="api.html">API</a>
+    <a href="validation.html">Validation</a>
+  </nav>
+  <form class="search" action="search.html" method="get" role="search">
+    <input type="search" name="q" placeholder="Search the docs" aria-label="Search the docs">
+  </form>
+</header>
+
+<main class="landing" role="main">
+  <section id="aopera">
+<h1>AOPERA<a class="headerlink" href="#aopera" title="Link to this heading">¶</a></h1>
+<section class="hero">
+  <div>
+    <p class="acro"><b>A</b>daptive <b>O</b>ptics <b>P</b>sf <b>E</b>stimation and <b>R</b>esiduals <b>A</b>nalysis</p>
+    <h2>Adaptive optics residuals, in seconds.</h2>
+    <p class="tag">A Fourier model of single-conjugate and cascaded AO: from a configuration file to the error budget, the phase PSD and the PSF.</p>
+    <div class="cta">
+      <a class="btn p" href="tutorial.html">Run your first simulation</a>
+      <a class="btn g" href="flow.html">See how it works</a>
+    </div>
+    <p class="pip">pip install aopera</p>
+  </div>
+  <div><pre class="term">══════════════════════════════════════════════════
+             WAVEFRONT ERROR [nm RMS]
+—————————————————▾———————▾———————▾———————▾———————▾
+  temporal  140  |■■■■■■■■■■■■■■■■■■■            |
+   fitting   73  |■■■■■                          |
+    jitter   65  |■■■■                           |
+      ncpa   50  |■■                             |
+  aliasing   22  |                               |
+ chromatic   19  |                               |
+refraction   15  |                               |
+    photon    6  |                               |
+       ron    0  |                               |
+—————————————————▴———————▴———————▴———————▴———————▴
+     total  181
+══════════════════════════════════════════════════
+Strehl = 52.5%</pre><p class="hero-cap">Error budget printed by the code below.</p>
+<a class="hero-psd" href="cascaded.html"><img src="gallery/hero_psd.svg" alt="Maps of the total residual phase PSD after the first and the second AO stage"></a>
+<p class="hero-cap">Residual PSD after each stage of the <a href="cascaded.html">cascaded AO tutorial</a>.</p>
+  </div>
+</section>
+
+<h2 class="sec">A simulation in a few lines</h2>
+<p class="sub">Presets are provided for several instruments, and the same parameters can be set directly from Python.</p><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">aopera.turbulence</span> <span class="kn">import</span> <span class="n">Atmosphere</span>
+<span class="kn">from</span> <span class="nn">aopera.otfpsf</span> <span class="kn">import</span> <span class="n">Pupil</span>
+<span class="kn">from</span> <span class="nn">aopera.control</span> <span class="kn">import</span> <span class="n">RTC</span>
+<span class="kn">from</span> <span class="nn">aopera.ffwfs</span> <span class="kn">import</span> <span class="n">PWFS</span>
+<span class="kn">from</span> <span class="nn">aopera.photometry</span> <span class="kn">import</span> <span class="n">SourceScience</span><span class="p">,</span> <span class="n">SourceWFS</span>
+<span class="kn">from</span> <span class="nn">aopera.simulation</span> <span class="kn">import</span> <span class="n">simulation</span>
+
+<span class="n">atmo</span><span class="p">,</span> <span class="n">instru</span> <span class="o">=</span> <span class="s1">&#39;ohp.ini&#39;</span><span class="p">,</span> <span class="s1">&#39;papyrus.ini&#39;</span>  <span class="c1"># presets of aopera/data/</span>
+<span class="n">atm</span> <span class="o">=</span> <span class="n">Atmosphere</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">atmo</span><span class="p">)</span>
+<span class="n">tel</span><span class="p">,</span> <span class="n">rtc</span> <span class="o">=</span> <span class="n">Pupil</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">instru</span><span class="p">),</span> <span class="n">RTC</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">instru</span><span class="p">)</span>
+<span class="n">wfs</span> <span class="o">=</span> <span class="n">PWFS</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">instru</span><span class="p">)</span>
+<span class="n">src_sci</span><span class="p">,</span> <span class="n">src_wfs</span> <span class="o">=</span> <span class="n">SourceScience</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">instru</span><span class="p">),</span> <span class="n">SourceWFS</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">instru</span><span class="p">)</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">simulation</span><span class="p">(</span><span class="mi">512</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">tel</span><span class="p">,</span> <span class="n">atm</span><span class="p">,</span> <span class="n">rtc</span><span class="p">,</span> <span class="n">wfs</span><span class="p">,</span> <span class="n">src_sci</span><span class="p">,</span> <span class="n">src_wfs</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">strehl</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">strehl</span><span class="p">(</span><span class="n">src_sci</span><span class="o">.</span><span class="n">wvl</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Strehl = </span><span class="si">%.1f%%</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="mi">100</span> <span class="o">*</span> <span class="n">strehl</span><span class="p">))</span>
+</pre></div>
+</div>
+<h2 class="sec">What you get</h2>
+<p class="sub">The outputs of one simulation, and what it can model.</p>
+<div class="feat">
+  <div><b>Phase PSD</b>In rad²·m², for each AO error term.</div>
+  <div><b>Error budget</b>The integral of each PSD, in nm RMS.</div>
+  <div><b>PSF</b>Long and short exposure, at any wavelength.</div>
+  <div><b>Fiber coupling</b>Coupling efficiency.</div>
+  <div><b>Fourier filtering WFS</b>Pyramid sensitivity and non-linearities with the convolutive formalism.</div>
+  <div><b>Cascaded AO</b>The result of one stage feeds the next one.</div>
+  <div><b>Light</b>Only needs numpy, scipy and astropy.</div>
+  <div><b>Compatible</b>TIPTOP ini files in SCAO mode, and the OOPAO end-to-end tool.</div>
+</div>
+
+<div class="flowteaser">
+  <div>
+    <h2>Follow the code, box by box</h2>
+    <p>An interactive diagram of what <code>simulation()</code> does: click a box for its equations and its place in the code. It also covers the available wavefront sensors, the coronagraph and the temporal binning of the cubes.</p>
+    <a class="btn p" href="flow.html">Open the code flow</a>
+  </div>
+  <ol class="steps">
+    <li>.ini files → objects</li>
+    <li>Calibration</li>
+    <li>Input: frozen flow, PSD, or previous stage</li>
+    <li>Spatio-temporal, aliasing, noise PSD</li>
+    <li class="o">Cube storage</li>
+    <li>Optical gain loop</li>
+    <li>SimulationResult → PSF, coronagraph</li>
+  </ol>
+</div>
+
+<h2 class="sec">Keep going</h2>
+<div class="gallery">
+  <a class="card" href="installation.html"><div class="ctext"><b>Installation</b><span>From PyPI, or from the repository to contribute.</span></div></a>
+  <a class="card" href="tutorial.html"><div class="ctext"><b>Your first simulation</b><span>Step by step, from the presets to the PSF.</span></div></a>
+  <a class="card" href="cascaded.html"><div class="ctext"><b>Cascaded AO</b><span>Feed a second AO stage with the first one.</span></div></a>
+  <a class="card" href="examples/index.html"><div class="ctext"><b>Example gallery</b><span>The scripts of the repository, with their figures.</span></div></a>
+  <a class="card" href="api.html"><div class="ctext"><b>Code documentation</b><span>Functions and classes.</span></div></a>
+  <a class="card" href="validation.html"><div class="ctext"><b>Validation</b><span>Reference paper, tests, and how to check the code.</span></div></a>
+</div>
+
+<p class="refbox">Romain Fétick, Vincent Chambouleyron, Lisa-Marie Mazzolo, Arnaud Striffling. Reference: <a href="https://www.aanda.org/component/article?access=doi&doi=10.1051/0004-6361/202661016">Fetick, Chambouleyron, Mazzolo et al, 2026, Astronomy and Astrophysics</a>.</p><div class="toctree-wrapper compound">
+</div>
+</section>
+
+</main>
+
+<footer class="foot">
+  AOPERA 2.0.1 · <a href="https://gitlab.lam.fr/lam-grd-public/aopera">GitLab</a> · <a href="https://pypi.org/project/aopera/">PyPI</a> · <a href="https://gitlab.lam.fr/lam-grd-public/aopera/-/issues">Report an issue</a>
+</footer>
+
+  </body>
+</html>

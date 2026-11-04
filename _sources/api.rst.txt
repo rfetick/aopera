@@ -1,0 +1,101 @@
+Code documentation
+==================
+
+Simulation
+----------
+
+.. autofunction:: aopera.simulation.simulation
+
+.. autoclass:: aopera.simulation.SimulationResult
+   :members:
+
+Main AO classes
+---------------
+
+.. autoclass:: aopera.turbulence.Atmosphere
+   :members:
+
+.. autoclass:: aopera.otfpsf.Pupil
+   :members:
+
+.. autoclass:: aopera.otfpsf.VLTPupil
+   :members:
+   
+.. autoclass:: aopera.control.RTC
+   :members:
+
+.. autoclass:: aopera.ffwfs.FFWFS
+   :members:
+   
+.. autoclass:: aopera.ffwfs.PWFS
+   :members:
+   
+.. autoclass:: aopera.photometry.SourceWFS
+   :members:
+   
+.. autoclass:: aopera.photometry.SourceScience
+   :members:
+   
+SH-WFS
+------
+
+.. autofunction:: aopera.shwfs.shwfs_sensitivity
+
+.. autofunction:: aopera.shwfs.shwfs_spot_fwhm
+
+FF-WFS
+------
+
+.. autofunction:: aopera.ffwfs.modulation
+
+.. autofunction:: aopera.ffwfs.pyramid_mask
+
+.. autofunction:: aopera.ffwfs.ffwfs_impulse_response
+
+.. autofunction:: aopera.ffwfs.ffwfs_transfer_function
+
+.. autofunction:: aopera.ffwfs.ffwfs_sensitivity
+
+.. autofunction:: aopera.ffwfs.sensitivity_ramp
+   
+   
+Photometric tools
+-----------------
+
+.. autofunction:: aopera.photometry.black_body
+
+.. autofunction:: aopera.photometry.black_body_sun
+   
+.. autoclass:: aopera.photometry.Band
+   :members:
+   
+Control tools
+-------------
+   
+.. autofunction:: aopera.control.open_loop_transfer
+
+.. autofunction:: aopera.control.closed_loop_transfer
+
+.. autofunction:: aopera.control.noise_transfer
+
+.. autofunction:: aopera.control.bandwidth
+
+.. autofunction:: aopera.control.bandwidth_noise
+
+.. autofunction:: aopera.control.lqg_controller
+   
+   
+Utilitary functions
+-------------------
+
+.. autofunction:: aopera.utils.rfftconvolve
+
+.. autofunction:: aopera.utils.rad2arcsec
+
+.. autofunction:: aopera.utils.arcsec2rad
+
+.. autofunction:: aopera.utils.polar
+
+.. autofunction:: aopera.utils.polar_radius
+
+.. autofunction:: aopera.utils.circavg

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Installation &#8212; AOPERA docs</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=92fd9be5" />
+    <link rel="stylesheet" type="text/css" href="_static/aopera.css?v=ddfc3e89" />
+    <script src="_static/documentation_options.js?v=f5cff4aa"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Tutorial" href="tutorial.html" />
+    <link rel="prev" title="AOPERA" href="index.html" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,650&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="_static/topbar.css">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+  </head><body>
+<header class="topbar">
+  <a class="brand" href="index.html">AOPERA<span class="ver">2.0.1</span></a>
+  <nav aria-label="Main">
+    <a href="tutorial.html" aria-current="true">Tutorials</a>
+    <a href="flow.html">Code flow</a>
+    <a href="examples/index.html">Examples</a>
+    <a href="api.html">API</a>
+    <a href="validation.html">Validation</a>
+  </nav>
+  <form class="search" action="search.html" method="get" role="search">
+    <input type="search" name="q" placeholder="Search the docs" aria-label="Search the docs">
+  </form>
+</header>
+
+<div class="page">
+  <aside class="side-left">
+    <div class="nav-group">Start</div>
+    <a class="nav-item on" href="#">Installation</a>
+    <a class="nav-item" href="tutorial.html">Your first simulation</a>
+    <a class="nav-item" href="cascaded.html">Cascaded AO</a>
+    <div class="nav-group">Understand</div>
+    <a class="nav-item" href="flow.html">Code flow</a>
+    <div class="nav-group">Examples</div>
+    <a class="nav-item" href="examples/index.html">Example gallery</a>
+    <div class="nav-group">Reference</div>
+    <a class="nav-item" href="api.html">Code documentation</a>
+    <a class="nav-item" href="validation.html">Validation</a>
+  </aside>
+  <main class="doc" role="main">
+    <article>
+  <section id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h1>
+<p>AOPERA is lightweight and only requires <code class="docutils literal notranslate"><span class="pre">numpy</span></code>, <code class="docutils literal notranslate"><span class="pre">scipy</span></code> and <code class="docutils literal notranslate"><span class="pre">astropy</span></code> to run.
+Thus, there is very little risk of package incompatibility with other Python tools.</p>
+<section id="installation-for-end-users">
+<h2>Installation for end users<a class="headerlink" href="#installation-for-end-users" title="Link to this heading">¶</a></h2>
+<p>Use this option if you want a stable version of the library:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>aopera
+</pre></div>
+</div>
+<p>This is a clean installation, but you may not have access to the tutorial examples. However, they can be found on the gitlab repository.</p>
+</section>
+<section id="installation-for-contributors">
+<h2>Installation for contributors<a class="headerlink" href="#installation-for-contributors" title="Link to this heading">¶</a></h2>
+<p>Use this option if you wish to actively contribute to AOPERA, or benefit from the very last commits.
+Navigate to the folder where to locate the AOPERA library and clone the git repository:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://gitlab.lam.fr/lam-grd-public/aopera.git
+</pre></div>
+</div>
+<p>Then add AOPERA to your Python libraries</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>aopera
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
+</pre></div>
+</div>
+</section>
+<section id="check-your-aopera-version">
+<h2>Check your AOPERA version<a class="headerlink" href="#check-your-aopera-version" title="Link to this heading">¶</a></h2>
+<p>You may know your current AOPERA version with the <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">list</span></code> command if AOPERA has been installed using <code class="docutils literal notranslate"><span class="pre">pip</span></code>.
+The version number is also available with the following Python commands:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">aopera</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">aopera</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+</article>
+    <nav class="pager" aria-label="Previous and next page"><a class="prev" href="index.html"><small>Previous</small>AOPERA</a><a class="next" href="tutorial.html"><small>Next</small>Tutorial</a>
+    </nav>
+  </main>
+  <aside class="side-right">
+    <div class="nav-group">On this page</div>
+    <ul>
+<li><a class="reference internal" href="#">Installation</a><ul>
+<li><a class="reference internal" href="#installation-for-end-users">Installation for end users</a></li>
+<li><a class="reference internal" href="#installation-for-contributors">Installation for contributors</a></li>
+<li><a class="reference internal" href="#check-your-aopera-version">Check your AOPERA version</a></li>
+</ul>
+</li>
+</ul>
+
+  </aside>
+</div>
+
+<footer class="foot">
+  AOPERA 2.0.1 · <a href="https://gitlab.lam.fr/lam-grd-public/aopera">GitLab</a> · <a href="https://pypi.org/project/aopera/">PyPI</a> · <a href="https://gitlab.lam.fr/lam-grd-public/aopera/-/issues">Report an issue</a>
+</footer>
+
+  </body>
+</html>

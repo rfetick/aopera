@@ -1,0 +1,111 @@
+Pyramid vs Shack-Hartmann: noise
+================================
+
+Comparison of the two sensors.
+
+Script: ``example/pwfs_vs_shwfs_noise.py``
+
+Result
+------
+
+.. raw:: html
+
+   <div class="figs"><a href="../gallery/pwfs_vs_shwfs_noise/fig_1.svg"><img src="../gallery/pwfs_vs_shwfs_noise/fig_1.svg" alt="Figure 1 of pwfs_vs_shwfs_noise.py" loading="lazy"></a><a href="../gallery/pwfs_vs_shwfs_noise/fig_2.svg"><img src="../gallery/pwfs_vs_shwfs_noise/fig_2.svg" alt="Figure 2 of pwfs_vs_shwfs_noise.py" loading="lazy"></a></div>
+
+Code
+----
+
+.. literalinclude:: ../../example/pwfs_vs_shwfs_noise.py
+   :language: python
+
+.. raw:: html
+
+   <details><summary>Console output</summary>
+
+.. code:: text
+
+   ----------------------------------------
+   Iteration  1/12
+
+
+   Spatiotemporal ✓   Noise ✓   Spatial-aliasing ✓
+   [OG iter. 1/3]   OG = 0.86   WFE =  76 nm
+
+   Spatiotemporal ✓   Noise ✓   Spatial-aliasing ✓
+   [OG iter. 2/3]   OG = 0.86   WFE =  76 nm
+
+   Spatiotemporal ✓   Noise ✓   Spatial-aliasing ✓
+   [OG iter. 3/3]   OG = 0.86   WFE =  76 nm
+
+   ══════════════════════════════════════════════════
+                WAVEFRONT ERROR [nm RMS]
+   —————————————————▾———————▾———————▾———————▾———————▾
+     temporal   62  |■■■■■■■■■■■■■■■■■■■■           |
+      fitting   38  |■■■■■■■■                       |
+     aliasing   22  |■■                             |
+       photon    7  |                               |
+       jitter    0  |                               |
+          ron    0  |                               |
+   —————————————————▴———————▴———————▴———————▴———————▴
+        total   76
+   ══════════════════════════════════════════════════
+
+   Spatiotemporal ✓   Noise ✓   Spatial-aliasing ✓
+   [OG iter. 1/1]   OG = 1.00   WFE =  78 nm
+
+   ══════════════════════════════════════════════════
+                WAVEFRONT ERROR [nm RMS]
+   —————————————————▾———————▾———————▾———————▾———————▾
+     temporal   62  |■■■■■■■■■■■■■■■■■■■            |
+      fitting   38  |■■■■■■■                        |
+     aliasing   26  |■■■                            |
+       photon   13  |■                              |
+       jitter    0  |                               |
+          ron    0  |                               |
+   —————————————————▴———————▴———————▴———————▴———————▴
+        total   78
+   ══════════════════════════════════════════════════
+   Strehl P-WFS  : 56.9%
+   Strehl SH-WFS : 55.5%
+
+   ----------------------------------------
+   Iteration  2/12
+
+
+   Spatiotemporal ✓   Noise ✓   Spatial-aliasing ✓
+   [OG iter. 1/3]   OG = 0.86   WFE =  76 nm
+
+   Spatiotemporal ✓   Noise ✓   Spatial-aliasing ✓
+   [OG iter. 2/3]   OG = 0.86   WFE =  76 nm
+
+   Spatiotemporal ✓   Noise ✓   Spatial-aliasing ✓
+   [OG iter. 3/3]   OG = 0.86   WFE =  76 nm
+
+   ══════════════════════════════════════════════════
+                WAVEFRONT ERROR [nm RMS]
+   —————————————————▾———————▾———————▾———————▾———————▾
+     temporal   62  |■■■■■■■■■■■■■■■■■■■■           |
+      fitting   38  |■■■■■■■■                       |
+     aliasing   22  |■■                             |
+       photon    9  |                               |
+       jitter    0  |                               |
+          ron    0  |                               |
+   —————————————————▴———————▴———————▴———————▴———————▴
+        total   77
+   ══════════════════════════════════════════════════
+
+   Spatiotemporal ✓   Noise ✓   Spatial-aliasing ✓
+   [OG iter. 1/1]   OG = 1.00   WFE =  79 nm
+
+   ══════════════════════════════════════════════════
+                WAVEFRONT ERROR [nm RMS]
+   —————————————————▾———————▾———————▾———————▾———————▾
+     temporal   62  |■■■■■■■■■■■■■■■■■■■            |
+      fitting   38  |■■■■■■■                        |
+     aliasing   26  |■■■                            |
+       photon   18  |■■                             |
+   [...]
+
+.. raw:: html
+
+   </details>

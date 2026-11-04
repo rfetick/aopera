@@ -1,0 +1,49 @@
+Tip-tilt temporal PSD
+=====================
+
+Temporal PSD of the turbulence tip-tilt.
+
+Script: ``example/turbulence_tiptilt.py``
+
+Result
+------
+
+.. raw:: html
+
+   <div class="figs"><a href="../gallery/turbulence_tiptilt/fig_1.svg"><img src="../gallery/turbulence_tiptilt/fig_1.svg" alt="Figure 1 of turbulence_tiptilt.py" loading="lazy"></a></div>
+
+Code
+----
+
+.. literalinclude:: ../../example/turbulence_tiptilt.py
+   :language: python
+
+.. raw:: html
+
+   <details><summary>Console output</summary>
+
+.. code:: text
+
+   ═════════════════════════
+          Atmosphere
+   —————————————————————————
+   seeing    : 2.00 arcsec
+   nb layer  : 10
+   altitude  : 2.1 km
+   wind speed: 10.0 m/s
+   —————————————————————————
+
+   Iteration  1/10
+   Iteration  2/10
+   Iteration  3/10
+   Iteration  4/10
+   Iteration  5/10
+   Iteration  6/10
+   Iteration  7/10
+   Iteration  8/10
+   Iteration  9/10
+   Iteration 10/10
+
+.. raw:: html
+
+   </details>
