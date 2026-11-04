@@ -5,6 +5,7 @@ AOPERA
 
    <section class="hero">
      <div>
+       <img class="hero-logo" src="_static/logo.png" alt="AOPERA logo">
        <p class="acro"><b>A</b>daptive <b>O</b>ptics <b>P</b>sf <b>E</b>stimation and <b>R</b>esiduals <b>A</b>nalysis</p>
        <h2>Adaptive optics residuals, in seconds.</h2>
        <p class="tag">A Fourier model of single-conjugate and cascaded AO: from a configuration file to the error budget, the phase PSD and the PSF.</p>

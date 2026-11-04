@@ -115,6 +115,7 @@ dl.field-list > dd { margin: 0; } dl.field-list ul { margin: 0; padding-left: 18
 .landing h1 { display: none; }
 .hero { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 44px; align-items: center; padding: 56px 0 40px; }
 .hero h2 { font-size: 46px; line-height: 1.08; margin: 0 0 16px; }
+.hero-logo { display: block; width: 183px; max-width: 60%; height: auto; margin: 0 0 16px; }
 .hero .acro { font-size: 13.5px; letter-spacing: .02em; color: var(--muted); margin: 0 0 12px; }
 .hero .acro b { color: var(--accent); }
 .hero p.tag { font-size: 18.5px; color: var(--muted); margin: 0 0 24px; max-width: 46ch; }
