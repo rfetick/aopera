@@ -88,12 +88,12 @@ Code
    [OG iter. 2/3]   OG = 0.68   WFE = 173 nm
 
    Spatiotemporal ✓   Noise ✓   Spatial-aliasing ✓
-   [OG iter. 3/3]   OG = 0.68   WFE = 175 nm
+   [OG iter. 3/3]   OG = 0.68   WFE = 176 nm
 
    ══════════════════════════════════════════════════
                 WAVEFRONT ERROR [nm RMS]
    —————————————————▾———————▾———————▾———————▾———————▾
-     temporal  141  |■■■■■■■■■■■■■■■■■■             |
+     temporal  142  |■■■■■■■■■■■■■■■■■■             |
       fitting   73  |■■■■■                          |
        jitter   65  |■■■■                           |
          ncpa   50  |■■                             |

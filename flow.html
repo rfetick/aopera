@@ -100,9 +100,9 @@ code, .mono { font-family: var(--f-mono); font-size: 0.88em; }
 .node.opt.sel rect { fill: var(--opt-soft); stroke: var(--opt); stroke-width: 2.8; }
 .node.binned rect { stroke-dasharray: 5 3; stroke: var(--opt); }
 .node.off, .edge.off, .elabel.off { opacity: var(--dim); }
-.edge { fill: none; stroke: var(--muted); stroke-width: 1.4; transition: opacity .2s; }
+.edge { fill: none; stroke: var(--muted); stroke-width: 1.8; transition: opacity .2s; }
 .edge.s2 { stroke: var(--stage2); stroke-dasharray: 6 4; }
-.edge.loop { stroke: var(--accent); }
+.edge.loop { stroke: var(--accent); stroke-width: 1.2; stroke-dasharray: 7 3; }
 .arrow { fill: var(--muted); }
 .arrow-s2 { fill: var(--stage2); }
 .arrow-loop { fill: var(--accent); }
@@ -250,7 +250,7 @@ const N = {
   alias: { x:224, y:472, w:170, h:62, t:'Aliasing', s:'temporal_psd aliasing', g:'all' },
   noise: { x:408, y:472, w:160, h:62, t:'Noise', s:'psd_noise (n_nu=100)', g:'all' },
   other: { x:582, y:472, w:150, h:62, t:'aniso-mes · jitter', s:'direct 2D PSD', g:'all' },
-  sink:  { x:40,  y:566, w:354, h:58, t:'Cube storage · code optimisation', s:'', g:'opt' },
+  sink:  { x:40,  y:566, w:528, h:58, t:'Cube storage · code optimisation', s:'', g:'opt' },
   sum:   { x:40,  y:656, w:692, h:58, t:'Σ over the temporal axis → 2D PSD per term', s:'psd[k] = Σ_t psd_cube[k] · psd_total = Σ_k psd[k]', g:'all' },
   og:    { x:190, y:746, w:380, h:58, t:'AO PSF → on-sky sensitivity → OG', s:'OG = S_sky / S_calib', g:'all' },
   sci:   { x:190, y:858, w:380, h:58, t:'Path differences (WFS ↔ target)', s:'aniso-dist · ncpa · chromatic · refraction', g:'all' },
@@ -304,36 +304,36 @@ const D = {
     dl:[['input','(nx, nx, nl)'],['output','(nx, nx, nl·2K) or bins']],
     ref:'aopera/psdengine.py:286 temporal_psd · _kernel_nonint (196) · _kernel_intersampling (220)' },
   alias: { k:'OG loop', h:'Aliasing PSD',
-    p:['The input is shifted by ±2·fcut in x and y (n_shift = 1, integer shift on the FFT grid), weighted by <code>alias_weight</code> for the SH, then filtered by the aliasing transfer function.','The concatenated cube (all copies) is then compacted if cube_bins is set.'],
+    p:['The input is shifted by ±2·fcut in x and y (n_shift = 1, integer shift on the FFT grid), weighted by <code>alias_weight</code> for the SH, then filtered by the aliasing transfer function.','The concatenated cube (all copies) is then compacted if cube_bins is set.','It depends on the OG through both R and S_sky: see the optical gain update.'],
     eq:'psd_shift · |OL/(1+X)|²',
-    ref:'aopera/aopsd.py:372 psd_aliasing (fast=True)' },
+    ref:'aopera/aopsd.py:380 psd_aliasing (fast=True)' },
   noise: { k:'OG loop', h:'Noise PSD',
-    p:['Photon and read-out noise, on their own temporal grid: 100 log-spaced points from 10⁻³ to 2·fs, plus 0. Independent of the layers and not binned.','The noise cube keeps this grid (n_nu = 100, hard-coded).'],
+    p:['Photon and read-out noise, on their own temporal grid: 100 log-spaced points from 10⁻³ Hz to fs/2, plus 0 (n_nu = 100, hard-coded). Independent of the layers.','The noise is a discrete sequence, one value per frame, so fs/2 is enough to describe it. For this reason OL has no sinc here, whatever the intersampling setting.','The cube then goes through the cube storage like the other two terms. It depends on the OG through both R and S_sky: see the optical gain update.'],
     eq:'NTF = OL / (1+S·OL) / H_wfs\npsd = |NTF|²·wfs_area·σ²_subap·Δf·2/fs',
-    dl:[['output','(nx, nx, 100)']],
+    dl:[['computed','(nx, nx, 100)'],['stored','cube storage mode']],
     ref:'aopera/aopsd.py:195 psd_noise' },
   other: { k:'OG loop', h:'Measurement anisoplanatism and jitter',
-    p:['2D terms with no temporal dimension. aniso-mes only appears for an extended WFS source with layers in altitude; it is multiplied by og_avg.'],
-    ref:'aopera/simulation.py:324 · 336' },
-  sink: { k:'Code optimisation', o:true, h:'Cube storage', p:[], ref:'aopera/psdengine.py:82 _FullSink · 104 _SumSink · 116 _BinSink' },
+    p:['2D terms with no temporal dimension. aniso-mes only appears for an extended WFS source with layers in altitude; it depends on the OG because it is multiplied by og_avg. Jitter does not depend on the OG.'],
+    ref:'aopera/simulation.py:328 · 340' },
+  sink: { k:'Code optimisation', o:true, h:'Cube storage', p:[], ref:'aopera/psdengine.py:82 _FullSink · 104 _SumSink · 116 _BinSink · aopsd.py:195 psd_noise (output)' },
   sum: { k:'OG loop', h:'Sum over the temporal axis',
     p:['The third axis of the cubes holds the power per entry (or per bin), not a density: the 2D PSD is the plain sum, and the variance is Σ psd · df².','In stage 2, the <code>spatiotemporal*</code> terms are added together.'],
     eq:'psd[k]    = Σ_t psd_cube[k]\nvariance  = Σ_xy psd · df²',
-    ref:'aopera/simulation.py:347' },
+    ref:'aopera/simulation.py:349' },
   og: { k:'OG loop', h:'Optical gain update',
-    p:['The long-exposure PSF (convolved by the object if extended) gives the on-sky pyramid sensitivity, then the OG pixel by pixel. With og_compensation, the reconstructor becomes R_calib/OG at the next iteration.','SH: nb_iter_og forced to 1 (linear WFS, OG = 1). Pyramid: nb_iter_og is a parameter of <code>simulation()</code> (default 3).'],
+    p:['The long-exposure PSF (convolved by the object if extended) gives the on-sky WFS sensitivity, then the OG pixel by pixel. S_sky is used at the next iteration by the spatio-temporal, aliasing and noise terms; aniso-mes follows through og_avg.','<b>og_compensation off</b> (default): R stays fixed and S_sky changes X = S_sky·OL. The spatio-temporal term changes through X, and aliasing and noise through their denominator 1+X.','<b>og_compensation on</b>: R = R_calib/OG, so S_sky·R = S_calib·R_calib. X no longer depends on the OG, nor does the spatio-temporal term, while aliasing and noise scale as 1/OG² through OL.','SH: nb_iter_og forced to 1 (linear WFS, OG = 1). Pyramid and perfect WFS: nb_iter_og is a parameter of <code>simulation()</code> (default 3).'],
     eq:'S_sky = wfs.sensitivity(samp, psf_diff, psf_AO)\nOG    = S_sky / S_calib\nog_avg = ⟨OG⟩_aomskin',
-    ref:'aopera/simulation.py:257 (loop) · 364' },
+    ref:'aopera/simulation.py:257 (loop) · 366' },
   sci: { k:'After the loop', h:'Path differences',
     p:['Errors that come from the difference between the path seen by the WFS and the target path: the loop corrects what its WFS measures, not exactly what the target sees. The target is the <code>SourceScience</code> passed to <code>simulation()</code>: a science camera, or another WFS (e.g. the WFS of the next stage in a cascade).',
        '<b>aniso-dist</b>: different direction (off-axis WFS source). <b>ncpa</b>: different optics after the beam split. <b>chromatic</b>: different wavelength, so a different air refractive index. <b>refraction</b>: different wavelength, so a different direction at non-zero zenith angle.',
        'They are computed once after the OG loop, with the final reconstructor and sensitivity, since they do not enter the measurement of this stage WFS.'],
     dl:[['aniso-dist','WFS source separation > 0'],['ncpa','tel.ncpa > 0'],['chromatic, refraction','λ_target ≠ λ_WFS']],
-    ref:'aopera/simulation.py:375 · aopsd.py:732' },
+    ref:'aopera/simulation.py:378 · aopsd.py:740' },
   res: { k:'Output', h:'SimulationResult',
     p:['<code>split_fit_temp</code> splits the spatio-temporal PSD with aomskin: fitting = outside the corrected area, temporal = inside. <code>var[k]</code> applies the piston filter (except noise and NCPA, already filtered).','All PSDs are in rad² m² at the WFS wavelength of the stage. The cubes stay in <code>psd_cube</code> / <code>frequency_cube</code> to feed the next stage.'],
     eq:'fitting  = psd_st · (1 − aomskin)\ntemporal = psd_st · aomskin',
-    ref:'aopera/simulation.py:389' },
+    ref:'aopera/simulation.py:391' },
   scisc: { k:'Science image', i:true, h:'PSD at the science wavelength',
     p:['Both tabs start from the total PSD of a stage, in rad² m² at the WFS wavelength of that stage. rad² scale as (λ_WFS/λ_sci)², and the grid becomes samp_sci = samp·λ_sci/λ_WFS, so that df = 1/(samp_sci·D).'],
     eq:'psd_sci = psd_wvl_scaling(psd_total, λ_WFS/λ_sci)',
@@ -375,15 +375,15 @@ function dynamic(id) {
     dl: [['shape', o === 'full' ? '(nx, nx, Σ n_k)' : '(nx, nx, cube_bins)']] };
   if (id === 'out') return {
     s: o === 'sum' ? "keep_cubes=False → 'sum'" : o === 'bins' ? 'cube_bins → TemporalBins' : "'full'",
-    p: ['Decided once before the OG loop; applies to the spatio-temporal and aliasing cubes.'],
-    eq: "if not keep_cubes: 'sum'\nelif cube_bins:   TemporalBins(cube_bins,\n                   max(|ft|, ν_max, 2·fs))\nelse:             'full'",
+    p: ['Decided once before the OG loop; applies to the spatio-temporal, aliasing and noise cubes.'],
+    eq: "if not keep_cubes: 'sum'\nelif cube_bins:   TemporalBins(cube_bins,\n                   max(|ft|, ν_max))\nelse:             'full'",
     dl: [['current', o === 'sum' ? "'sum'" : o === 'bins' ? 'TemporalBins(cube_bins, fmax)' : "'full'"]] };
   if (id === 'sink') return {
     s: o === 'sum' ? '_SumSink: 2D PSD only' : o === 'bins' ? '_BinSink: (nx, nx, cube_bins)' : '_FullSink: (nx, nx, nl·ns·na)',
     p: ['This box only sets how the cube is stored, to save memory and time. In the code, the engine writes each PSD entry into a “sink” object, one class per mode. The 2D PSD of this stage is the same in the three modes, because it is the sum over the temporal axis.',
-        o === 'full' ? 'Stores every entry. Memory ∝ layers × intersampling copies × aliasing shifts.'
+        o === 'full' ? 'Stores every entry. Memory ∝ layers × intersampling copies × aliasing shifts. The noise cube keeps its own 100 frequencies.'
       : o === 'bins' ? 'Each non-zero entry is sent to its (log-index) bin with bincount. Bin power = Σ psd; frequency = Σ|psd|·f / Σ|psd| (geometric centre for an empty bin). Bounded memory, independent of the number of layers. A next stage sees the mean frequency of each bin, which is a small approximation.'
-      : 'Direct sum over the temporal axis, no cube kept. Used for the last stage (keep_cubes=False).'],
+      : 'Direct sum over the temporal axis, no cube kept, including for the noise. Used for the last stage (keep_cubes=False).'],
     eq: o === 'bins' ? 'b = ⌊ln(|f|/fmin)/Δ⌋ + 1   (b=0 if |f|<fmin)\nΔ = ln(10⁶)/(nbin−1)\nP_b = Σ psd    f_b = Σ|psd|f / Σ|psd|' : '',
     dl: [] };
   return {};
@@ -397,8 +397,8 @@ const E = [
   ['prev','scale','s2'], ['scale','in2','s2'], ['in2','out','s2'],
   ['ff','out','s1'],
   ['out','st',''], ['out','alias',''], ['out','noise',''], ['out','other',''],
-  ['st','sink','sinkpath'], ['alias','sink','sinkpath'],
-  ['sink','sum',''], ['noise','sum',''], ['other','sum',''],
+  ['st','sink','sinkpath'], ['alias','sink','sinkpath'], ['noise','sink','sinkpath'],
+  ['sink','sum',''], ['other','sum',''],
   ['sum','og',''], ['og','sci',''], ['sci','res',''],
   ['res','scisc',''], ['scisc','psf1',''], ['psf1','psf2',''], ['psf2','psf3',''],
 ];
@@ -407,7 +407,7 @@ const el = (tag, attrs, parent) => { const e = document.createElementNS(NS, tag)
 
 const defs = el('defs', {});
 [['a','arrow'],['a2','arrow-s2'],['al','arrow-loop']].forEach(([id, cls]) => {
-  const m = el('marker', { id, viewBox:'0 0 10 10', refX:9, refY:5, markerWidth:7, markerHeight:7, orient:'auto-start-reverse' }, defs);
+  const m = el('marker', { id, viewBox:'0 0 10 10', refX:9, refY:5, markerWidth: id === 'al' ? 7 : 5, markerHeight: id === 'al' ? 7 : 5, orient:'auto-start-reverse' }, defs);
   el('path', { d:'M0,0 L10,5 L0,10 z', class: cls }, m);
 });
 
@@ -455,8 +455,14 @@ E.forEach(([a, b, kind]) => {
   edgeEls.push({ p, a, b, kind });
 });
 // loop-back OG → st
-el('path', { d:`M${N.og.x},${N.og.y + 29} H32 V${N.st.y + 31} H${N.st.x - 1}`, class:'edge loop', 'marker-end':'url(#al)' });
-el('text', { x:40, y: N.og.y + 22, class:'elabel' }).textContent = 'R = R_calib / OG';
+const OG_BUS = 455;
+// drawn under the grey arrows, so that the crossings stay readable
+[el('path', { d:`M${N.og.x},${N.og.y + 29} H32 V${OG_BUS} H${N.other.x + 30}`, class:'edge loop' }),
+ ...[N.st, N.alias, N.noise, N.other].map(n => el('path', { d:`M${n.x + 30},${OG_BUS} V${n.y - 1}`, class:'edge loop', 'marker-end':'url(#al)' }))
+].forEach(p => svg.insertBefore(p, edgeEls[0].p));
+[['S_sky, R', 0], ['(R = R_calib/OG if', 14], ['og_compensation)', 28]].forEach(([txt, dy]) => {
+  el('text', { x:40, y: N.og.y - 14 + dy, class:'elabel' }).textContent = txt;
+});
 // next stage: res → prev (dashed)
 const nsp = el('path', { d:`M${N.res.x + N.res.w},${N.res.y + 31} H758 V${N.prev.y + 29} H${N.prev.x + N.prev.w + 1}`, class:'edge s2', 'marker-end':'url(#a2)' });
 const nsl = el('text', { x:752, y: 900, class:'elabel s2', 'text-anchor':'end' });
@@ -599,7 +605,7 @@ const WFS = {
     ['Noise', '<p>Variance per sub-aperture. It is multiplied by 2 for an EMCCD (photon) and divided by <code>cog_gain</code>². A weighted CoG adds a factor on the photon term.</p>' + eq('photon = spot²·π² / (2 ln2·n_ph)\nron    = pix²·π²/3·(ron/n_ph)²·npix_cog²')],
     ['Aliasing', '<p>Vector weighting <code>alias_weight</code> of each aliased order. An optional square <code>spatial_filter</code>, in λ/d, keeps |f_x|, |f_y| ≤ spatial_filter/(2d).</p>'],
     ['Config', '<p><code>[shwfs]</code>: lenslet, ron, emccd, samp, npix_cog; optional throughput, weight, spatial_filter, cog_gain.</p>'] ],
-    ref:'aopera/shwfs.py:138 · 13 shwfs_sensitivity · 108 shwfs_var_photon_subap · aopera/aopsd.py:418' },
+    ref:'aopera/shwfs.py:138 · 13 shwfs_sensitivity · 108 shwfs_var_photon_subap · aopera/aopsd.py:426' },
   pwfs: { label:'Pyramid', cls:'PWFS', ok:true, status:'Works in simulation()', rows:[
     ['Measures', '<p>Fourier filtering by a pyramid mask (<code>nface</code> = 4, <code>angle</code> = 0.35, optional field stop <code>fov</code>), with a circular modulation of radius <code>modulation</code> in λ/D.</p>'],
     ['Sensitivity', '<p>Convolutive model, with a linear ramp inside the modulation radius taken from the calibration map. <code>simulation()</code> multiplies by the pixel filter sinc(f_x·pix)·sinc(f_y·pix).</p>' + eq('S_conv = √(|TF(PSF)|² ∗ PSF_calib)\nS_sky  = S_conv,sky · ramp(S_conv,calib) / S_conv,calib')],
@@ -608,7 +614,7 @@ const WFS = {
     ['Noise', '<p>Variance per sub-aperture.</p>' + eq('photon = (1 + emccd) / (nface·n_ph)\nron    = (ron/n_ph)²')],
     ['Aliasing', '<p>Scalar: shifted PSD filtered by |OL/(1+S·OL)|².</p>'],
     ['Config', '<p><code>[pwfs]</code>: lenslet, ron, emccd, modulation; optional throughput, og_compensation. <code>nface</code>, <code>angle</code>, <code>fov</code> and <code>modulation_sky</code> are object attributes, not read from the file.</p>'] ],
-    ref:'aopera/ffwfs.py:360 · 423 sensitivity · 133 ffwfs_sensitivity · 156 sensitivity_ramp' },
+    ref:'aopera/ffwfs.py:360 · 426 sensitivity · 133 ffwfs_sensitivity · 156 sensitivity_ramp' },
   zwfs: { label:'Zernike', cls:'ZernikeWFS', ok:false, status:'Fails in simulation(): no og_compensation attribute, and S = 0 with the current mask', rows:[
     ['Measures', '<p>Fourier filtering by a phase dot (<code>diameter</code> = 1 λ/D, <code>depth</code> = π/2), without modulation.</p>'],
     ['Sensitivity', '<p>Generic convolutive model of <code>FFWFS</code>, without the ramp.</p>' + eq('S = √(|TF(PSF)|² ∗ PSF_calib)')],
@@ -616,15 +622,15 @@ const WFS = {
     ['Optical gain', '<p><code>optical_gain</code> is inherited from <code>FFWFS</code> and also expects a <code>modulation_sky</code> attribute, which this class does not define.</p>'],
     ['Noise', '<p>Variance per sub-aperture.</p>' + eq('photon = (1 + emccd) / n_ph\nron    = (ron/n_ph)²')],
     ['Config', '<p>Dictionary only, category <code>zwfs</code>: lenslet, ron, emccd; optional throughput. There is no <code>from_file</code>.</p>'] ],
-    ref:'aopera/ffwfs.py:458 ZernikeWFS · 36 zernike_mask · 330 FFWFS.sensitivity' },
-  perfect: { label:'Perfect', cls:'PerfectWFS', ok:false, status:'simulation() with nb_iter_og=1 only; the default (3) fails: no modulation_sky attribute', rows:[
+    ref:'aopera/ffwfs.py:467 ZernikeWFS · 36 zernike_mask · 330 FFWFS.sensitivity' },
+  perfect: { label:'Perfect', cls:'PerfectWFS', ok:true, status:'Works in simulation()', rows:[
     ['Measures', '<p>Reference sensor at the theoretical maximum sensitivity, with no focal plane mask.</p>'],
-    ['Sensitivity', '<p>Constant, and null for scintillation.</p>' + eq('S = 2')],
-    ['Sensitivity map', mapsHtml('perfect', '<code>simulation()</code> multiplies the constant S = 2 by the pixel filter sinc(f_x·pix)·sinc(f_y·pix).')],
-    ['Optical gain', '<p>None: OG = 1.</p>'],
+    ['Sensitivity', '<p>Constant over the spatial frequencies, and null for scintillation. On sky, it falls with the on-axis Strehl ratio.</p>' + eq('S_calib = 2\nS_sky   = 2·√SR')],
+    ['Sensitivity map', mapsHtml('perfect', 'At calibration, <code>simulation()</code> multiplies the constant S = 2 by the pixel filter sinc(f_x·pix)·sinc(f_y·pix).')],
+    ['Optical gain', '<p>One value for all spatial frequencies, from the on-axis Strehl ratio of the long-exposure PSF (Chambouleyron et al. 2024). Set <code>wfs.optical_gains = False</code> for S = 2 and OG = 1.</p>' + eq('OG = √SR')],
     ['Noise', '<p>Variance per sub-aperture.</p>' + eq('photon = (1 + emccd) / n_ph\nron    = (ron/n_ph)²')],
     ['Config', '<p><code>[perfectwfs]</code>: lenslet, ron, emccd; optional throughput.</p>'] ],
-    ref:'aopera/ffwfs.py:480 PerfectWFS · 519 sensitivity' },
+    ref:'aopera/ffwfs.py:488 PerfectWFS · 529 sensitivity' },
 };
 function tabs(segId, items, draw, first) {
   const seg = document.getElementById(segId);

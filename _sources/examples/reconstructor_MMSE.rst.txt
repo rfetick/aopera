@@ -82,25 +82,25 @@ Code
 
 
    Spatiotemporal ✓   Noise ✓   Spatial-aliasing ✓
-   [OG iter. 1/3]   OG = 0.89   WFE =  77 nm
+   [OG iter. 1/3]   OG = 0.88   WFE =  78 nm
 
    Spatiotemporal ✓   Noise ✓   Spatial-aliasing ✓
-   [OG iter. 2/3]   OG = 0.89   WFE =  81 nm
+   [OG iter. 2/3]   OG = 0.88   WFE =  82 nm
 
    Spatiotemporal ✓   Noise ✓   Spatial-aliasing ✓
-   [OG iter. 3/3]   OG = 0.89   WFE =  81 nm
+   [OG iter. 3/3]   OG = 0.88   WFE =  82 nm
 
    ══════════════════════════════════════════════════
                 WAVEFRONT ERROR [nm RMS]
    —————————————————▾———————▾———————▾———————▾———————▾
-       photon   62  |■■■■■■■■■■■■■■■■■■             |
-     temporal   43  |■■■■■■■■■                      |
+       photon   63  |■■■■■■■■■■■■■■■■■■             |
+     temporal   43  |■■■■■■■■                       |
       fitting   25  |■■■                            |
-          ron   20  |■■                             |
+          ron   21  |■■                             |
      aliasing    2  |                               |
        jitter    0  |                               |
    —————————————————▴———————▴———————▴———————▴———————▴
-        total   82
+        total   83
    ══════════════════════════════════════════════════
 
    Spatiotemporal ✓   Noise ✓   Spatial-aliasing ✓
